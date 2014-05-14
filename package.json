@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "The node application that is running my site for the most part.",
   "dependencies": {
-    "express": ">=4.2.0",
+    "express": ">=4.2.0"
   },
   "engine": "node >=0.6.x"
 }
