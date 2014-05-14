@@ -10,17 +10,17 @@ app.get('/', function(req, res){
   res.render('index',{greeting:randElement(greetings),title:req.url});
 });
 
+app.use(express.static(__dirname + "/public"));
 app.listen(3000);
 
-
-//static server
-var file = new require('node-static').Server('./public');
+var static = require('node-static');
+var file = new static.Server('./public');
 
 http.createServer(function (request, response) {
     request.addListener('end', function () {
         file.serve(request, response);
     }).resume();
-}).listen(3000);
+}).listen(8080);
 
 
 
