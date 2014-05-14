@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tables</title>
+    </head>
+    <body>
+        <table id="multiSelect" class="tablesorter-blue tableSelect-default">
+            <thead>
+                <th>First</th><th>Last</th><th>Address</th><th>Id</th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Josh</td><td>Smith</td><td>1234 Main St</td><td>1</td>
+                </tr>
+                <tr>
+                    <td>Russ</td><td>Johnson</td><td>456 Fake St APT 234</td><td>6</td>
+                </tr>
+            </tbody>
+        </table>
+        <button id="delete">
+            Delete Selected
+        </button>
+        <button id="add">
+            Add row
+        </button>
+        <form>
+            <input id="fname">
+            <input id="lname">
+            <input id="address">
+            <input id="id">
+        </form>
+    </body>
+
+    <script src="../jquery.js"></script>
+    <script src="tablesorter/js/jquery.tablesorter.js"></script>
+    <script src="table-select.js"></script>
+    <link rel="stylesheet" href="tablesorter/css/theme.blue.css">
+
+    <script>
+        $(function() {
+            var def = $.tableSelect.defaults;
+            
+            $("#multiSelect").tableSelect().tablesorter();
+
+            $("#add").bind("click", function() {
+                var input = $.extend({}, {
+                    "fname" : "NA",
+                    "lname" : "NA",
+                    "address" : "NA",
+                    "id" : new Date().getTime().toString()
+                }, {
+                    "fname" : $("#fname").val(),
+                    "lname" : $("#lname").val(),
+                    "address" : $("#address").val(),
+                    id : $("#id").val()
+                });
+                row = $("<tr>");
+                row.append("<td>"+ input.fname +"</td>");
+                row.append("<td>"+ input.lname +"</td>");
+                row.append("<td>"+ input.address +"</td>");
+                row.append("<td>"+ input.id +"</td>");
+                $("#multiSelect tbody").append(row);
+                $("#multiSelect").trigger("addRows", [row,true]);
+            });
+            
+            $("html").bind("keypress", function(e){
+               if (e.key == "Del") {
+                   $("#multiSelect tbody tr").remove("." + def.selectedClass);
+               }
+            });
+            
+            $("#delete").bind("click", function(e) {
+                console.log(e);
+                console.log(def);
+                $("#multiSelect tbody tr").remove("." + def.selectedClass);
+                $("#multiSelect").trigger("update");
+            });
+        });
+    </script>
+
+    <style>
+        .tableSelect-default {
+            -moz-user-select: none;
+        }
+
+        .tableSelect-default tbody > tr.selected > td {
+            background: grey;
+        }
+    </style>
+
+</html>

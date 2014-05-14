@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Contacts</title>
+        <link rel="stylesheet" href="table-select.css">
+    </head>
+    <body>
+
+        <h1>Contact table demo</h1>
+        <div id="contacts-container">
+            <button id="gen">
+                Generate Contact
+            </button>
+            <form>
+                <label> First Name:
+                    <input id="fname">
+                </label>
+                <label> Last Name:
+                    <input id="lname">
+                </label>
+                <label>Sex:
+                    <input id="sex">
+                </label>
+                <label> Phone:
+                    <input id="phone">
+                </label>
+
+                <button id="addContact">
+                    Add Contact
+                </button>
+            </form>
+            <table id="contactsTable" class="tablesorter-blue tableSelect-default"></table>
+            <h1>Show/Hide Columns</h1>
+        </div>
+        <script src="../jquery.js"></script>
+        <script src="table.js"></script>
+        <script src="tablesorter/js/jquery.tablesorter.js"></script>
+        <script src="table-select.js"></script>
+        <script src="contactDB.js"></script>
+        <script src="showhide.js"></script>
+        <link rel="stylesheet" href="tablesorter/css/theme.blue.css">
+        <script>
+            $(function() {
+                var divContainer = $("#contacts-container");
+                var table = $("#contactsTable");
+                table.contactTable();
+                table.bind("contactTableComplete", function(e) {
+                    table.tablesorter().tableSelect();
+                    divContainer.showHide();
+                    $("html").bind("keypress", function(e) {
+                        if (e.key == "Del") {
+                            $("tr.selected").each(function(ix, el) {
+                                var recId = $(el).data("id");
+                                console.log(recId);
+                                table.trigger("removeRec", [recId]);
+                            });
+                            table.trigger("removeRows");
+                        }
+                    });
+                });
+                table.bind("removeRow", function(e, row) {
+                    var recId = $(el).data("id");
+                    table.trigger("removeRec", [recId]);
+                });
+                table.bind("rowsRemoved", function(e, rows) {
+                    rows.each(function(ix, el) {
+                        var recId = $(el).data("id");
+                        console.log(recId);
+                        table.trigger("removeRec", [recId]);
+                    });
+                });
+
+                $("#gen").bind("click", function() {
+                    var contact = $.testData.genContact();
+                    table.trigger("addRec", [contact]);
+                });
+                
+                $("#addContact").bind("click", function(e) {
+                    e.preventDefault();
+                    table.trigger("addRec", [{
+                        fname: $("#fname").val(),
+                        lname: $("#lname").val(),
+                        sex: $("#sex").val(),
+                        phone: $("#phone").val()
+                    }]);
+                });
+            });
+        </script>
+
+        <style>
+            td.hidden, th.hidden {
+                display: none;
+            }
+            label {
+                position: relative;
+                width: 300px;
+                display: block;
+            }
+            
+            label input {
+                position: absolute;
+                right: 0;
+            }
+        </style>
+    </body>
+
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Tables</title>
+        <link rel="stylesheet" href="table-select.css">
+    </head>
+    <body>
+
+        <div id="todo">
+
+        </div>
+        <script src="../jquery.js"></script>
+        <script src="table.js"></script>
+        <script src="tablesorter/js/jquery.tablesorter.js"></script>
+        <script src="table-select.js"></script>
+        <link rel="stylesheet" href="tablesorter/css/theme.blue.css">
+        <script>
+            $(function() {
+                var table = $.testData.genTable({
+                    rows : 20
+                });
+                $("#todo").append(table);
+                table.tablesorter().tableSelect();
+
+                $("html").bind("keypress", function(e) {
+                    if (e.key == "Del") {
+                        table.trigger("removeRows");
+                    }
+                });
+            });
+        </script>
+    </body>
+
+</html>
