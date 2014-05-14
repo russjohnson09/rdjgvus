@@ -1,7 +1,7 @@
 {
-  "name": "hodor",
+  "name": "russgvsu.com",
   "version": "0.0.1",
-  "description": "hodor",
+  "description": "The node application that is running my site for the most part.",
   "dependencies": {
     "express": ">=4.2.0",
   },
