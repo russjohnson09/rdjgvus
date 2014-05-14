@@ -1,0 +1,76 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+
+a {
+    color: #FFF;
+}
+
+#main {
+    margin: 10px 100px 20px 200px;
+    max-width: 1000px;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative;
+    color: #FFF;
+    background-color: #333;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAADklEQVQIW2NgQAXGZHAAGioAza6+Hk0AAAAASUVORK5CYII=");
+}
+
+#sidebar {
+    position: fixed;
+    top: 30%;
+    left: 10px;
+}
+
+#sidebar ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#sidebar a {
+    background-color: #444;
+    border-radius: 5px;
+    color: #FFF;
+    text-decoration: none;
+}
+
+footer {
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.tableSelect-default {
+    -moz-user-select: none;
+}
+
+.tableSelect-default tbody > tr.selected > td {
+    background: grey;
+}
+
+td.hidden, th.hidden {
+    display: none;
+}
+label {
+    position: relative;
+    width: 300px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+label input {
+    position: absolute;
+    right: 0;
+}
+

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="favicon.ico">
+        <link rel="stylesheet" href="table-select.css">
+        <link rel="stylesheet" href="tablesorter/css/theme.blue.css">
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="prism.css">
+        <title>Home - russ</title>
+    </head>
+    <body>
+        <div id="sidebar">
+            <ul>
+                <li>
+                    <a href="#about">About Me</a>
+                </li>
+                <li>
+                    <a href="#contact">Contact Demo</a>
+                </li>
+                <li>
+                    <a href="#japanese">Japanese</a>
+                </li>
+                <li>
+                    <a href="#javascript">Javascript</a>
+                </li>
+                <li>
+                    <a href="#misc">Misc</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="main">
+            <h1 id="about">About Me</h1>
+            <p>
+                My name is Russ, I work as a software developer at Epic Systems in Verona, WI. One of my hobbies is studying Japanese and I hope to visit Japan sometime in 2014. This site is somewhat of a mix between a blog and some more technical stuff. I may throw in some entries on web development, python, japanese, mathematics, or whatever interests me at the time.
+            </p>
+
+            <h1 id="contact">Contact demo</h1>
+            Enter contact information here. Data will be stored locally using IndexedDB. Sort column functionality provided by <a href="http://tablesorter.com">tablesorter</a>. You can sort on multiple columns using shift. You can delete information by selecting a row and pressing delete. Multiple rows can be selected using ctl or shift.
+            <div id="todoDemo">
+                <div id="contacts-container">
+                    <button id="gen">
+                        Generate Contact
+                    </button>
+                    <form>
+                        <label> First Name:
+                            <input id="fname">
+                        </label>
+                        <label> Last Name:
+                            <input id="lname">
+                        </label>
+                        <label>Sex:
+                            <input id="sex">
+                        </label>
+                        <label> Phone:
+                            <input id="phone">
+                        </label>
+
+                        <button id="addContact">
+                            Add Contact
+                        </button>
+                    </form>
+                    <table id="contactsTable" class="tablesorter-blue tableSelect-default"></table>
+                    <h1>Show/Hide Columns</h1>
+                </div>
+            </div>
+            <h1 id="japanese">Short Japanese Lesson</h1>
+            <p>
+                The japanese alphabet is broken up into two distinct parts. Hiragana(ひらがな)/katakana(カタカナ) together make up the gana and kanji (漢字) which are characters adbopted from China.
+            </p>
+
+            <h1 id="javascript">Javascript</h1>
+            <h2>Jquery Snippets</h2>
+            The following code snippets use <a href="http://prismjs.com/">primjs</a> to hightlight text. <h3>Print every keystroke event to the console.</h3>
+            <pre>
+<code class="language-javascript">$(function(){
+    $("html").bind("keypress",function(e){
+       console.log(e); 
+    });
+})</code></pre>
+            <h3><a href="https://api.jquery.com/toggleClass/">Toggling a class</a> when element with id="switch" is pressed.</h3>
+            <pre>
+<code class="language-javascript">$("#switch").bind("click",function(e) {
+    $(".switchable").toggleClass("on");
+});
+</code>
+</pre>                                                                        
+
+ <h1 id="misc">Misc. Stuff</h1>
+            <img src="http://i.imgur.com/4BEitgf.gif">
+        </div>
+
+        
+        <script src="jquery.js"></script>
+        <script src="table.js"></script>
+        <script src="tablesorter/js/jquery.tablesorter.js"></script>
+        <script src="table-select.js"></script>
+        <script src="contactDB.js"></script>
+        <script src="showhide.js"></script>
+        <script src="main.js"></script>
+        <script src="prism.js"></script>
+
+    </body>
+
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+	</head>
+	<body>
+		<button id="ajax">Push me</button>
+	</body>
+	<script src="jquery.js"></script>
+	<script>
+		$(function() {
+			$("#ajax").bind("click", function(e){
+				$.ajax({
+					type: "GET",
+					contentType: "text/plain",
+					url: "http://localhost:3030",
+					error: function(jqXHR,status,err) {
+						console.log(status);
+						console.log(jqXHR);
+						console.log(err);
+					},
+					success: function(data,status,jqXHR) {
+						console.log(status);
+						console.log(jqXHR);
+						console.log(data);
+					}
+				});
+			});
+		});
+	</script>
+</html>

@@ -1,0 +1,6 @@
+.tableSelect-default tbody > tr.selected > td {
+    background: grey;
+}
+.tableSelect-default {
+    -moz-user-select: none;
+}
