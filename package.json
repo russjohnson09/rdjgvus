@@ -4,7 +4,6 @@
   "description": "hodor",
   "dependencies": {
     "express": ">=4.2.0",
-    "express3-handlebars": "*",
   },
   "engine": "node >=0.6.x"
 }
