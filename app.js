@@ -6,11 +6,11 @@ var http = require("http");
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"main.hbs"}));
 app.set('view engine', 'hbs');
 
-app.get('/', function(req, res){
+app.get('/handlebars', function(req, res){
   res.render('index',{greeting:randElement(greetings),title:req.url});
 });
 
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/public_html"));
 app.listen(3000);
 
 var static = require('node-static');
