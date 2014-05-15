@@ -1,4 +1,0 @@
-PassengerEnabled on
-PassengerAppRoot /home/russgvsu/myapp
-SetEnv NODE_ENV production
-SetEnv NODE_PATH /russgvsu/lib/node_modules
