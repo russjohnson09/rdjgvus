@@ -14,7 +14,6 @@ app.get("/request",function(req,res){
     console.log(req.url);
     var greeting = randElement(greetings);
     res.writeHead(200, {
-  'Content-Length': greeting.length,
   'Content-Type': 'text/plain' });
   res.end(greeting);
 });
