@@ -12,8 +12,11 @@ app.get('/greetings', function(req, res){
 
 app.get("/request",function(req,res){
     console.log(req.url);
-    res.writeHead("200");
-    res.end("1");
+    var greeting = randElement(greetings);
+    res.writeHead(200, {
+  'Content-Length': greeting.length,
+  'Content-Type': 'text/plain' });
+  res.end(greeting);
 });
 
 app.use("/",express.static(__dirname + "/public_html"));
