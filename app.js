@@ -10,7 +10,11 @@ app.get('/greetings', function(req, res){
   res.render('index',{greeting:randElement(greetings),title:req.url});
 });
 
-app.use("/public",express.static(__dirname + "/public_html"));
+app.get("/request",function(req,res){
+    res.end("1");
+});
+
+app.use("/",express.static(__dirname + "/public_html"));
 app.listen(3000);
 
 var greetings = ["Hello","こんにちは","夜露死苦"]
