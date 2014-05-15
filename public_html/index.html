@@ -32,6 +32,10 @@
         </div>
 
         <div id="main">
+            <h1 id="ajax">Ajax Example</h1>
+            <button id="ajax-send">Send request</button>
+            <div id="ajax-res"></div>
+            
             <h1 id="about">About Me</h1>
             <p>
                 My name is Russ, I work as a software developer at Epic Systems in Verona, WI. One of my hobbies is studying Japanese and I hope to visit Japan sometime in 2014. This site is somewhat of a mix between a blog and some more technical stuff. I may throw in some entries on web development, python, japanese, mathematics, or whatever interests me at the time.
@@ -101,6 +105,24 @@
         <script src="showhide.js"></script>
         <script src="main.js"></script>
         <script src="prism.js"></script>
+        
+         <script>
+            $(function(){
+                $("#ajax-send").bind("click",function(){
+                   $.ajax({
+                   	type: 'GET',
+	                dataType: 'text',
+                    url: "./request",
+                    context: $("#ajax-res")
+                    }).done(function(data) {
+                        this.text(data);
+                    }).fail(function(){
+                        alert("error or something");
+                    });
+                    ;
+                });
+            });
+            </script>
 
     </body>
 

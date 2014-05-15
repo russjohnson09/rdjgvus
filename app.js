@@ -11,6 +11,8 @@ app.get('/greetings', function(req, res){
 });
 
 app.get("/request",function(req,res){
+    console.log(req.url);
+    res.writeHead("200");
     res.end("1");
 });
 
