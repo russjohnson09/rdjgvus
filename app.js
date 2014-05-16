@@ -21,7 +21,7 @@ app.get("/request",function(req,res){
 app.use("/",express.static(__dirname + "/public_html"));
 app.listen(3000);
 
-var greetings = ["Hello","こんにちは","夜露死苦"]
+var greetings = ["Hello","こんにちは","夜露死苦"];
 
 function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];

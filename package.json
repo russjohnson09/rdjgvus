@@ -1,11 +1,17 @@
 {
   "name": "russgvsu.com",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The node application that is running my site for the most part.",
   "dependencies": {
     "express": ">=4.2.0",
     "express3-handlebars": "*",
     "node-static": "*"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.3.3",
+    "grunt-contrib-uglify": "~0.4.0"
   },
   "engine": "node >=0.6.x"
 }
