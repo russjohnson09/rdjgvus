@@ -2,3 +2,4 @@ node_modules
 .ftpquota*
 .htaccess*
 .dispatch.fcgi*
+*.log*
