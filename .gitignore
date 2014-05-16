@@ -3,3 +3,4 @@ node_modules
 .htaccess*
 .dispatch.fcgi*
 *.log*
+config.js
