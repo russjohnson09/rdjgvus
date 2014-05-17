@@ -15,7 +15,8 @@
     "connect-flash" : "~0.1.1",
     "bcrypt-nodejs" : "latest",
     "cookie-parser" : "*",
-    "express-session" : "*"
+    "express-session" : "*",
+    "mongo" : "*"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
