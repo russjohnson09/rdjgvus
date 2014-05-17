@@ -8,7 +8,7 @@ var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 
-//mongoose.connect('localhost:27017/test');
+mongoose.connect('localhost:27017/test');
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
@@ -103,10 +103,10 @@ function(req, email, password, done) {
 }));
 
 
-    passport.use('local-login', new LocalStrategy({
-        usernameField : 'email',
-        passwordField : 'password',
-        passReqToCallback : true
+passport.use('local-login', new LocalStrategy({
+    usernameField : 'email',
+    passwordField : 'password',
+    passReqToCallback : true
     },
     function(req, email, password, done) {
         User.findOne({ 'local.email' : email }, function(err, user) {
