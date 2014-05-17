@@ -42,4 +42,18 @@ $(function() {
             phone : $("#phone").val()
         }]);
     });
+    
+
+    $("#ajax-send").bind("click",function(){
+       $.ajax({
+       	type: 'GET',
+        dataType: 'text',
+        url: "./request",
+        context: $("#ajax-res")
+        }).done(function(data) {
+            this.text(data);
+        }).fail(function(){
+            alert("error or something");
+        });
+});
 }); 
