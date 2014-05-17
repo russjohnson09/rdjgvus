@@ -11,7 +11,7 @@ Code = m.Code,
 BSON = m.pure().BSON,
 assert = require('assert');
 
-var db = new Db('test', new Server('localhost', 27017));
+var db = new Db('test', new Server('localhost', 27017),{safe:false});
 
 db.open(function(err, db) {
     assert.equal(null, err);
