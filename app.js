@@ -12,30 +12,11 @@ app.get('/greetings', function(req, res){
 });
 
 app.get("/request",function(req,res){
-  var post_options = {
-      host: 'getpocket.com',
-      path: '/v3/oauth/request',
-      port: 3000,
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-          'X-Accept': 'application/json'
-      }
-  };
-
-  // Set up the request
-  var post_req = http.request(post_options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          console.log('Response: ' + chunk);
-      });
-  });
-
-    console.log(req.url);
+    console.log(req);
     var greeting = randElement(greetings);
     res.writeHead(200, {
-  'Content-Type': 'text/plain' });
-  res.end(greeting);
+  'Content-Type': 'text/html' });
+  res.end("<html><head>" + "<meta charset='UTF-8'>" + "</head><body>" + greeting + "</body></html>");
 });
 
 app.use("/",express.static(__dirname + "/public_html"));
