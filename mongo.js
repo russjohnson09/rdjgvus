@@ -18,7 +18,7 @@ db.open(function(err, db) {
     collection.insert({a:2},{w:1}, function(err, result) {
         console.log(err);
         console.log(result);
+        db.close();
     });
-    db.close();
 });
 
