@@ -8,11 +8,11 @@ var flash = require('connect-flash');
 var cookieParser = require('cookie-parser');
 var session      = require('express-session');
 
-mongoose.connect('localhost:27017/test');
+//mongoose.connect('localhost:27017/test');
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(session({ secret: 'russ' }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -21,6 +21,8 @@ app.use(flash());
 app.get('/', function(req, res) {
 	res.render('auth');
 });
+app.listen(3000);
+
 app.get('/login', function(req, res) {
 	res.render('login', { message: req.flash('loginMessage') }); 
 });
@@ -45,7 +47,6 @@ function isLoggedIn(req, res, next) {
 		return next();
 	res.redirect('/');
 }
-app.listen(3000);
 
 var LocalStrategy   = require('passport-local').Strategy;
 var User       		= require('./user');
