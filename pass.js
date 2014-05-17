@@ -5,14 +5,16 @@ var http = require("http");
 var mongoose = require('mongoose');
 var passport = require('passport');
 var flash = require('connect-flash');
+var cookieParser = require('cookie-parser');
+var session      = require('express-session');
 
 mongoose.connect('localhost:27017/test');
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
 //app.use(express.logger('dev'));
-//app.use(express.cookieParser());
-//app.use(express.session({ secret: 'russ' }));
+app.use(cookieParser);
+app.use(session({ secret: 'russ' }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
