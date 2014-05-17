@@ -12,7 +12,11 @@ app.get('/greetings', function(req, res){
 });
 
 app.get("/request",function(req,res){
-    console.log(req);
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress;
+    
+    console.log(ip);
     var greeting = randElement(greetings);
     res.writeHead(200, {
   'Content-Type': 'text/html' });
