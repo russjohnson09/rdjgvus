@@ -19,5 +19,6 @@ db.open(function(err, db) {
         console.log(err);
         console.log(result);
     });
+    db.close();
 });
 
