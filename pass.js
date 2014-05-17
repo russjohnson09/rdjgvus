@@ -12,7 +12,6 @@ mongoose.connect('localhost:27017/test');
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
-//app.use(express.logger('dev'));
 app.use(cookieParser);
 app.use(session({ secret: 'russ' }));
 app.use(passport.initialize());
@@ -61,6 +60,7 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 });
+
 passport.use('local-signup', new LocalStrategy({
     usernameField : 'email',
     passwordField : 'password',
@@ -69,11 +69,8 @@ passport.use('local-signup', new LocalStrategy({
 function(req, email, password, done) {
     process.nextTick(function() {
     User.findOne({ 'local.email' :  email }, function(err, user) {
-        // if there are any errors, return the error
         if (err)
             return done(err);
-
-        // check to see if theres already a user with that email
         if (user) {
             return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
         } else {
@@ -86,9 +83,26 @@ function(req, email, password, done) {
                 return done(null, newUser);
             });
         }
-
-    });    
-
+    });
     });
 
 }));
+
+
+    passport.use('local-login', new LocalStrategy({
+        usernameField : 'email',
+        passwordField : 'password',
+        passReqToCallback : true
+    },
+    function(req, email, password, done) {
+        User.findOne({ 'local.email' : email }, function(err, user) {
+            if (err)
+                return done(err);
+            if (!user)
+                return done(null, false, req.flash('loginMessage', 'No user found.')); // req.flash is the way
+            if (!user.validPassword(password))
+                return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the
+            return done(null, user);
+        });
+
+    }));
