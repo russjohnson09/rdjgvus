@@ -16,7 +16,7 @@
     "bcrypt-nodejs" : "latest",
     "cookie-parser" : "*",
     "express-session" : "*",
-    "mongo" : "*"
+    "mongodb" : "*"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
