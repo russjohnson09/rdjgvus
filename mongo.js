@@ -14,7 +14,10 @@ assert = require('assert');
 var db = new Db('test', new Server('localhost', 27017),{safe:false});
 
 db.open(function(err, db) {
-    assert.equal(null, err);
-    db.on('close',function(){});
-    db.close();
+    var collection = db.collection("test");
+    collection.insert({a:2},{w:1}, function(err, result) {
+        console.log(err);
+        console.log(result);
+    });
 });
+
