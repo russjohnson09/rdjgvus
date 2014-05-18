@@ -1,0 +1,23 @@
+{{greeting}}
+<button id="add">Add</button>
+
+<script src="/js/jquery.js"></script>
+<script>
+$(function(){
+    $("#add").bind("click",function(el){
+       $.ajax({
+       	type: 'POST',
+        dataType: 'json',
+        url: "",
+        data: ""
+        }).done(function(data,status,xhr) {
+            console.log("success");
+            console.log(data);
+        }).fail(function(xhr,status,err){
+            console.log("error");
+            console.log(status);
+            console.log(err);
+        });
+    });
+});
+</script>
