@@ -11,6 +11,16 @@
 <p>Last name: <strong data-bind="text: lastName">todo</strong></p>
 <p>Full name: <strong data-bind="text: fullName">todo</strong></p>
 
+
+<h2>Your seat reservations</h2>
+
+<table>
+    <thead><tr>
+        <th>Passenger name</th><th>Meal</th><th>Surcharge</th><th></th>
+    </tr></thead>
+    <tbody></tbody>
+</table>
+
 <script src="./js/jquery.js"></script>
 <script src="./js/knockout.js"></script>
 
@@ -25,6 +35,28 @@ function AppViewModel() {
 }
 
 ko.applyBindings(new AppViewModel());
+
+function SeatReservation(name, initialMeal) {
+    var self = this;
+    self.name = name;
+    self.meal = ko.observable(initialMeal);
+}
+function ReservationsViewModel() {
+    var self = this;
+    self.availableMeals = [
+        { mealName: "Standard (sandwich)", price: 0 },
+        { mealName: "Premium (lobster)", price: 34.95 },
+        { mealName: "Ultimate (whole zebra)", price: 290 }
+    ];    
+
+    // Editable data
+    self.seats = ko.observableArray([
+        new SeatReservation("Steve", self.availableMeals[0]),
+        new SeatReservation("Bert", self.availableMeals[0])
+    ]);
+}
+
+ko.applyBindings(new ReservationsViewModel());
 </script>
 </body>
 
