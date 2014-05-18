@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<p>First name: <input data-bind="value: firstName" /></p>
+<p>Last name: <input data-bind="value: lastName" /></p>
+
+<p>First name: <strong data-bind="text: firstName">todo</strong></p>
+<p>Last name: <strong data-bind="text: lastName">todo</strong></p>
+<p>Full name: <strong data-bind="text: fullName">todo</strong></p>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/knockout.js"></script>
+
+<script>
+// This is a simple *viewmodel* - JavaScript that defines the data and behavior of your UI
+function AppViewModel() {
+    this.firstName = ko.observable("Russ");
+    this.lastName = ko.observable("Johnson");
+    this.fullName = ko.computed(function() {
+    return this.firstName() + " " + this.lastName();    
+}, this);
+}
+
+ko.applyBindings(new AppViewModel());
+</script>
+</body>
+
+</html>
