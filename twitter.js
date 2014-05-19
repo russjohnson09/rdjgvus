@@ -10,8 +10,8 @@ function getAuth(){
     return new OAuth(
 	twitter.requestTokenUrl,
 	twitter.accessTokenUrl,
-	twitter.accessToken,
-	twitter.accessTokenSecret,
+	twitter.apiKey,
+	twitter.apiSecret,
 	twitter.oauthVer,
 	host + twitter.callbackUrl,
 	twitter.hmac
