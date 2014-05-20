@@ -18,7 +18,9 @@
     "express-session": "*",
     "mongodb": "*",
     "oauth": "~0.9.11",
-    "twit": "~1.1.15"
+    "twit": "~1.1.15",
+    "twitter-oauth": "0.0.6",
+    "node-twitter-api": "~1.2.2"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
