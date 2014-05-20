@@ -4,6 +4,7 @@ var express = require('express');
 var app = express();
 var oauth = require('oauth');
 var request = require('request');
+var qs = require('qs');
 
 
 var cookieParser = require('cookie-parser');
@@ -23,17 +24,28 @@ var consumer = new oauth.OAuth(
 
 
 app.get('/', function(req, res) {
-	//consumer.getOAuthRequestToken(function(err, oauthToken, oauthTokenSecret, results){
-	//    console.log(err);
-	//    console.log(oauthToken);
-	//    console.log(results);
-	//});
-	for (k in gp.headers) {
-	    res.setHeader(k,gp.headers[k]);
-	}
-	console.log(res);
-	res.redirect(gp.domain + gp.request +  "?consumer_key=" + gp.consumerKey +
-	"&redirect_uri=" + config.domain + gp.redirectUrl);
+    request.post({headers : gp.headers,
+        url: gp.domain + gp.request,
+        body: qs.stringify({
+        consumer_key: gp.consumerKey,
+        redirect_uri: config.domain + gp.redirect
+        })}, function(e, r, body) {
+            console.log(e);
+            console.log(r);
+            console.log(result);
+        });
 });
+
+
+    request.post({headers : gp.headers,
+        url: gp.domain + gp.request,
+        body: qs.stringify({
+        consumer_key: gp.consumerKey,
+        redirect_uri: config.domain + gp.redirect
+        })}, function(e, r, body) {
+            console.log(e);
+            //console.log(r);
+            console.log(body);
+        });
 
 app.listen(3000);

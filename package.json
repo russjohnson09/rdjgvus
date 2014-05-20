@@ -21,7 +21,8 @@
     "twit": "~1.1.15",
     "twitter-oauth": "0.0.6",
     "node-twitter-api": "~1.2.2",
-    "request": "~2.36.0"
+    "request": "~2.36.0",
+    "qs": "~0.6.6"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
