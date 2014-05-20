@@ -12,7 +12,7 @@ db.open(function(err, db) {
     knockoutCollection = db.collection("knockout");
 });
 
-app.engine('hbs', hb({extname:'hbs',defaultLayout:"main.hbs"}));
+app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
 app.use("/",express.static(__dirname + "/public_html"));
 

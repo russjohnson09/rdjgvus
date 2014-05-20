@@ -1,7 +1,34 @@
+<!DOCTYPE html>
+<head>
+</head>
+<body>
+
 {{greeting}}
 <button id="add">Add</button>
 
+<table>
+    <thead>
+        <tr><th>Ice Cream Flavor</th><th># Votes</th></tr>
+    </thead>
+    <tbody data-bind="foreach: iceCreamFlavors">
+        <tr>
+            <td data-bind="text: label"></td>
+            <td data-bind="text: voteCount"></td>
+        </tr>
+    </tbody>
+</table>
+
 <script src="/js/jquery.js"></script>
+<script src="/js/knockout.js"></script>
+<script type="text/javascript">
+    ko.applyBindings({
+        iceCreamFlavors : [
+            {label: 'Rocky Road', voteCount: 0},
+            {label: 'Vanila', voteCount: 1}
+        ]
+    });
+</script>
+
 <script>
 $(function(){
     $("#add").bind("click",function(el){
@@ -21,3 +48,6 @@ $(function(){
     });
 });
 </script>
+
+</body>
+</html>
