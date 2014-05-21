@@ -9,23 +9,21 @@ var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
 var PROD = false;
 var w = require('winston');
+var dbUrl = "";
+var knockoutCollection;
+
+if (PROD) {
+    dbUrl = mConfig.remoteDb;
+}
+else {
+     dbUrl = "mongodb://" + mConfig.host + ":" + mConfig.port + "/" + mConfig.db;
+}
 
 w.add(w.transports.File, { filename: './error.log' });
 
-
-var db = new m.Db(mConfig.db, new m.Server(mConfig.domain, mConfig.port),{safe:false});
-
-db.open(function(err, client) {
-    if (mConfig.user) {
-    client.authenticate(mConfig.user, mConfig.pass, function(err, success) {
+m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions: {connectTimeoutMS: 500}}}}, 
+    function(err, db) {
         knockoutCollection = db.collection("knockout");
-        w.log("error","Connection error",err);
-    });
-    }
-    else {
-        w.info('success db');
-        knockoutCollection = db.collection("knockout");
-    }
 });
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
