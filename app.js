@@ -6,8 +6,9 @@ var config = require("./config");
 var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
+var mConfig = config.mongo;
 
-var db = new m.Db('test', new m.Server('localhost', 27017),{safe:false});
+var db = new m.Db(mConfig.db, new m.Server(mConfig.domain, mConfig.port),{safe:false});
 
 db.open(function(err, db) {
     knockoutCollection = db.collection("knockout");
