@@ -1,4 +1,4 @@
-var config = require('./config.js') || require('./server-config.js');
+var config = require('./config.js');
 var express = require('express');
 var app = express();
 var hb = require('express3-handlebars');
@@ -13,10 +13,9 @@ var db = new m.Db(mConfig.db, new m.Server(mConfig.domain, mConfig.port),{safe:f
 
 db.open(function(err, client) {
     if (mConfig.user) {
-    client.authenticate(mConfig.user, mConfig.pass, function(err, success) {
-        console.log(err);
-        knockoutCollection = db.collection("knockout");
-    });
+        client.authenticate(mConfig.user, mConfig.pass, function(err, success) {
+            knockoutCollection = db.collection("knockout");
+        });
     }
     else {
         knockoutCollection = db.collection("knockout");
@@ -36,8 +35,6 @@ app.get("/request",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress;
-    
-    console.log(ip);
     var greeting = randElement(greetings);
     res.writeHead(200, {
   'Content-Type': 'text/html' });
@@ -68,7 +65,6 @@ app.post("/knockout/save",function(req,res){
 app.get("/knockout/load",function(req,res){
     knockoutCollection.find();
     var val = req.query.x;
-    //res.json({'x':1});
     knockoutCollection.find().toArray(function(err, items) {
         if (err) {
             res.json({txt:'error'});
@@ -80,7 +76,6 @@ app.get("/knockout/load",function(req,res){
 });
 
 app.post("/knockout/del",function(req,res){
-    console.log(req.body);
     var selector;
     if (req.body.id) {
         selector = {"_id":ObjectID(req.body.id)};
