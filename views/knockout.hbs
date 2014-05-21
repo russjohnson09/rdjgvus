@@ -29,8 +29,8 @@ var poll = {
         dataType: 'json',
         url: "/knockout/load",
         }).done(function(data,status,xhr) {
-            //console.log(data);
-            self.data(data);
+            console.log(data);
+            self.data(data.x);
         }).fail(function(xhr,status,err){
             self.error(err);
         })
