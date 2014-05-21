@@ -56,7 +56,7 @@ app.get("/test", function(req,res){
     else {
     knockoutCollection.find().toArray(function(err, items) {
         if (err) {
-            res.end("There was an error" + err);
+            res.end("There was an error");
             w.log("error","Error finding", err);
         }
         res.end("success");
