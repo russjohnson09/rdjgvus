@@ -19,7 +19,7 @@ db.open(function(err, client) {
     if (mConfig.user) {
     client.authenticate(mConfig.user, mConfig.pass, function(err, success) {
         knockoutCollection = db.collection("knockout");
-        w.info(err);
+        w.log("error","Connection error",err);
     });
     }
     else {
