@@ -42,7 +42,6 @@ app.get("/request",function(req,res){
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress;
     
-    console.log(ip);
     var greeting = randElement(greetings);
     res.writeHead(200, {
   'Content-Type': 'text/html' });
@@ -85,7 +84,6 @@ app.get("/knockout/load",function(req,res){
 });
 
 app.post("/knockout/del",function(req,res){
-    console.log(req.body);
     var selector;
     if (req.body.id) {
         selector = {"_id":ObjectID(req.body.id)};
