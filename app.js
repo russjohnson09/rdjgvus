@@ -48,6 +48,22 @@ app.get("/request",function(req,res){
   res.end("<html><head>" + "<meta charset='UTF-8'>" + "</head><body>" + greeting + "</body></html>");
 });
 
+app.get("/test", function(req,res){
+    if (!knockoutCollection) {
+        res.end("No knockoutCollection");
+        return;
+       }
+    else {
+    knockoutCollection.find().toArray(function(err, items) {
+        if (err) {
+            res.end("There was an error" + err);
+            w.log("error","Error finding", err);
+        }
+        res.end("success");
+    });
+    }
+});
+
 app.get("/knockout",function(req,res){
     res.render('knockout',{'greeting':randElement(greetings)});
 });
@@ -70,9 +86,7 @@ app.post("/knockout/save",function(req,res){
 });
 
 app.get("/knockout/load",function(req,res){
-    knockoutCollection.find();
     var val = req.query.x;
-    //res.json({'x':1});
     knockoutCollection.find().toArray(function(err, items) {
         if (err) {
             res.json({txt:'error'});
