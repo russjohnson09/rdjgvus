@@ -3,40 +3,50 @@
 </head>
 <body>
 
-{{greeting}}
+<input id="cat"></input>
 <button id="add">Add</button>
-
-<table>
-    <thead>
-        <tr><th>Ice Cream Flavor</th><th># Votes</th></tr>
-    </thead>
-    <tbody data-bind="foreach: iceCreamFlavors">
-        <tr>
-            <td data-bind="text: label"></td>
-            <td data-bind="text: voteCount"></td>
-        </tr>
-    </tbody>
-</table>
+<div data-bind="text: data"></div>
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
 <script type="text/javascript">
-    ko.applyBindings({
-        iceCreamFlavors : [
-            {label: 'Rocky Road', voteCount: 0},
-            {label: 'Vanila', voteCount: 1}
-        ]
-    });
+var poll = {
+    data : ko.observable("345"),
+    testLoad : function() {
+        this.data("test");
+    },
+    load : function() {
+        $.ajax({
+       	type: 'GET',
+        dataType: 'json',
+        url: "",
+        }).done(function(data,status,xhr) {
+            this.data = data;
+            console.log(data);
+        }).fail(function(xhr,status,err){
+            console.log("error");
+            console.log(status);
+            console.log(err);
+        })
+        }
+    };
+$(function() {
+    ko.applyBindings(poll);
+    console.log(poll);
+    poll.testLoad();
+});
 </script>
 
 <script>
 $(function(){
-    $("#add").bind("click",function(el){
+    $(".add").bind("click",function(el){
+        console.log(el);
+       /* );
        $.ajax({
        	type: 'POST',
         dataType: 'json',
         url: "",
-        data: ""
+        data: "{}"
         }).done(function(data,status,xhr) {
             console.log("success");
             console.log(data);
@@ -44,7 +54,7 @@ $(function(){
             console.log("error");
             console.log(status);
             console.log(err);
-        });
+        });*/
     });
 });
 </script>
