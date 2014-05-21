@@ -1,17 +1,26 @@
+var config = require('./config.js') || require('./server-config.js');
 var express = require('express');
 var app = express();
 var hb = require('express3-handlebars');
 var http = require("http");
-var config = require("./config");
 var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
+var PROD = false;
 
 var db = new m.Db(mConfig.db, new m.Server(mConfig.domain, mConfig.port),{safe:false});
 
-db.open(function(err, db) {
-    knockoutCollection = db.collection("knockout");
+db.open(function(err, client) {
+    if (mConfig.user) {
+    client.authenticate(mConfig.user, mConfig.pass, function(err, success) {
+        console.log(err);
+        knockoutCollection = db.collection("knockout");
+    });
+    }
+    else {
+        knockoutCollection = db.collection("knockout");
+    }
 });
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
