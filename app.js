@@ -8,17 +8,22 @@ var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
 var PROD = false;
+var w = require('winston');
+
+w.add(w.transports.File, { filename: './error.log' });
+
 
 var db = new m.Db(mConfig.db, new m.Server(mConfig.domain, mConfig.port),{safe:false});
 
 db.open(function(err, client) {
     if (mConfig.user) {
     client.authenticate(mConfig.user, mConfig.pass, function(err, success) {
-        console.log(err);
         knockoutCollection = db.collection("knockout");
+        w.info(err);
     });
     }
     else {
+        w.info('success db');
         knockoutCollection = db.collection("knockout");
     }
 });
