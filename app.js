@@ -56,9 +56,28 @@ app.post("/knockout/save",function(req,res){
 });
 
 app.get("/knockout/load",function(req,res){
+    knockoutCollection.find()
     var val = req.query.x;
-    res.json({'x':1});
+    //res.json({'x':1});
+    knockoutCollection.find().toArray(function(err, items) {
+        if (err) {
+            res.json({txt:'error'});
+            return;
+        }
+        res.json(items);
+    });
    
+});
+
+app.post("/knockout/del",function(req,res){
+    knockoutCollection.remove(null,{w:1},function(err,result){
+        if (err) {
+            res.json({txt:err});
+        }
+        else {
+            res.json({txt:result + " category documents have been deleted."});
+        }
+    });
 });
 
 app.listen(3000);

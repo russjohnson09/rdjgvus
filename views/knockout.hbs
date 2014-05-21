@@ -9,9 +9,14 @@
 </style>
 <input id="cat"></input>
 <button id="add">Add</button>
+<button id="del">Delete</button>
+<button id="refresh">Refresh</button>
 <div data-bind="text: data"></div>
 <div class="error" data-bind="text: error"></div>
 <div class="response" data-bind="text: response"></div>
+<div class="items" data-bind="foreach: items">
+    <div data-bind="text: _id"></div><span data-bind="text: cat"></span>
+</div>
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
@@ -30,24 +35,39 @@ var poll = {
             url: "/knockout/save",
             }).done(function(data,status,xhr) {
                 self.response(data.txt);
+                self.load();
             }).fail(function(xhr,status,err){
                 self.error(err);
             })
         },
     error : ko.observable(""),
+    items: ko.observableArray([]),
     load : function() {
-        var self = this;
+        var self = this;        
         $.ajax({
-        data: {x:1},
+        data: {limit:10},
        	type: 'GET',
        	contentType: "application/json; charset=utf-8",
         url: "/knockout/load",
         }).done(function(data,status,xhr) {
-            self.data(data.x);
+            self.items(data);
         }).fail(function(xhr,status,err){
             self.error(err);
         })
-        }
+        },
+    del : function() {
+        var self = this;
+        $.ajax({
+        data: {},
+       	type: 'POST',
+       	contentType: "application/json; charset=utf-8",
+        url: "/knockout/del",
+        }).done(function(data,status,xhr) {
+            self.response(data.txt);
+        }).fail(function(xhr,status,err){
+            self.error(err);
+        })
+    }
     };
 $(function() {
     ko.applyBindings(poll);
@@ -55,6 +75,12 @@ $(function() {
     poll.load();
     $("#add").bind("click",function(el,ix){
         poll.addCat($("#cat").val());
+    });
+    $("#del").bind("click",function(el,ix){
+        poll.del();
+    });
+    $("#refresh").bind("click",function(el,ix){
+        poll.refresh();
     });
 });
 </script>
