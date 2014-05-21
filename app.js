@@ -3,6 +3,7 @@ var app = express();
 var hb = require('express3-handlebars');
 var http = require("http");
 var config = require("./config");
+var bodyparser = require("body-parser");
 
 var m = require("mongodb");
 
@@ -14,6 +15,7 @@ db.open(function(err, db) {
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
+app.use(bodyparser());
 app.use("/",express.static(__dirname + "/public_html"));
 
 app.get('/greetings', function(req, res){
@@ -36,10 +38,21 @@ app.get("/knockout",function(req,res){
     res.render('knockout',{'greeting':randElement(greetings)});
 });
 
-app.post("/knockout",function(req,res){
-    knockoutCollection.insert({a:1},{w:1}, function(err, result) {
-        res.end("1");
-    });
+app.post("/knockout/save",function(req,res){
+    var cat = req.body.cat;
+    if (cat) {
+        knockoutCollection.insert({cat:cat},{w:1}, function(err, result) {
+            if (err) {
+                res.json({txt:err});
+            }
+            else {
+                res.json({txt:"Successfully saved category " + cat});
+            }
+        });
+    }
+    else {
+        res.json({txt:"Error saving category " + cat});
+    }
 });
 
 app.get("/knockout/load",function(req,res){

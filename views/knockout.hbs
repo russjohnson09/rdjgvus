@@ -11,6 +11,7 @@
 <button id="add">Add</button>
 <div data-bind="text: data"></div>
 <div class="error" data-bind="text: error"></div>
+<div class="response" data-bind="text: response"></div>
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
@@ -20,16 +21,28 @@ var poll = {
     testLoad : function() {
         this.data("test");
     },
+    response : ko.observable(),
+    addCat : function(txt){
+        var self = this;
+        $.ajax({
+            data: {cat:txt},
+           	type: 'POST',
+            url: "/knockout/save",
+            }).done(function(data,status,xhr) {
+                self.response(data.txt);
+            }).fail(function(xhr,status,err){
+                self.error(err);
+            })
+        },
     error : ko.observable(""),
     load : function() {
         var self = this;
         $.ajax({
         data: {x:1},
        	type: 'GET',
-        dataType: 'json',
+       	contentType: "application/json; charset=utf-8",
         url: "/knockout/load",
         }).done(function(data,status,xhr) {
-            console.log(data);
             self.data(data.x);
         }).fail(function(xhr,status,err){
             self.error(err);
@@ -39,8 +52,9 @@ var poll = {
 $(function() {
     ko.applyBindings(poll);
     poll.testLoad();
+    poll.load();
     $("#add").bind("click",function(el,ix){
-        poll.load();
+        poll.addCat($("#cat").val());
     });
 });
 </script>

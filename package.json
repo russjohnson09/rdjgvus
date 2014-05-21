@@ -22,7 +22,8 @@
     "twitter-oauth": "0.0.6",
     "node-twitter-api": "~1.2.2",
     "request": "~2.36.0",
-    "qs": "~0.6.6"
+    "qs": "~0.6.6",
+    "body-parser": "~1.2.0"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
