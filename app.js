@@ -7,7 +7,7 @@ var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
-var PROD = false;
+var PROD = config.isPROD;
 var w = require('winston');
 var dbUrl = "";
 var knockoutCollection;
