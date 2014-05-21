@@ -4,8 +4,8 @@ var hb = require('express3-handlebars');
 var http = require("http");
 var config = require("./config");
 var bodyparser = require("body-parser");
-
 var m = require("mongodb");
+var ObjectID = m.ObjectID;
 
 var db = new m.Db('test', new m.Server('localhost', 27017),{safe:false});
 
@@ -56,7 +56,7 @@ app.post("/knockout/save",function(req,res){
 });
 
 app.get("/knockout/load",function(req,res){
-    knockoutCollection.find()
+    knockoutCollection.find();
     var val = req.query.x;
     //res.json({'x':1});
     knockoutCollection.find().toArray(function(err, items) {
@@ -70,7 +70,12 @@ app.get("/knockout/load",function(req,res){
 });
 
 app.post("/knockout/del",function(req,res){
-    knockoutCollection.remove(null,{w:1},function(err,result){
+    console.log(req.body);
+    var selector;
+    if (req.body.id) {
+        selector = {"_id":ObjectID(req.body.id)};
+    }
+    knockoutCollection.remove(selector,{w:1},function(err,result){
         if (err) {
             res.json({txt:err});
         }

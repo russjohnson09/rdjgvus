@@ -6,6 +6,9 @@
 .error {
     color: red;
 }
+a.catRec {
+
+}
 </style>
 <input id="cat"></input>
 <button id="add">Add</button>
@@ -14,9 +17,9 @@
 <div data-bind="text: data"></div>
 <div class="error" data-bind="text: error"></div>
 <div class="response" data-bind="text: response"></div>
-<div class="items" data-bind="foreach: items">
-    <div data-bind="text: _id"></div><span data-bind="text: cat"></span>
-</div>
+<ul class="items" data-bind="foreach: items">
+   <li><a class="catRec" data-bind="attr: { 'data-id': _id }"><span data-bind="text: cat"></span></a></li>
+</ul></a>
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
@@ -55,15 +58,15 @@ var poll = {
             self.error(err);
         })
         },
-    del : function() {
+    del : function(catId) {
         var self = this;
         $.ajax({
-        data: {},
+        data: {'id':catId},
        	type: 'POST',
-       	contentType: "application/json; charset=utf-8",
         url: "/knockout/del",
         }).done(function(data,status,xhr) {
             self.response(data.txt);
+            self.load();
         }).fail(function(xhr,status,err){
             self.error(err);
         })
@@ -73,14 +76,17 @@ $(function() {
     ko.applyBindings(poll);
     poll.testLoad();
     poll.load();
-    $("#add").bind("click",function(el,ix){
+    $("#add").on("click",function(e){
         poll.addCat($("#cat").val());
     });
-    $("#del").bind("click",function(el,ix){
+    $("#del").on("click",function(e){
         poll.del();
     });
-    $("#refresh").bind("click",function(el,ix){
-        poll.refresh();
+    $("#refresh").on("click",function(e){
+        poll.load();
+    });
+    $("ul.items").on("click","a",function(e){
+        poll.del($(this).data("id"));
     });
 });
 </script>
