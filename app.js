@@ -42,6 +42,14 @@ app.post("/knockout",function(req,res){
     });
 });
 
+app.get("/knockout/load",function(req,res){
+    var val = req.query.x;
+    console.log(val);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({x:1}));
+   
+});
+
 app.listen(3000);
 
 var greetings = ["Hello","こんにちは","夜露死苦"];

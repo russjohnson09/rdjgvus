@@ -2,10 +2,15 @@
 <head>
 </head>
 <body>
-
+<style>
+.error {
+    color: red;
+}
+</style>
 <input id="cat"></input>
 <button id="add">Add</button>
 <div data-bind="text: data"></div>
+<div class="error" data-bind="text: error"></div>
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
@@ -15,46 +20,27 @@ var poll = {
     testLoad : function() {
         this.data("test");
     },
+    error : ko.observable(""),
     load : function() {
+        var self = this;
         $.ajax({
+        data: {x:1},
        	type: 'GET',
         dataType: 'json',
-        url: "",
+        url: "/knockout/load",
         }).done(function(data,status,xhr) {
-            this.data = data;
-            console.log(data);
+            //console.log(data);
+            self.data(data);
         }).fail(function(xhr,status,err){
-            console.log("error");
-            console.log(status);
-            console.log(err);
+            self.error(err);
         })
         }
     };
 $(function() {
     ko.applyBindings(poll);
-    console.log(poll);
     poll.testLoad();
-});
-</script>
-
-<script>
-$(function(){
-    $(".add").bind("click",function(el){
-        console.log(el);
-       /* );
-       $.ajax({
-       	type: 'POST',
-        dataType: 'json',
-        url: "",
-        data: "{}"
-        }).done(function(data,status,xhr) {
-            console.log("success");
-            console.log(data);
-        }).fail(function(xhr,status,err){
-            console.log("error");
-            console.log(status);
-            console.log(err);
-        });*/
+    $("#add").bind("click",function(el,ix){
+        poll.load();
     });
 });
 </script>
