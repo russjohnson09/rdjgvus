@@ -12,14 +12,19 @@ var w = require('winston');
 var dbUrl = "";
 var knockoutCollection;
 
+if (process.argv) {
+    PROD = PROD || process.argv[2];
+}
+
+w.add(w.transports.File, { filename: './error.log' });
+
+
 if (PROD) {
     dbUrl = mConfig.remoteDb;
 }
 else {
      dbUrl = "mongodb://" + mConfig.host + ":" + mConfig.port + "/" + mConfig.db;
 }
-
-w.add(w.transports.File, { filename: './error.log' });
 
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions: {connectTimeoutMS: 500}}}}, 
     function(err, db) {
