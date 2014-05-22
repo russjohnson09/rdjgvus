@@ -28,6 +28,10 @@ else {
 
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions: {connectTimeoutMS: 500}}}}, 
     function(err, db) {
+        if (err) {
+            w.info(err);
+            return;
+        }
         knockoutCollection = db.collection("knockout");
 });
 
