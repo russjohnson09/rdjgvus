@@ -33,6 +33,7 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions
             w.info("could not connect");
             return;
         }
+        w.info("connected");
         knockoutCollection = db.collection("knockout");
 });
 
@@ -55,6 +56,19 @@ app.get("/request",function(req,res){
   'Content-Type': 'text/html' });
   res.end("<html><head>" + "<meta charset='UTF-8'>" + "</head><body>" + greeting + "</body></html>");
 });
+
+app.get("/testdb", function(req,res) {
+m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions: {connectTimeoutMS: 500}}}}, 
+    function(err, db) {
+        if (err) {
+            res.end("could not connect");
+            w.info(err);
+            return;
+        }
+        res.end("connected");
+});
+}
+);
 
 app.get("/test", function(req,res){
     if (!knockoutCollection) {
