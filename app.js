@@ -30,6 +30,7 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions
     function(err, db) {
         if (err) {
             w.info(err);
+            w.info("could not connect");
             return;
         }
         knockoutCollection = db.collection("knockout");
