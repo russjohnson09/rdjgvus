@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<style>
+.error {
+    color: red;
+}
+a.catRec {
+
+}
+</style>
+<input id="section"></input>
+<button id="add">Add Section</button>
+<div class="error" data-bind="text: error"></div>
+<div class="response" data-bind="text: response"></div>
+<ul class="section" data-bind="foreach: items">
+   <li><a class="catRec" data-bind="attr: { 'data-id': _id }"><span data-bind="text: cat"></span></a></li>
+</ul></a>
+
+<script src="/js/jquery.js"></script>
+<script src="/js/knockout.js"></script>
+<script type="text/javascript">
+var todo = {
+    response : ko.observable(),
+    addSection : function(txt,user){
+        var self = this;
+        $.ajax({
+            data: {section:txt,uid:user},
+           	type: 'POST',
+            url: "/todo/save-section",
+            }).done(function(data,status,xhr) {
+                self.response(data.txt);
+                self.load();
+            }).fail(function(xhr,status,err){
+                self.error(err);
+            })
+        },
+    error : ko.observable(""),
+    items: ko.observableArray([]),
+    load : function(user) {
+        var self = this;        
+        $.ajax({
+        data: {limit:1000,uid:user},
+       	type: 'GET',
+       	contentType: "application/json; charset=utf-8",
+        url: "/todo/load",
+        }).done(function(data,status,xhr) {
+            self.items(data);
+        }).fail(function(xhr,status,err){
+            self.error(err);
+        })
+        },
+    del : function(secId) {
+        var self = this;
+        $.ajax({
+        data: {'secId':secId},
+       	type: 'POST',
+        url: "/todo/del-section",
+        }).done(function(data,status,xhr) {
+            self.response(data.txt);
+            self.load();
+        }).fail(function(xhr,status,err){
+            self.error(err);
+        })
+    }
+    };
+$(function() {
+    ko.applyBindings(todo);
+    todo.load();
+    $("#add").on("click",function(e){
+        todo.addSection($("#section").val());
+    });
+});
+</script>
+</body>
+</html>

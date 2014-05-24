@@ -1,4 +1,4 @@
-var config = require('./config.js') || require('./server-config.js');
+var config = require('./config.js');
 var express = require('express');
 var app = express();
 var hb = require('express3-handlebars');
@@ -26,6 +26,8 @@ else {
      dbUrl = "mongodb://" + mConfig.host + ":" + mConfig.port + "/" + mConfig.db;
 }
 
+w.info(dbUrl);
+
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions: {connectTimeoutMS: 500}}}}, 
     function(err, db) {
         if (err) {
@@ -41,6 +43,15 @@ app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
 app.set('view engine', 'hbs');
 app.use(bodyparser());
 app.use("/",express.static(__dirname + "/public_html"));
+
+app.get('/todo', function(req,res){
+    res.render('todo',{});
+});
+
+app.get('/todo/:id?',function(req,res){
+    var id = req.params.id;
+    res.end(req.params.id);
+});
 
 app.get('/greetings', function(req, res){
   res.render('index',{greeting:randElement(greetings),title:req.url});
@@ -134,7 +145,7 @@ app.post("/knockout/del",function(req,res){
     });
 });
 
-app.listen(3000);
+app.listen(config.port,config.ip);
 
 var greetings = ["Hello","こんにちは","夜露死苦"];
 
