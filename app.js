@@ -11,6 +11,7 @@ var PROD = config.isPROD;
 var w = require('winston');
 var dbUrl = "";
 var knockoutCollection;
+var todos;
 
 if (process.argv) {
     PROD = PROD || process.argv[2];
@@ -37,6 +38,7 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions
         }
         w.info("connected");
         knockoutCollection = db.collection("knockout");
+        todos = db.collection('todos');
 });
 
 app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
@@ -48,9 +50,26 @@ app.get('/todo', function(req,res){
     res.render('todo',{});
 });
 
-app.get('/todo/:id?',function(req,res){
-    var id = req.params.id;
-    res.end(req.params.id);
+app.get('/todo/:uid?',function(req,res){
+    var uid = req.params.uid;
+    todos.findOne({uid:uid},{w:1},function(err,result) {
+        if (err) {
+            w.info("error");
+            res.end("error");
+            return;
+        }
+        console.log(result);
+        if (!result) {
+            todos.insert({'uid':uid},{w:1},function(err,result){
+                if (err) {
+                    res.end("err creating user");
+                    return;
+                }
+                res.end("created new user");
+                return;
+            });
+        }
+    });
 });
 
 app.get('/greetings', function(req, res){
