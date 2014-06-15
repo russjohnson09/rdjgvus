@@ -9,23 +9,11 @@ var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
 var PROD = config.isPROD;
 var w = require('winston');
-var dbUrl = "";
+var dbUrl = mConfig.url;
 var knockoutCollection;
 var todos;
 
-if (process.argv) {
-    PROD = PROD || process.argv[2];
-}
-
 w.add(w.transports.File, { filename: './error.log' });
-
-
-if (PROD) {
-    dbUrl = mConfig.remoteDb;
-}
-else {
-     dbUrl = "mongodb://" + mConfig.host + ":" + mConfig.port + "/" + mConfig.db;
-}
 
 w.info(dbUrl);
 
@@ -164,7 +152,7 @@ app.post("/knockout/del",function(req,res){
     });
 });
 
-app.listen(config.port,config.ip);
+app.listen(3000);
 
 var greetings = ["Hello","こんにちは","夜露死苦"];
 
