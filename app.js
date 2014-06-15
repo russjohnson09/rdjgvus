@@ -17,7 +17,8 @@ w.add(w.transports.File, { filename: './error.log' });
 
 w.info(dbUrl);
 
-m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions: {connectTimeoutMS: 500}}}}, 
+m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: 
+	{socketOptions: {connectTimeoutMS: 500}}}}, 
     function(err, db) {
         if (err) {
             w.info(err);
@@ -27,15 +28,49 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: {socketOptions
         w.info("connected");
         knockoutCollection = db.collection("knockout");
         todos = db.collection('todos');
+        patients = db.collection('patients');
 });
 
-app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs"}));
+app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs", 
+	helpers: {
+		list: function(items,options) {
+		  var out = "<ul>";
+		  for(var i=0, l=items.length; i<l; i++) {
+			out = out + "<li>" + options.fn(items[i]) + "</li>";
+		  }
+		  return out + "</ul>";
+		}}
+
+}));
+
 app.set('view engine', 'hbs');
 app.use(bodyparser());
 app.use("/",express.static(__dirname + "/public_html"));
 
+
+app.get('/ben', function(req,res){
+    patients.find().toArray(function(err, items) {
+        if (err) {
+            res.render('ben',{err: 'error'});
+            return;
+        }
+        else {
+            res.render('ben',{patients: items});
+        }
+    });
+});
+
+app.get('/benmock', function(req,res){
+	res.render('ben',{patients: [{first:'Russ',last:'Smith'},{first:
+		'Satsuki',last:'Sama'}]});	
+});
+
 app.get('/todo', function(req,res){
     res.render('todo',{});
+});
+
+app.get('/todo/load', function(req,res){
+    
 });
 
 app.get('/todo/:uid?',function(req,res){
