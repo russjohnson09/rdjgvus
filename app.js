@@ -1,4 +1,5 @@
 var config = require('./config.js');
+var u = require('./util_modules/utils.js')();
 var express = require('express');
 var app = express();
 var hb = require('express3-handlebars');
@@ -61,8 +62,7 @@ app.get('/ben', function(req,res){
 });
 
 app.get('/benmock', function(req,res){
-	res.render('ben',{patients: [{first:'Russ',last:'Smith'},{first:
-		'Satsuki',last:'Sama'}]});	
+	res.render('ben',{patients: u.getPatientList()});	
 });
 
 app.get('/todo', function(req,res){
