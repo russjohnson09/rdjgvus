@@ -1,3 +1,27 @@
+//Returns an game instance.
+//params
+//canvas - the canvas that will be drawn on
+//margin - space between playable area and out of bounds. this margin is not viewable
+// except in debug mode.
+//width - width of playable area, not including margin
+//height - height of playable area
+//loop - main loop executed by game
+//delay - delay between frames
+//start - starts the game
+//pause - pauses the game
+//frame - frame to start game at, default 0
+//levels - array of levels
+//levelIdx - 0-position in level array
+//gameComplete - is the game complete?
+//enemies - an array of enemies
+//player - player object, defines its own movement
+//keystate - stores the current keystate
+//oob - function that defines out of bounds object. 
+//majority of game functions should not need to be overridden, but functions will take input provided
+//draw - function used to draw elements in game, default is to use each objects draw function if available,
+//otherwise get picture position, and dimensions of object, attempt to draw object as box if witdth and height
+//given, finally draw as circle.
+//collision - are two objects in a state of collision function
 function Game(canvas, options) {
     var self = this;
     self.canvas = canvas;
