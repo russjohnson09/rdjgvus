@@ -18,9 +18,9 @@
 <script>
 $(function(){
     var canvas = document.getElementById("canvas");
-    var c = canvas.getContext('2d');
-    var opts = {margin: {x:70,y:70},debug:true,delay:500,width: 500, height: 500};
-    var game = new Game(c,opts);
+    //var c = canvas.getContext('2d');
+    var opts = {margin: {x:70,y:70},debug:true,delay:33,width: 500, height: 500};
+    var game = new Game(canvas,opts);
     //game.enemies.push(basicEnemy(game));
     game.addLevel(Level1(game));
     game.start();
@@ -28,5 +28,23 @@ $(function(){
 
 
 </script>
+
+<h1>What's working now</h1>
+Bullets are drawn and all objects are drawn as circles. The inner box represents the area that the player can see and can move in. The outer box includes the area that bullets/enemies can spawn. Spawing off-screen and moving on-screen looks more natural. Any objects with their center outside of the outer box will be removed. No points or anything else is awarded for enemies/bullets that are lost.
+<h1>Enemies</h1>
+Each enemy is meant to be a logical progression of the previous enemy. Enemies increase in the number of parameters that they can take and their randomness. As this list gets too long, it will probably be condensed into different classes of enemies plus examples. The API for each of these will eventually be frozen. 
+<h2>Enemy01</h2>
+This is a very boring enemy. It goes from left to right, no variation other than its height. Enemy01(y) is its constructor.
+<h2>Enemey02</h2>
+Like Enemy01, but takes a min and max height. This is 
+
+<h1>Near future</h1>
+Each object right now will be a simple colored circle. Until I get the basics working and create a presentable level (3 different enemy types, 6 bullet variations, 1 boss, no scoreboard for now because this isn't as interesting to me) that is all they will be. Once I get a presentable level I will work on adding some effects. The boss will not be represented as a simple particle as it will require more advanced movements. When moving in a single direction it uses a particle, but when it reaches a certain point it transforms the particle that defines it's movement and in that way changes directions. A boss is unique in that all of its child objects (spawned bullets) are tied to it. As soon as the boss is destroyed any bullets are removed as well.
+
+<h1>Todo</h1>
+<p>Currently I have the following. A game should loop throught levels, it should do some action when all levels are complete such as display the player's score for each completed level. I want to be able to make this as customizable as possible, but be able to work in a well defined way without all of the extra customization. Someone should be able to add a level without having to touch a lot of other code. I guess the main goal would be to create a danmaku engine. Right now there is danmakufu which lets users define levels using scripts. I might look into being able to read those if I can get this working to a good degree. Right now a bullet uses a particle class for movement. A particle acts as one would expect in a 2d plane using the postional, velocity, and acceleration vectors. Each frame the velocity and positional vectors are updated. I should be able to define animations/sounds for common events such as creation and destruction. Certain bullets have no collision circles/boxes and should not be included in the same array for performance reasons. I'm not overly concerned with performance right now. There are plenty of things that I could do to improve performance that I won't do in the beginning, such as breaking the bullets apart into sections and only checking for collisions for bullets in neighboring boxes. Scoreboard. Use a psuedorandom generator to create reproducable instances of levels. Levels will have some degree of randomness.</p>
+<p>
+Scrolling picture background. Using a tall image and a px/frame scroll rate, create a background image.
+</p>
 </body>
 </html>
