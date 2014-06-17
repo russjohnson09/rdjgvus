@@ -1,5 +1,5 @@
 var config = require('./config.js');
-var u = require('./util_modules/utils.js')();
+var u = require('./util_modules/utils.js')({seed:100});
 var express = require('express');
 var app = express();
 var hb = require('express3-handlebars');
@@ -62,6 +62,11 @@ app.get('/ben', function(req,res){
 });
 
 app.get('/benmock', function(req,res){
+	var seed = req.param('seed');
+	if (seed) {
+		u.seed = seed;
+	}
+	//u.seed = req.seed;
 	res.render('ben',{patients: u.getPatientList()});	
 });
 

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bullethell</title>
+<style>
+    canvas {
+        border: 1px solid black;
+    }
+</style>
+</head>
+<body>
+<canvas id="canvas" width="0" height="0">No canvas</canvas>
+
+<script src="../js/jquery.js"></script>
+<script>
+$(function(){
+    var canvas = document.getElementById("canvas");
+    var c = canvas.getContext('2d');
+    var opts = {margin: new Pos2(70,70),debug:true,delay:500,width: 500, height: 500};
+    var game = new Game(c,opts);
+    game.start();
+});
+
+function Pos2(x,y) {
+    this.x = x;
+    this.y = y;
+    return this;
+}
+
+
+function Game(context, options) {
+    var self = this;
+    self.context = context;
+    if (!context) return;
+    self.margin = options.margin;
+    self.width =  options.width;
+    self.height = options.height;
+    if (options.debug) {
+        context.canvas.width = self.width + self.margin.x * 2;  //include margin as part of visible screen
+        context.canvas.height = self.height + self.margin.y * 2;
+        context.translate(options.margin.x,options.margin.y);   //origin will start at upper left of game screen.
+    }
+    else {
+        context.canvas.width = self.width;
+        context.canvas.width = self.height;
+    }
+    self.delay = options.delay || 30;
+    this.start = function() {
+        var self = this;
+        setInterval(function(){self.loop();},
+        self.delay);
+    };
+    this.loop = function() {
+        var self = this;
+        var c = self.context;
+        c.clearRect(-self.margin.x,-self.margin.y,self.width,self.height);
+        c.fillStyle = "#FFF";
+        c.strokeRect(0,0,self.width,self.height);
+        //for ()
+    };
+    return this;
+}
+
+
+</script>
+</body>
+</html>
