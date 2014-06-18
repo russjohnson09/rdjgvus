@@ -22,12 +22,13 @@
 <script>
 $(function(){
     var canvas = document.getElementById("canvas");
-    //var c = canvas.getContext('2d');
     var opts = {margin: {x:70,y:70},debug:true,width: 500, height: 500};
     var game = new Game(canvas,opts);
-    //game.enemies.push(basicEnemy(game));
     game.addLevel(Level1());
     $("#play").on("click",function(e) {
+        togglePause();
+    });
+    function togglePause() {
         game.togglePause();
         if (game.state == "playing") {
             $("#play").text("Pause");
@@ -35,7 +36,8 @@ $(function(){
         else {
             $("#play").text("Play");
         }
-    });
+    }
+    togglePause();
 });
 
 
