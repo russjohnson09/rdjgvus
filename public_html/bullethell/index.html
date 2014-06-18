@@ -45,6 +45,15 @@ $(function(){
 
 </script>
 
+<h1>Weekly projects</h1>
+
+<h1>Wednesday</h1>
+Create bullet spawing. This will basically be just having the enemy create more enemies. The only time an enemy will need to keep track of its spawining is when it is a boss. In this case, when the boss is destroyed any spawn entities are removed as well.
+<br/>
+Create three different bullet spawn patterns. Random, aimed, seeking. Random is really simple and self-explanitory. Aimed means taking a position and and shooting towards it with some % accuracy. Seeking can be aimed or random, seeking means that there is some degree of gravitational pull towards an object or position. Also burst.
+<br/>
+For the boss, it will go back and forth a few times spawn some bullets, spawn some helper enemies. Its health is decreasing constantly. When it is below 0, it is destroyed. Any of its spawned entities will also be destroyed. Being destroyed should be its own action with sound effect. Being destroyed will increment score and will possibly drop a powerup.
+
 <h1>Level01</h1>
 <p>
 This is the most basic level. Each basic enemy type is represented, there is some degree of randomness thrown in. If you play it multiple times though, you will notice that the enemies will always follow the same pattern. This is because I am using David Bau's seedrandom which allows for seeding of Math.random. This means that the randomness is reproduceable. Technically psuedorandomness, a truely random number generator requires observing a natural process.
