@@ -14,7 +14,9 @@
 <button id="play">Play</button>
 
 <script src="../js/jquery.js"></script>
-<script src="seedrandom"></script>
+<script src="seedrandom.js"></script>
+<script src="rand.js"></script>
+<script src="draw.js"></script>
 <script src="particle.js"></script>
 <script src="enemies.js"></script>
 <script src="level1.js"></script>
@@ -42,6 +44,11 @@ $(function(){
 
 
 </script>
+
+<h1>Level01</h1>
+<p>
+This is the most basic level. Each basic enemy type is represented, there is some degree of randomness thrown in. If you play it multiple times though, you will notice that the enemies will always follow the same pattern. This is because I am using David Bau's seedrandom which allows for seeding of Math.random. This means that the randomness is reproduceable. Technically psuedorandomness, a truely random number generator requires observing a natural process.
+</p>
 
 <h1>What's working now</h1>
 Bullets are drawn and all objects are drawn as circles. The inner box represents the area that the player can see and can move in. The outer box includes the area that bullets/enemies can spawn. Spawing off-screen and moving on-screen looks more natural. Any objects with their center outside of the outer box will be removed. No points or anything else is awarded for enemies/bullets that are lost.

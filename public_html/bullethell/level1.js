@@ -1,3 +1,6 @@
+//this is the simplest example of a level, each enemy type is represented
+//to the degree that it needs to be, there is a boss at the end and a
+//big surprise
 function Level1() {
     var self = {};
     self.frame = 0;
