@@ -31,6 +31,7 @@ function Game(canvas, options) {
     self.width =  options.width;
     self.height = options.height;
     self.frame = 0;
+    self.draw = gameBasicDraw;
     self.levelIdx = 0; //position in level array
     self.gameComplete = false; //set to true on completion of all levels
     self.levels = [];  //array of levels
@@ -45,6 +46,7 @@ function Game(canvas, options) {
         context.canvas.width = self.height;
     }
     self.delay = options.delay || 30;
+    self.loopObject = gameBasicLoop;
     self.enemies = [];
     self.start = function() {
         var self = this;
@@ -73,11 +75,22 @@ function Game(canvas, options) {
         }
         for (var i=self.enemies.length - 1; i > -1; i--) {
             var e = self.enemies[i];
-            var success = e.loop();
+            var success;
+            if (e.loop) {
+                success = e.loop(self,e)
+            }
+            else {
+                var success = self.loopObject(self,e);
+            }
             if (!success) {
                 self.enemies.splice(i, 1);
             }
-            e.draw(self.context);
+            if (e.draw) {
+                e.draw(self.context,e);
+            }
+            else {
+                draw(self.draw(self.context,e));
+            }
         }
     };
     self.oob = function(pos) {
@@ -92,4 +105,28 @@ function Game(canvas, options) {
         self.levels.push(l); 
     };
     return self;
+}
+
+//returns false if failure/should be removed
+function gameBasicLoop(game,o) {
+    if (game.oob(o)) {  //game defines out of boundness for an object
+        return false;
+    }
+    var particle = o.particle;
+    o.move();
+    return true;
+}
+
+//basic draw function, takes a context and an object and attempts to 
+//draw it according to information provided by the object
+function gameBasicDraw(ctx,o) {
+    var pos = o.pos;
+    if (pos) {
+        var x = pos.x;
+        var y = pos.y;
+        var radius = o.radius;
+        if(x && y && radius) {
+            drawCircle(ctx,x,y,radius)
+        }
+    }
 }

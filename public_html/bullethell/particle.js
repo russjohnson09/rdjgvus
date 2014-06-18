@@ -1,4 +1,5 @@
 //simulate a particle given postion, velocity and acceleration
+//http://en.wikipedia.org/wiki/Particle
 function Particle(pos,velocity,acceleration) {
     var self = {};
     self.pos = pos || Vector2();
