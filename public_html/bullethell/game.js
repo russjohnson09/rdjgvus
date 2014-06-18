@@ -24,12 +24,14 @@
 //collision - are two objects in a state of collision function
 function Game(canvas, options) {
     var self = this;
+    self.seed = options.seed || 0;
     self.canvas = canvas;
     self.context = canvas.getContext('2d');
     if (!self.context) return;
     self.margin = options.margin;
     self.width =  options.width;
     self.height = options.height;
+    self.state = "";
     self.frame = 0;
     self.draw = gameBasicDraw;
     self.levelIdx = 0; //position in level array
@@ -48,10 +50,28 @@ function Game(canvas, options) {
     self.delay = options.delay || 30;
     self.loopObject = gameBasicLoop;
     self.enemies = [];
-    self.start = function() {
+    self.start = self.resume = function() {
         var self = this;
-        setInterval(function(){self.loop();},
+        self.state = "playing";
+        self.interval = setInterval(function(){self.loop();},
         self.delay);
+    };
+    self.pause = function() {
+        var self = this;
+        self.state = "paused";
+        clearInterval(self.interval);
+    };
+    self.togglePause = function() {
+        var self = this;
+        if (!self.state) {
+            self.start();
+        }
+        else if (self.state == "paused") {
+            self.resume();
+        }
+        else {
+            self.pause();
+        }
     };
     self.loop = function() {
         var self = this;

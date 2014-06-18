@@ -10,9 +10,11 @@
 </style>
 </head>
 <body>
-<canvas id="canvas" width="0" height="0">No canvas</canvas>
+<canvas id="canvas" width="0" height="0">No canvas</canvas></br>
+<button id="play">Play</button>
 
 <script src="../js/jquery.js"></script>
+<script src="seedrandom"></script>
 <script src="particle.js"></script>
 <script src="enemies.js"></script>
 <script src="level1.js"></script>
@@ -25,7 +27,15 @@ $(function(){
     var game = new Game(canvas,opts);
     //game.enemies.push(basicEnemy(game));
     game.addLevel(Level1());
-    game.start();
+    $("#play").on("click",function(e) {
+        game.togglePause();
+        if (game.state == "playing") {
+            $("#play").text("Pause");
+        }
+        else {
+            $("#play").text("Play");
+        }
+    });
 });
 
 
