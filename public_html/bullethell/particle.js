@@ -1,13 +1,19 @@
 //simulate a particle given postion, velocity and acceleration
 //http://en.wikipedia.org/wiki/Particle
-function Particle(pos,velocity,acceleration,radius,width,height) {
+function Particle(pos,velocity,acceleration,options) {
     var self = {};
     self.pos = pos || Vector2();
     self.velocity = velocity || Vector2();
     self.acceleration = acceleration || Vector2();
-    self.radius = radius;
-    self.width = width;
-    self.height = height;
+    self.type = options.type || 'circle';
+    if (self.type == 'circle') {
+        self.radius = options.radius;
+    }
+    else if (self.type == 'rect') {
+        self.width = options.width;
+        self.height = options.height;
+    }
+
     self.move = function() {
         var self = this;
         self.pos.add(self.velocity);
