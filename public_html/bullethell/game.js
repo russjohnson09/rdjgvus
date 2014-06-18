@@ -66,7 +66,7 @@ function Game(canvas, options) {
         // Restore the transform
         c.restore();
         c.strokeRect(0,0,self.width,self.height);
-        if (!self.levels[self.levelIdx].loop()) {
+        if (!self.levels[self.levelIdx].loop(self)) {
             self.levelIdx++;
             if (self.levelIdx > self.levels.length) {
                 self.gameComplete = true;
@@ -77,7 +77,7 @@ function Game(canvas, options) {
             var e = self.enemies[i];
             var success;
             if (e.loop) {
-                success = e.loop(self,e)
+                success = e.loop(self)
             }
             else {
                 var success = self.loopObject(self,e);
@@ -89,7 +89,7 @@ function Game(canvas, options) {
                 e.draw(self.context,e);
             }
             else {
-                draw(self.draw(self.context,e));
+                self.draw(self.context,e.particle);
             }
         }
     };
@@ -109,22 +109,22 @@ function Game(canvas, options) {
 
 //returns false if failure/should be removed
 function gameBasicLoop(game,o) {
-    if (game.oob(o)) {  //game defines out of boundness for an object
+    var particle = o.particle;
+    if (game.oob(particle.getPos())) {  //game defines out of boundness for an object
         return false;
     }
-    var particle = o.particle;
-    o.move();
+    particle.move();
     return true;
 }
 
-//basic draw function, takes a context and an object and attempts to 
+//basic draw function, takes a context and a particle and attempts to 
 //draw it according to information provided by the object
-function gameBasicDraw(ctx,o) {
-    var pos = o.pos;
+function gameBasicDraw(ctx,p) {
+    var pos = p.pos;
     if (pos) {
         var x = pos.x;
         var y = pos.y;
-        var radius = o.radius;
+        var radius = p.radius;
         if(x && y && radius) {
             drawCircle(ctx,x,y,radius)
         }

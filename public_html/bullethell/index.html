@@ -21,10 +21,10 @@
 $(function(){
     var canvas = document.getElementById("canvas");
     //var c = canvas.getContext('2d');
-    var opts = {margin: {x:70,y:70},debug:true,delay:33,width: 500, height: 500};
+    var opts = {margin: {x:70,y:70},debug:true,width: 500, height: 500};
     var game = new Game(canvas,opts);
     //game.enemies.push(basicEnemy(game));
-    game.addLevel(Level1(game));
+    game.addLevel(Level1());
     game.start();
 });
 
