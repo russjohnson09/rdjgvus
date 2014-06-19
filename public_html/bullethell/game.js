@@ -48,7 +48,7 @@ function Game(canvas, options) {
     }
     self.delay = options.delay || 30;
     //self.mspf = self.delay / 1000;
-    //self.fps = 1 / self.delay; 
+    self.fps = Math.floor(1000 / self.delay);
     self.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
                  //enemey should be removed
         function(o) {
@@ -128,8 +128,14 @@ function Game(canvas, options) {
             self.pause();
         }
     };
+    self.debug = function() {
+        console.log(self.enemies.length);
+    };
     self.loop = function() {
         var self = this;
+        if (self.frame % self.fps == 0) {
+            self.debug();
+        }
         var c = self.context;
         c.save();
         c.setTransform(1, 0, 0, 1, 0, 0);
@@ -164,6 +170,7 @@ function Game(canvas, options) {
                 self.draw(self.context,e);
             }
         }
+        self.frame++;
     };
     self.draw = function(ctx,o) {
         drawCircle(ctx,o.pos.x,o.pos.y,o.r);
@@ -193,14 +200,8 @@ function Level01(game) {
     self.spf = game.spf;
     self.loop = function(game){
         var self = this;
-        if (self.frame % 100 == 0 && self.frame < 201) {
-            game.addEnemy(eb1());
-        }
-        else if (self.frame % 100 == 0 && self.frame < 401) {
-            game.addEnemy(simpleArc());
-        }
-        else if (self.frame % 302 == 0) {
-            game.addEnemy(simpleArc());
+        if (self.frame % 100 == 0) {
+            game.addEnemy(simpleArc02());
         }
         self.frame++;
         return true;
@@ -234,7 +235,7 @@ function bs02(o) {
         frame: 0,
         delay: 500, //delay in milliseconds
         spawn: function() {
-            return rp02(this.parent)
+            return rp02(this.parent);
         }
     };
 }
@@ -245,7 +246,7 @@ function bs01(o) {
         frame: 0,
         delay: 500, //delay in milliseconds
         spawn: function() {
-            return rp01(this.parent)
+            return rp01(this.parent);
         }
     };
 }
@@ -261,11 +262,19 @@ function rp01(o) {
 
 //add a little umph
 function rp02(o) {
-    return {
-        r: 5,
-        pos: {x:o.pos.x,y:o.pos.y},
-        v: {x:o.v.x - 10,y:o.v.y -5}
-    };
+    var self = {};
+    self.r = 5;
+    self.pos = {x:o.pos.x,y:o.pos.y};
+    self.v = {};
+    self.v.x = o.v.x - 0.1;
+    self.v.y = o.v.y - 0.1;
+    if (self.v.x < 0.05) {
+        self.v.x = 0.05;
+    }
+    if (self.v.y < 0.05) {
+        self.v.y = 0.1;
+    }
+    return self;
 }
 
 function eb1() {
