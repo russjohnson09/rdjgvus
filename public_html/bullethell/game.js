@@ -82,6 +82,7 @@ function Game(canvas, options) {
             var enemy = o.spawn();
             if (enemy) {
                 if (enemy instanceof Array) {
+                    self.enemies = self.enemies.concat(enemy);
                 }
                 else{
                   self.addEnemy(enemy);
@@ -205,21 +206,11 @@ function Level01(game) {
     self.loop = function(game){
         var self = this;
         if (self.frame % 100 == 0) {
-            game.addEnemy(simpleArc02());
+            game.addEnemy(simpleArc02("","","",rpBurst));
         }
         self.frame++;
         return true;
     };
-    return self;
-}
-
-function simpleArc() {
-    var self = {};
-    self.r = 10;
-    self.v = {x:0.1,y:0.1};
-    self.pos = {x:0,y:0};
-    self.a = {x:0,y:-0.00005};
-    self.spawnObject = bs01(self);
     return self;
 }
 
@@ -232,6 +223,21 @@ function simpleArc02(spawnObject,delay,spawn,bullet) {
     self.spawnObject = spawnObject || bs03(self,delay,spawn,bullet);
     return self;
 }
+
+
+//burst bullet returns array of five bullets
+function rpBurst(o) {
+    var result = [];
+    for (var i=0; i<5; i++) {
+        result.push(
+            { r: 5,
+            pos: {x:o.pos.x,y:o.pos.y},
+            v: {x:(i-2)*0.1,y:0.1}
+            }
+        );
+    }
+    return result;
+};
 
 function bs03(parent,delay,spawn,bullet) {
     return {
@@ -270,20 +276,6 @@ function bs01(o) {
         }
     };
 }
-
-//burst bullet returns array of five bullets
-function rpBurst(o) {
-    var result = [];
-    for (var i=0; i<5; i++) {
-        result.push(
-            { r: 5,
-            pos: {x:o.pos.x,y:o.pos.y},
-            v: {x:(i-2)*0.1,y:0.1}
-            }
-        );
-    }
-    return result;
-};
 
 //relative positioning no moves tangently
 function rp01(o) {
