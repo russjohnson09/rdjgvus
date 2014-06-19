@@ -103,9 +103,15 @@ function Game(canvas, options) {
         pos.x += v.x * self.delay;
         pos.y += v.y * self.delay;
         var a = o.a;
-        if (a) {
+        if (typeof o.vFunc == "function") {
+            o.vFunc();
+        }
+        else if (a) {
             v.x += a.x * self.delay;
             v.y += a.y * self.delay;
+        }
+        if (typeof o.aFunc == "function") {
+            o.aFunc();
         }
         return true;
     };
@@ -206,7 +212,8 @@ function Level01(game) {
     self.loop = function(game){
         var self = this;
         if (self.frame % 100 == 0) {
-            game.addEnemy(simpleArc02("","","",rpBurst));
+            //game.addEnemy(simpleArc02("","","",bseek01,{pos:{x:0,y:0}}));
+            game.addEnemy(simpleArc02("","","",bseek02,{pos:{x:0,y:0}}));
         }
         self.frame++;
         return true;
@@ -214,13 +221,13 @@ function Level01(game) {
     return self;
 }
 
-function simpleArc02(spawnObject,delay,spawn,bullet) {
+function simpleArc02(spawnObject,delay,spawn,bullet,target) {
     var self = {};
     self.r = 10;
     self.v = {x:0.1,y:0.1};
     self.pos = {x:0,y:0};
     self.a = {x:0,y:-0.00005};
-    self.spawnObject = spawnObject || bs03(self,delay,spawn,bullet);
+    self.spawnObject = spawnObject || bs03(self,delay,spawn,bullet,target);
     return self;
 }
 
@@ -239,14 +246,15 @@ function rpBurst(o) {
     return result;
 };
 
-function bs03(parent,delay,spawn,bullet) {
+//construct that takes parent,delay,spawn, and bullet
+function bs03(parent,delay,spawn,bullet,target) {
     return {
     parent: parent,
     frame: 0,
     delay: delay || 500,
     spawn : spawn || function() {
         if (typeof bullet == "function") {
-            return bullet(this.parent);
+            return bullet(this.parent,target);
         }
         else {
             return rp02(this.parent);
@@ -254,6 +262,49 @@ function bs03(parent,delay,spawn,bullet) {
     }
     }
 }
+
+function bseek02(o,target,vx,vy) {
+    var self = {};
+    self.r = 5;
+    self.target = target;
+    self.pos = {x:o.pos.x,y:o.pos.y};
+    self.v = {};
+    self.v.x = o.v.x;
+    self.v.y = o.v.y;
+    self.a = {x:0,y:0};
+    self.aFunc = function() {
+        var self = this;
+        if (self.pos.x < self.target.pos.x) {
+            self.a.x = 0.001;
+        }
+        else if (self.pos.x > self.target.pos.x) {
+            self.a.x = -0.0001;
+        }
+    };
+    return self;
+}
+
+function bseek01(o,target,vx,vy) {
+    var self = {};
+    self.r = 5;
+    self.target = target;
+    self.pos = {x:o.pos.x,y:o.pos.y};
+    self.v = {};
+    self.v.x = o.v.x;
+    self.v.y = o.v.y;
+    self.vFunc = function() {
+        var self = this;
+        if (self.pos.x < self.target.pos.x) {
+            self.v.x = self.v.x + 0.01;
+        }
+        else if (self.pos.x > self.target.pos.x) {
+            self.v.x = self.v.x - 0.01;
+        }
+    };
+    return self;
+}
+
+
 
 function bs02(o) {
     return {
