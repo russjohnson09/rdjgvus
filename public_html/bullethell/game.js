@@ -47,8 +47,8 @@ function Game(canvas, options) {
         context.canvas.width = self.height;
     }
     self.delay = options.delay || 30;
-    self.spf = self.delay / 1000;
-    self.fps = 1 / self.delay; 
+    //self.mspf = self.delay / 1000;
+    //self.fps = 1 / self.delay; 
     self.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
                  //enemey should be removed
         function(o) {
@@ -64,11 +64,27 @@ function Game(canvas, options) {
                 result = self.move(o);
             }
             if (!result) return false;
-            if (typeof o.spawn == "function") {
-                o.spawn(self);
+            var spawnObject = o.spawnObject;
+            if (spawnObject) {
+                if (typeof spawnObject.loop == "function") {
+                    spawnObject.loop(self);
+                }
+                else {
+                    self.spawn(spawnObject);
+                }
             }
             return true;
         };
+    self.spawn = function(o) {
+        o.frame++;
+        if (self.delay * o.frame > o.delay) {
+            o.frame = 0;
+            var enemy = o.spawn();
+            if (enemy) {
+                self.addEnemy(enemy);
+            }
+        }
+    },
     self.oob = function(o) {
         var self = this;
         var pos = o.pos;
@@ -79,12 +95,12 @@ function Game(canvas, options) {
         var self = this;
         var pos = o.pos;
         var v = o.v;
-        pos.x += v.x * self.spf;
-        pos.y += v.y * self.spf;
+        pos.x += v.x * self.delay;
+        pos.y += v.y * self.delay;
         var a = o.a;
         if (a) {
-            v.x += a.x * self.spf;
-            v.y += a.y * self.spf;
+            v.x += a.x * self.delay;
+            v.y += a.y * self.delay;
         }
         return true;
     };
@@ -162,20 +178,6 @@ function Game(canvas, options) {
     return self;
 }
 
-//basic draw function, takes a context and a particle and attempts to 
-//draw it according to information provided by the object
-function gameBasicDraw(ctx,p) {
-    var pos = p.pos;
-    if (pos) {
-        var x = pos.x;
-        var y = pos.y;
-        var radius = p.radius;
-        if(x && y && radius) {
-            drawCircle(ctx,x,y,radius)
-        }
-    }
-}
-
 function drawCircle(ctx,x,y,radius) {
     ctx.beginPath();                    //begin path, I think fill might already closepath.
     ctx.arc(x,y,radius,0,Math.PI*2);
@@ -184,14 +186,21 @@ function drawCircle(ctx,x,y,radius) {
 }
 
 
-function Level01() {
+function Level01(game) {
     Math.seedrandom(1);
     var self = {};
     self.frame = 0;
+    self.spf = game.spf;
     self.loop = function(game){
         var self = this;
-        if (self.frame % 100 == 0) {
+        if (self.frame % 100 == 0 && self.frame < 201) {
             game.addEnemy(eb1());
+        }
+        else if (self.frame % 100 == 0 && self.frame < 401) {
+            game.addEnemy(simpleArc());
+        }
+        else if (self.frame % 302 == 0) {
+            game.addEnemy(simpleArc());
         }
         self.frame++;
         return true;
@@ -199,11 +208,72 @@ function Level01() {
     return self;
 }
 
+function simpleArc() {
+    var self = {};
+    self.r = 10;
+    self.v = {x:0.1,y:0.1};
+    self.pos = {x:0,y:0};
+    self.a = {x:0,y:-0.00005};
+    self.spawnObject = bs01(self);
+    return self;
+}
+
+function simpleArc02() {
+    var self = {};
+    self.r = 10;
+    self.v = {x:0.1,y:0.1};
+    self.pos = {x:0,y:0};
+    self.a = {x:0,y:-0.00005};
+    self.spawnObject = bs02(self);
+    return self;
+}
+
+function bs02(o) {
+    return {
+        parent: o,
+        frame: 0,
+        delay: 500, //delay in milliseconds
+        spawn: function() {
+            return rp02(this.parent)
+        }
+    };
+}
+
+function bs01(o) {
+    return {
+        parent: o,
+        frame: 0,
+        delay: 500, //delay in milliseconds
+        spawn: function() {
+            return rp01(this.parent)
+        }
+    };
+}
+
+//relative positioning no moves tangently
+function rp01(o) {
+    return {
+        r: 5,
+        pos: {x:o.pos.x,y:o.pos.y},
+        v: {x:o.v.x,y:o.v.y}
+    };
+}
+
+//add a little umph
+function rp02(o) {
+    return {
+        r: 5,
+        pos: {x:o.pos.x,y:o.pos.y},
+        v: {x:o.v.x - 10,y:o.v.y -5}
+    };
+}
+
 function eb1() {
     return {
         r: 10,
-        v: {x:10,y:10},
-        pos: {x:0,y:0}
+        v: {x:0.1,y:0.1},
+        pos: {x:0,y:0},
+        a: {x:0,y:-0.00005}
     }
 }
 
