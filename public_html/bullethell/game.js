@@ -81,7 +81,11 @@ function Game(canvas, options) {
             o.frame = 0;
             var enemy = o.spawn();
             if (enemy) {
-                self.addEnemy(enemy);
+                if (enemy instanceof Array) {
+                }
+                else{
+                  self.addEnemy(enemy);
+                }
             }
         }
     },
@@ -219,14 +223,30 @@ function simpleArc() {
     return self;
 }
 
-function simpleArc02() {
+function simpleArc02(spawnObject,delay,spawn,bullet) {
     var self = {};
     self.r = 10;
     self.v = {x:0.1,y:0.1};
     self.pos = {x:0,y:0};
     self.a = {x:0,y:-0.00005};
-    self.spawnObject = bs02(self);
+    self.spawnObject = spawnObject || bs03(self,delay,spawn,bullet);
     return self;
+}
+
+function bs03(parent,delay,spawn,bullet) {
+    return {
+    parent: parent,
+    frame: 0,
+    delay: delay || 500,
+    spawn : spawn || function() {
+        if (typeof bullet == "function") {
+            return bullet(this.parent);
+        }
+        else {
+            return rp02(this.parent);
+        }
+    }
+    }
 }
 
 function bs02(o) {
@@ -250,6 +270,20 @@ function bs01(o) {
         }
     };
 }
+
+//burst bullet returns array of five bullets
+function rpBurst(o) {
+    var result = [];
+    for (var i=0; i<5; i++) {
+        result.push(
+            { r: 5,
+            pos: {x:o.pos.x,y:o.pos.y},
+            v: {x:(i-2)*0.1,y:0.1}
+            }
+        );
+    }
+    return result;
+};
 
 //relative positioning no moves tangently
 function rp01(o) {
