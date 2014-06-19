@@ -33,7 +33,6 @@ function Game(canvas, options) {
     self.height = options.height;
     self.state = "";
     self.frame = 0;
-    self.draw = gameBasicDraw;
     self.levelIdx = 0; //position in level array
     self.gameComplete = false; //set to true on completion of all levels
     self.levels = [];  //array of levels
@@ -48,7 +47,47 @@ function Game(canvas, options) {
         context.canvas.width = self.height;
     }
     self.delay = options.delay || 30;
-    self.loopObject = gameBasicLoop;
+    self.spf = self.delay / 1000;
+    self.fps = 1 / self.delay; 
+    self.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
+                 //enemey should be removed
+        function(o) {
+            var self = this;
+            var result;
+            if (self.oob(o)) {  //game defines out of boundness for an object
+                return false;
+            }
+            if (typeof o.move == "function") {
+                result = o.move(self);
+            }
+            else {
+                result = self.move(o);
+            }
+            if (!result) return false;
+            if (typeof o.spawn == "function") {
+                o.spawn(self);
+            }
+            return true;
+        };
+    self.oob = function(o) {
+        var self = this;
+        var pos = o.pos;
+        return (pos.x < -self.margin.x || pos.y < -self.margin.y || 
+                pos.x > self.width + self.margin.x || pos.y > self.height + self.margin.y);
+    };
+    self.move = function(o) {
+        var self = this;
+        var pos = o.pos;
+        var v = o.v;
+        pos.x += v.x * self.spf;
+        pos.y += v.y * self.spf;
+        var a = o.a;
+        if (a) {
+            v.x += a.x * self.spf;
+            v.y += a.y * self.spf;
+        }
+        return true;
+    };
     self.enemies = [];
     self.start = self.resume = function() {
         var self = this;
@@ -76,14 +115,11 @@ function Game(canvas, options) {
     self.loop = function() {
         var self = this;
         var c = self.context;
-        // Store the current transformation matrix
         c.save();
-        // Use the identity matrix while clearing the canvas
         c.setTransform(1, 0, 0, 1, 0, 0);
         var width = self.canvas.width;
         var height = self.canvas.height;
         c.clearRect(0, 0, width, height);
-        // Restore the transform
         c.restore();
         c.strokeRect(0,0,self.width,self.height);
         if (!self.levels[self.levelIdx].loop(self)) {
@@ -96,11 +132,11 @@ function Game(canvas, options) {
         for (var i=self.enemies.length - 1; i > -1; i--) {
             var e = self.enemies[i];
             var success;
-            if (e.loop) {
-                success = e.loop(self)
+            if (typeof e.loop == "function") {
+                success = e.loopE(self);
             }
             else {
-                var success = self.loopObject(self,e);
+                var success = self.loopE(e);
             }
             if (!success) {
                 self.enemies.splice(i, 1);
@@ -109,15 +145,14 @@ function Game(canvas, options) {
                 e.draw(self.context,e);
             }
             else {
-                self.draw(self.context,e.particle);
+                self.draw(self.context,e);
             }
         }
     };
-    self.oob = function(pos) {
-        var self = this;
-        return (pos.x < -self.margin.x || pos.y < -self.margin.y || 
-                pos.x > self.width + self.margin.x || pos.y > self.height + self.margin.y);
-    };
+    self.draw = function(ctx,o) {
+        drawCircle(ctx,o.pos.x,o.pos.y,o.r);
+    }
+    
     self.addEnemy = function(e) {
         self.enemies.push(e);
     };
@@ -125,16 +160,6 @@ function Game(canvas, options) {
         self.levels.push(l); 
     };
     return self;
-}
-
-//returns false if failure/should be removed
-function gameBasicLoop(game,o) {
-    var particle = o.particle;
-    if (game.oob(particle.getPos())) {  //game defines out of boundness for an object
-        return false;
-    }
-    particle.move();
-    return true;
 }
 
 //basic draw function, takes a context and a particle and attempts to 
@@ -149,4 +174,44 @@ function gameBasicDraw(ctx,p) {
             drawCircle(ctx,x,y,radius)
         }
     }
+}
+
+function drawCircle(ctx,x,y,radius) {
+    ctx.beginPath();                    //begin path, I think fill might already closepath.
+    ctx.arc(x,y,radius,0,Math.PI*2);
+    ctx.closePath();
+    ctx.fill();
+}
+
+
+function Level01() {
+    Math.seedrandom(1);
+    var self = {};
+    self.frame = 0;
+    self.loop = function(game){
+        var self = this;
+        if (self.frame % 100 == 0) {
+            game.addEnemy(eb1());
+        }
+        self.frame++;
+        return true;
+    };
+    return self;
+}
+
+function eb1() {
+    return {
+        r: 10,
+        v: {x:10,y:10},
+        pos: {x:0,y:0}
+    }
+}
+
+
+function randInt(min,max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randNum(min,max) {
+    return Math.random() * (max - min) + min;
 }

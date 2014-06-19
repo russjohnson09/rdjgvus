@@ -16,17 +16,13 @@
 <script src="../js/jquery.js"></script>
 <script src="seedrandom.js"></script>
 <script src="rand.js"></script>
-<script src="draw.js"></script>
-<script src="particle.js"></script>
-<script src="enemies.js"></script>
-<script src="level1.js"></script>
 <script src="game.js"></script>
 <script>
 $(function(){
     var canvas = document.getElementById("canvas");
-    var opts = {margin: {x:70,y:70},debug:true,width: 500, height: 500};
+    var opts = {margin: {x:70,y:70},debug:true,width: 500, height: 500, delay:10};
     var game = new Game(canvas,opts);
-    game.addLevel(Level1());
+    game.addLevel(Level01());
     $("#play").on("click",function(e) {
         togglePause();
     });
