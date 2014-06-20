@@ -15,10 +15,12 @@
 <body>
 <canvas id="canvas" width="0" height="0">No canvas</canvas></br>
 <button id="play">Play</button>
+<button id="debug">Debug off</button>
 
 <h1>Enemy spawner</h1>
 <label><input type="radio" name="eType" value="basicArc">Basic Arc</label><br/>
-<label><input type="radio" name="eType" value="seeker">Seeker</label><br/>
+<label><input type="radio" name="eType" value="burst">Burst Shot</label><br/>
+<label><input type="radio" name="eType" value="seeker">Seeker Bullets</label><br/>
 <button id="spawner">Spawn</button>
     
     
@@ -34,10 +36,19 @@ $(function(){
     $("#play").on("click",function(e) {
         togglePause();
     });
+    $("#debug").on("click",function(e) {
+        toggleDebug();
+    });
     $("#spawner").on("click",function(e) {
         var val = $('input[name=eType]:checked').val();
         if (val == "basicArc") {
             game.addEnemy(simpleArc02());
+        }
+        else if (val == "burst") {
+            game.addEnemy(simpleArc02("","","",rpBurst));
+        }
+        else if (val == "seeker") {
+            game.addEnemy(simpleArc02("","","",bseek,game.player));
         }
     });
     function togglePause() {
@@ -47,6 +58,16 @@ $(function(){
         }
         else {
             $("#play").text("Play");
+        }
+    }
+    function toggleDebug() {
+        if ($("#debug").text() == "Debug on") {
+            game.isDebug = true;
+            $("#debug").text("Debug off")
+        }
+        else {
+            game.isDebug = false;
+            $("#debug").text("Debug on");
         }
     }
     togglePause();

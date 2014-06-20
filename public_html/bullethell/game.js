@@ -47,6 +47,7 @@ function Game(canvas, options) {
         context.canvas.width = self.width;
         context.canvas.width = self.height;
     }
+    self.player = player(self);
     self.delay = options.delay || 30;
     //self.mspf = self.delay / 1000;
     self.fps = Math.floor(1000 / self.delay);
@@ -185,6 +186,16 @@ function Game(canvas, options) {
                 self.draw(self.context,e);
             }
         }
+        if (self.player) {
+           var p = self.player;
+           if (typeof p.loop == "function") {
+           }
+           if (typeof p.draw == "function") {
+           }
+           else {
+                self.drawPlayer(c,p);
+           }
+        }
         self.frame++;
     };
     self.draw = function(ctx,o) {
@@ -206,12 +217,25 @@ function Game(canvas, options) {
         if (o.a) {drawLine(ctx,o.pos.x,o.pos.y,o.a.x * 1000 * 1000 ,o.a.y * 1000 * 1000,"red");}
     };
     
+    self.drawPlayer = function(ctx,p) {
+        drawCircle(ctx,p.pos.x,p.pos.y,p.r2,"rgba(40, 40, 215, 0.3)");
+        drawCircle(ctx,p.pos.x,p.pos.y,p.r,"rgba(40, 40, 215, 1)");
+    }
+    
     self.addEnemy = function(e) {
         self.enemies.push(e);
     };
     self.addLevel = function(l) {
         self.levels.push(l); 
     };
+    return self;
+}
+
+function player(game) {
+    var self = {};
+    self.pos = {x:game.width/2,y:game.height - 10};
+    self.r = 5;
+    self.r2 = 20;
     return self;
 }
 
@@ -232,7 +256,8 @@ function drawVector(ctx,x,y,v,color) {
       ctx.stroke();
 }
 
-function drawCircle(ctx,x,y,radius) {
+function drawCircle(ctx,x,y,radius,fillStyle) {
+    ctx.fillStyle = fillStyle || "black";
     ctx.beginPath();                    //begin path, I think fill might already closepath.
     ctx.arc(x,y,radius,0,Math.PI*2);
     ctx.closePath();
@@ -298,6 +323,34 @@ function bs03(parent,delay,spawn,bullet,target) {
     }
     }
 }
+
+function aimed(o,target) {
+}
+
+function bseek(o,target,vx,vy) {
+    var self = {};
+    self.r = 5;
+    self.target = target;
+    self.pos = {x:o.pos.x,y:o.pos.y};
+    self.v = {};
+    self.v.x = o.v.x;
+    self.v.y = o.v.y;
+    self.a = {x:0,y:0};
+    self.aFunc = function() {
+        var self = this;
+        var mass = 1;
+        var c = 30;
+        var r2 = Math.pow((self.target.pos.x - self.pos.x),2) + Math.pow((self.target.pos.y - self.pos.y),2);
+        var sum = Math.abs(self.target.pos.x - self.pos.x) + Math.abs((self.target.pos.y - self.pos.y));
+        var ratioX = (self.target.pos.x - self.pos.x)/sum;
+        var ratioY = (self.target.pos.y - self.pos.y)/sum;
+        self.a.x = ratioX * 1/r2 * c;
+        self.a.y = ratioY * 1/r2 * c;
+    };
+    return self;
+}
+
+
 
 function bseek02(o,target,vx,vy) {
     var self = {};
