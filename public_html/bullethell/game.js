@@ -41,6 +41,7 @@ function Game(canvas, options) {
         canvas.height = self.height + self.margin.y * 2;
         self.context.translate(options.margin.x,options.margin.y);   //origin will start at upper left of game screen.
         self.trace = 10;  //print trace every nth bullet 
+        self.isDebug = true;
     }
     else {
         context.canvas.width = self.width;
@@ -154,7 +155,10 @@ function Game(canvas, options) {
         var height = self.canvas.height;
         c.clearRect(0, 0, width, height);
         c.restore();
-        c.strokeRect(0,0,self.width,self.height);
+        if (self.isDebug) {
+            c.strokeStyle = "black";
+            c.strokeRect(0,0,self.width,self.height);
+        }
         if (!self.levels[self.levelIdx].loop(self)) {
             self.levelIdx++;
             if (self.levelIdx > self.levels.length) {
@@ -184,8 +188,23 @@ function Game(canvas, options) {
         self.frame++;
     };
     self.draw = function(ctx,o) {
+        var self = this;
         drawCircle(ctx,o.pos.x,o.pos.y,o.r);
+        if (self.isDebug) {
+            if (o.drawDebug == "function") {
+                o.drawDebug(ctx,game);
+            }
+            else {
+                self.drawDebug(ctx,o);
+            }
+        }
     }
+    
+    self.drawDebug = function(ctx,o) {
+        var self = this;
+        if (o.v) {drawLine(ctx,o.pos.x,o.pos.y,o.v.x * 1000,o.v.y * 1000,"blue");}
+        if (o.a) {drawLine(ctx,o.pos.x,o.pos.y,o.a.x * 1000 * 1000 ,o.a.y * 1000 * 1000,"red");}
+    };
     
     self.addEnemy = function(e) {
         self.enemies.push(e);
@@ -196,6 +215,23 @@ function Game(canvas, options) {
     return self;
 }
 
+function drawLine(ctx,startX,startY,lengthX,lengthY,color) {
+    var color = color || "black";
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(startX,startY);
+    ctx.lineTo(startX+lengthX,startY+lengthY);
+    ctx.stroke();
+}
+
+function drawVector(ctx,x,y,v,color) {
+      ctx.strokeStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x+(v.x * 1000), y+(v.y * 1000));
+      ctx.stroke();
+}
+
 function drawCircle(ctx,x,y,radius) {
     ctx.beginPath();                    //begin path, I think fill might already closepath.
     ctx.arc(x,y,radius,0,Math.PI*2);
@@ -203,17 +239,17 @@ function drawCircle(ctx,x,y,radius) {
     ctx.fill();
 }
 
-
-function Level01(game) {
+function Level01(game,e,delay) {
     Math.seedrandom(1);
-    var self = {};
+    if (!game) return;
+    self.eFunc = e || simpleArc02;
+    if (!(delay > 0)) self.delay = 100;
     self.frame = 0;
     self.spf = game.spf;
     self.loop = function(game){
         var self = this;
-        if (self.frame % 100 == 0) {
-            //game.addEnemy(simpleArc02("","","",bseek01,{pos:{x:0,y:0}}));
-            game.addEnemy(simpleArc02("","","",bseek02,{pos:{x:0,y:0}}));
+        if (self.frame % self.delay == 0) {
+            game.addEnemy(self.eFunc());
         }
         self.frame++;
         return true;

@@ -7,12 +7,21 @@
     canvas {
         border: 1px solid black;
     }
+    div.ctlPanel {
+        border: 1px solid black;
+    }
 </style>
 </head>
 <body>
 <canvas id="canvas" width="0" height="0">No canvas</canvas></br>
 <button id="play">Play</button>
 
+<h1>Enemy spawner</h1>
+<label><input type="radio" name="eType" value="basicArc">Basic Arc</label><br/>
+<label><input type="radio" name="eType" value="seeker">Seeker</label><br/>
+<button id="spawner">Spawn</button>
+    
+    
 <script src="../js/jquery.js"></script>
 <script src="seedrandom.js"></script>
 <script src="game.js"></script>
@@ -25,6 +34,12 @@ $(function(){
     $("#play").on("click",function(e) {
         togglePause();
     });
+    $("#spawner").on("click",function(e) {
+        var val = $('input[name=eType]:checked').val();
+        if (val == "basicArc") {
+            game.addEnemy(simpleArc02());
+        }
+    });
     function togglePause() {
         game.togglePause();
         if (game.state == "playing") {
@@ -36,49 +51,6 @@ $(function(){
     }
     togglePause();
 });
-
-
 </script>
-
-<h1>Weekly projects</h1>
-
-<h1>Caturday</h1>
-Add scoreboard/sidebar with some debug stuff. Pretty up the background. Make it presentable. Theme should match the rest of the site. Cool idea, use IndexDB to allow people to choose my sites theme when they view it on their computer. Should be easy. Store some "key"=numeric category or string desctiption.
-
-<h1>Friday</h1>
-Player and player bullet array. Collision detection between player bullets and collidable enemies. Seperate enemy types into different arrays. Those that can be collided with and those that can't. Add opacity to the circles for cool looking patterns and stuff. Red enemy bullets, blue player bullets no collisions. Red enemy and blue player bullet == collision. Enemies will need to be able to handel damage or the game will handle it for them by taking their health etc. into account. Destroyed will handle adding points. Graze should be implemented by checking player graze radius.
-
-<h1>Thursday</h1>
-Create a boss. It has a time limit and a set pattern that is looped over multiple times. Using the seeded Math.random function to provide some randomness. 
-
-<h1>Wednesday</h1>
-Create bullet spawing. This will basically be just having the enemy create more enemies. The only time an enemy will need to keep track of its spawining is when it is a boss. In this case, when the boss is destroyed any spawn entities are removed as well.
-<br/>
-Create three different bullet spawn patterns. Random, aimed, seeking. Random is really simple and self-explanitory. Aimed means taking a position and and shooting towards it with some % accuracy. Seeking can be aimed or random, seeking means that there is some degree of gravitational pull towards an object or position. Also burst.
-<br/>
-For the boss, it will go back and forth a few times spawn some bullets, spawn some helper enemies. Its health is decreasing constantly. When it is below 0, it is destroyed. Any of its spawned entities will also be destroyed. Being destroyed should be its own action with sound effect. Being destroyed will increment score and will possibly drop a powerup.
-
-<h1>Level01</h1>
-<p>
-This is the most basic level. Each basic enemy type is represented, there is some degree of randomness thrown in. If you play it multiple times though, you will notice that the enemies will always follow the same pattern. This is because I am using David Bau's seedrandom which allows for seeding of Math.random. This means that the randomness is reproduceable. Technically psuedorandomness, a truely random number generator requires observing a natural process.
-</p>
-
-<h1>What's working now</h1>
-Bullets are drawn and all objects are drawn as circles. The inner box represents the area that the player can see and can move in. The outer box includes the area that bullets/enemies can spawn. Spawing off-screen and moving on-screen looks more natural. Any objects with their center outside of the outer box will be removed. No points or anything else is awarded for enemies/bullets that are lost.
-<h1>Enemies</h1>
-Each enemy is meant to be a logical progression of the previous enemy. Enemies increase in the number of parameters that they can take and their randomness. As this list gets too long, it will probably be condensed into different classes of enemies plus examples. The API for each of these will eventually be frozen. 
-<h2>Enemy01</h2>
-This is a very boring enemy. It goes from left to right, no variation other than its height. Enemy01(y) is its constructor.
-<h2>Enemey02</h2>
-Like Enemy01, but takes a min and max height. This is 
-
-<h1>Near future</h1>
-Each object right now will be a simple colored circle. Until I get the basics working and create a presentable level (3 different enemy types, 6 bullet variations, 1 boss, no scoreboard for now because this isn't as interesting to me) that is all they will be. Once I get a presentable level I will work on adding some effects. The boss will not be represented as a simple particle as it will require more advanced movements. When moving in a single direction it uses a particle, but when it reaches a certain point it transforms the particle that defines it's movement and in that way changes directions. A boss is unique in that all of its child objects (spawned bullets) are tied to it. As soon as the boss is destroyed any bullets are removed as well.
-
-<h1>Todo</h1>
-<p>Currently I have the following. A game should loop throught levels, it should do some action when all levels are complete such as display the player's score for each completed level. I want to be able to make this as customizable as possible, but be able to work in a well defined way without all of the extra customization. Someone should be able to add a level without having to touch a lot of other code. I guess the main goal would be to create a danmaku engine. Right now there is danmakufu which lets users define levels using scripts. I might look into being able to read those if I can get this working to a good degree. Right now a bullet uses a particle class for movement. A particle acts as one would expect in a 2d plane using the postional, velocity, and acceleration vectors. Each frame the velocity and positional vectors are updated. I should be able to define animations/sounds for common events such as creation and destruction. Certain bullets have no collision circles/boxes and should not be included in the same array for performance reasons. I'm not overly concerned with performance right now. There are plenty of things that I could do to improve performance that I won't do in the beginning, such as breaking the bullets apart into sections and only checking for collisions for bullets in neighboring boxes. Scoreboard. Use a psuedorandom generator to create reproducable instances of levels. Levels will have some degree of randomness.</p>
-<p>
-Scrolling picture background. Using a tall image and a px/frame scroll rate, create a background image.
-</p>
 </body>
 </html>
