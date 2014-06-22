@@ -26,14 +26,16 @@ var document = window.document;
 //collision - are two objects in a state of collision function
 
 var Game = function(canvas,options) {
-    var self = {};
+    //declaration of 'private' variables
+    var game = {};
     var seed = options.seed || 0;
     var canvas = canvas;
-    self.context = canvas.getContext('2d');
-    if (!self.context) return;
+    var ctx = canvas.getContext('2d');
+    if (!ctx) return;
     var margin = options.margin;
     var width =  options.width;
     var height = options.height;
+    var interval;
     var isDebug;
     var state = "";
     var frame = 0;
@@ -41,41 +43,43 @@ var Game = function(canvas,options) {
     var levelIdx = 0; //position in level array
     var gameComplete = false; //set to true on completion of all levels
     var levels = [];  //array of levels
-    var debugPanel = {};
+    var debugPanel;
+    var trace;
+    var player;
+    var console = options.console || window.console;
     if (options.isDebug) {
         canvas.width = width + margin.x * 2;  //include margin as part of visible screen
         canvas.height = height + margin.y * 2;
-        self.context.translate(options.margin.x,options.margin.y);   //origin will start at upper left of game screen.
-        self.trace = 10;  //print trace every nth bullet 
+        ctx.translate(options.margin.x,options.margin.y);   //origin will start at upper left of game screen.
+        trace = 10;  //print trace every nth bullet 
         isDebug = true;
-        if (!options.noConsole) {
-            self.console = options.console || window.console;
-        }
     }
     else {
-        self.context.canvas.width = self.width;
-        self.context.canvas.width = self.height;
+        canvas.width = width;
+        canvas.width = height;
     }
-    
-    var player = _player(options);
-    self.delay = options.delay || 30;
-    var fps = Math.floor(1000 / self.delay);
-    self.getWidth = function() {return width};
-    self.getHeight = function() {return height};
-    self.getPlayer = function() {return player;};
-    self.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
+    var delay = options.delay || 30;
+    var fps = Math.floor(1000 / delay);
+    Object.defineProperty(game,"isDebug",{
+        get: function() {return isDebug},
+        set: function(val) {isDebug = val}
+    });
+    game.getWidth = function() {return width};
+    game.getHeight = function() {return height};
+    game.getPlayer = function() {return player;};
+    game.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
                  //enemey should be removed
         function(o) {
             var self = this;
             var result;
-            if (self.oob(o)) {  //game defines out of boundness for an object
+            if (game.oob(o)) {  //game defines out of boundness for an object
                 return false;
             }
             if (typeof o.move == "function") {
                 result = o.move(self);
             }
             else {
-                result = self.move(o);
+                result = game.move(o);
             }
             if (!result) return false;
             var spawnObject = o.spawnObject;
@@ -84,14 +88,14 @@ var Game = function(canvas,options) {
                     spawnObject.loop(self);
                 }
                 else {
-                    self.spawn(spawnObject);
+                    game.spawn(spawnObject);
                 }
             }
             return true;
         };
-    self.spawn = function(o) {
+    game.spawn = function(o) {
         o.frame++;
-        if (self.delay * o.frame > o.delay) {
+        if (game.delay * o.frame > o.delay) {
             o.frame = 0;
             var enemy = o.spawn();
             if (enemy) {
@@ -99,59 +103,59 @@ var Game = function(canvas,options) {
                     enemies = enemies.concat(enemy);
                 }
                 else{
-                  self.addEnemy(enemy);
+                  game.addEnemy(enemy);
                 }
             }
         }
     },
-    self.oob = function(o) {
+    game.oob = function(o) {
         var pos = o.pos;
         return (pos.x < -margin.x || pos.y < -margin.y || 
                 pos.x > width + margin.x || pos.y > height + margin.y);
     };
-    self.move = function(o) {
+    game.move = function(o) {
         var self = this;
         var pos = o.pos;
         var v = o.v;
-        pos.x += v.x * self.delay;
-        pos.y += v.y * self.delay;
+        pos.x += v.x * delay;
+        pos.y += v.y * delay;
         var a = o.a;
         if (typeof o.vFunc == "function") {
             o.vFunc();
         }
         else if (a) {
-            v.x += a.x * self.delay;
-            v.y += a.y * self.delay;
+            v.x += a.x * delay;
+            v.y += a.y * delay;
         }
         if (typeof o.aFunc == "function") {
             o.aFunc();
         }
         return true;
     };
-    self.start = self.resume = function() {
-        var self = this;
-        self.state = "playing";
-        self.interval = setInterval(function(){self.loop();},
-        self.delay);
+    game.start = game.resume = function() {
+        player = initPlayer(options);
+        state = "playing";
+        interval = setInterval(function(){game.loop();},
+        delay);
     };
-    self.pause = function() {
+    game.pause = function() {
         var self = this;
-        self.state = "paused";
-        clearInterval(self.interval);
+        state = "paused";
+        clearInterval(interval);
     };
-    self.togglePause = function() {
+    game.togglePause = function() {
         var self = this;
-        if (!self.state) {
-            self.start();
+        if (!state) {
+            game.start();
         }
-        else if (self.state == "paused") {
-            self.resume();
+        else if (state == "paused") {
+            game.resume();
         }
         else {
-            self.pause();
+            game.pause();
         }
     };
-    self.debug = function() {
+    game.debug = function() {
         if (!isDebug) return;
         if (console.log == "function") {
             console.log(enemies.length);
@@ -160,24 +164,23 @@ var Game = function(canvas,options) {
             debugPanel.text = 1;
         }
     };
-    self.loop = function() {
+    game.loop = function() {
         var self = this;
-        if (frame % self.fps == 0) {
-            self.debug();
+        if (frame % fps == 0) {
+            game.debug();
         }
-        var c = self.context;
-        c.save();
-        c.setTransform(1, 0, 0, 1, 0, 0);
-        c.clearRect(0, 0, canvas.width,  canvas.height);
-        c.restore();
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width,  canvas.height);
+        ctx.restore();
         if (isDebug) {
-            c.strokeStyle = "black";
-            c.strokeRect(0,0,self.width,self.height);
+            ctx.strokeStyle = "black";
+            ctx.strokeRect(0,0,width,height);
         }
         if (!levels[levelIdx].loop(self)) {
             levelIdx++;
             if (levelIdx > levels.length) {
-                self.gameComplete = true;
+                gameComplete = true;
             }
             return;
         }
@@ -188,67 +191,75 @@ var Game = function(canvas,options) {
                 success = e.loopE(self);
             }
             else {
-                var success = self.loopE(e);
+                var success = game.loopE(e);
             }
             if (!success) {
                 enemies.splice(i, 1);
             }
             if (e.draw) {
-                e.draw(self.context,e);
+                e.draw(ctx,e);
             }
             else {
-                self.draw(self.context,e);
+                game.draw(e);
             }
         }
-        if (self.player) {
-           var p = self.player;
-           if (typeof p.loop == "function") {
+        if (player) {
+           if (typeof player.loop == "function") {
            }
-           if (typeof p.draw == "function") {
+           if (typeof player.draw == "function") {
            }
            else {
-                self.drawPlayer(c,p);
+                drawPlayer();
            }
         }
         frame++;
     };
-    self.draw = function(ctx,o) {
+    game.draw = function(o) {
         var self = this;
         drawCircle(ctx,o.pos.x,o.pos.y,o.r);
-        if (self.isDebug) {
+        if (isDebug) {
             if (o.drawDebug == "function") {
                 o.drawDebug(ctx,game);
             }
             else {
-                self.drawDebug(ctx,o);
+                drawDebug(ctx,o);
             }
         }
     }
-    
-    self.drawDebug = function(ctx,o) {
-        var self = this;
-        if (o.v) {drawLine(ctx,o.pos.x,o.pos.y,o.v.x * 1000,o.v.y * 1000,"blue");}
-        if (o.a) {drawLine(ctx,o.pos.x,o.pos.y,o.a.x * 1000 * 1000 ,o.a.y * 1000 * 1000,"red");}
-    };
-    
-    self.drawPlayer = function(ctx,p) {
-        drawCircle(ctx,p.pos.x,p.pos.y,p.r2,"rgba(40, 40, 215, 0.3)");
-        drawCircle(ctx,p.pos.x,p.pos.y,p.r,"rgba(40, 40, 215, 1)");
-    }
-    
-    self.addEnemy = function(e) {
+        
+    game.addEnemy = function(e) {
         enemies.push(e);
     };
-    self.addLevel = function(l) {
+    game.addLevel = function(l) {
         levels.push(l); 
     };
     
-    self.initPlayer = function(options) {
-        
-    };
     
-    //functions
-    function _player(options) {
+    game.utils = { 
+        addBasicLevel: function(e,delay) {
+            var lvl = {};
+            Math.seedrandom(1);
+            lvl.eFunc = e || simpleArc02;
+            if (!(delay > 0)) lvl.delay = 100;
+            lvl.frame = 0;
+            lvl.spf = game.spf;
+            lvl.loop = function(game){
+                var lvl = this;
+                if (lvl.frame % lvl.delay == 0) {
+                    game.addEnemy(lvl.eFunc());
+                }
+                lvl.frame++;
+                return true;
+            };
+            game.addLevel(lvl);
+        }
+    };
+     
+    return game;
+
+
+    //helper functions
+    function initPlayer(options) {
         var p = {};
         p.pos = {x:width/2,y:height - 10};
         p.r = 5;
@@ -256,50 +267,48 @@ var Game = function(canvas,options) {
         return p;
     }
     
-    return self;
-}
+    function drawPlayer() {
+        drawCircle(ctx,player.pos.x,player.pos.y,player.r2,"rgba(40, 40, 215, 0.3)");
+        drawCircle(ctx,player.pos.x,player.pos.y,player.r,"rgba(40, 40, 215, 1)");
+    }
+    
+    function drawDebug(ctx,o) {
+        if (o.v) {drawLine(ctx,o.pos.x,o.pos.y,o.v.x * 1000,o.v.y * 1000,"blue");}
+        if (o.a) {drawLine(ctx,o.pos.x,o.pos.y,o.a.x * 1000 * 1000 ,o.a.y * 1000 * 1000,"red");}
+    }
+   
+    function randInt(min,max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-function drawLine(ctx,startX,startY,lengthX,lengthY,color) {
-    var color = color || "black";
-    ctx.strokeStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(startX,startY);
-    ctx.lineTo(startX+lengthX,startY+lengthY);
-    ctx.stroke();
-}
+    function randNum(min,max) {
+        return Math.random() * (max - min) + min;
+    }
+    
+    function drawLine(ctx,startX,startY,lengthX,lengthY,color) {
+        var color = color || "black";
+        ctx.strokeStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(startX,startY);
+        ctx.lineTo(startX+lengthX,startY+lengthY);
+        ctx.stroke();
+    }
 
-function drawVector(ctx,x,y,v,color) {
-      ctx.strokeStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x+(v.x * 1000), y+(v.y * 1000));
-      ctx.stroke();
-}
+    function drawVector(ctx,x,y,v,color) {
+          ctx.strokeStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x+(v.x * 1000), y+(v.y * 1000));
+          ctx.stroke();
+    }
 
-function drawCircle(ctx,x,y,radius,fillStyle) {
-    ctx.fillStyle = fillStyle || "black";
-    ctx.beginPath();                    //begin path, I think fill might already closepath.
-    ctx.arc(x,y,radius,0,Math.PI*2);
-    ctx.closePath();
-    ctx.fill();
-}
-
-function Level01(game,e,delay) {
-    Math.seedrandom(1);
-    if (!game) return;
-    self.eFunc = e || simpleArc02;
-    if (!(delay > 0)) self.delay = 100;
-    self.frame = 0;
-    self.spf = game.spf;
-    self.loop = function(game){
-        var self = this;
-        if (self.frame % self.delay == 0) {
-            game.addEnemy(self.eFunc());
-        }
-        self.frame++;
-        return true;
-    };
-    return self;
+    function drawCircle(ctx,x,y,radius,fillStyle) {
+        ctx.fillStyle = fillStyle || "black";
+        ctx.beginPath();                    //begin path, I think fill might already closepath.
+        ctx.arc(x,y,radius,0,Math.PI*2);
+        ctx.closePath();
+        ctx.fill();
+    }
 }
 
 function simpleArc02(spawnObject,delay,spawn,bullet,target) {
@@ -470,13 +479,4 @@ function eb1() {
         pos: {x:0,y:0},
         a: {x:0,y:-0.00005}
     }
-}
-
-
-function randInt(min,max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function randNum(min,max) {
-    return Math.random() * (max - min) + min;
 }

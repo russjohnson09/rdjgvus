@@ -31,8 +31,10 @@
 $(function(){
     var canvas = document.getElementById("canvas");
     var opts = {margin: {x:70,y:70},isDebug:true,width: 500, height: 500, delay:30};
-    var game = new Game(canvas,opts);
-    game.addLevel(Level01(game));
+    var game = Game(canvas,opts);
+    console.log(game);
+    var utils = game.utils;
+    utils.addBasicLevel();
     $("#play").on("click",function(e) {
         togglePause();
     });
