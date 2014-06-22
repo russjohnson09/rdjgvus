@@ -23,14 +23,14 @@
 <label><input type="radio" name="eType" value="seeker">Seeker Bullets</label><br/>
 <button id="spawner">Spawn</button>
     
-    
+<script src="../js/physics.js"></script>
 <script src="../js/jquery.js"></script>
 <script src="seedrandom.js"></script>
 <script src="game.js"></script>
 <script>
 $(function(){
     var canvas = document.getElementById("canvas");
-    var opts = {margin: {x:70,y:70},debug:true,width: 500, height: 500, delay:30};
+    var opts = {margin: {x:70,y:70},isDebug:true,width: 500, height: 500, delay:30};
     var game = new Game(canvas,opts);
     game.addLevel(Level01(game));
     $("#play").on("click",function(e) {

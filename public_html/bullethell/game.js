@@ -1,3 +1,5 @@
+var window = this;
+var document = window.document;
 //Returns an game instance.
 //params
 //canvas - the canvas that will be drawn on
@@ -22,35 +24,45 @@
 //otherwise get picture position, and dimensions of object, attempt to draw object as box if witdth and height
 //given, finally draw as circle.
 //collision - are two objects in a state of collision function
-function Game(canvas, options) {
-    var self = this;
-    self.seed = options.seed || 0;
-    self.canvas = canvas;
+
+var Game = function(canvas,options) {
+    var self = {};
+    var seed = options.seed || 0;
+    var canvas = canvas;
     self.context = canvas.getContext('2d');
     if (!self.context) return;
-    self.margin = options.margin;
-    self.width =  options.width;
-    self.height = options.height;
-    self.state = "";
-    self.frame = 0;
-    self.levelIdx = 0; //position in level array
-    self.gameComplete = false; //set to true on completion of all levels
-    self.levels = [];  //array of levels
-    if (options.debug) {
-        canvas.width = self.width + self.margin.x * 2;  //include margin as part of visible screen
-        canvas.height = self.height + self.margin.y * 2;
+    var margin = options.margin;
+    var width =  options.width;
+    var height = options.height;
+    var isDebug;
+    var state = "";
+    var frame = 0;
+    var enemies = [];
+    var levelIdx = 0; //position in level array
+    var gameComplete = false; //set to true on completion of all levels
+    var levels = [];  //array of levels
+    var debugPanel = {};
+    if (options.isDebug) {
+        canvas.width = width + margin.x * 2;  //include margin as part of visible screen
+        canvas.height = height + margin.y * 2;
         self.context.translate(options.margin.x,options.margin.y);   //origin will start at upper left of game screen.
         self.trace = 10;  //print trace every nth bullet 
-        self.isDebug = true;
+        isDebug = true;
+        if (!options.noConsole) {
+            self.console = options.console || window.console;
+        }
     }
     else {
-        context.canvas.width = self.width;
-        context.canvas.width = self.height;
+        self.context.canvas.width = self.width;
+        self.context.canvas.width = self.height;
     }
-    self.player = player(self);
+    
+    var player = _player(options);
     self.delay = options.delay || 30;
-    //self.mspf = self.delay / 1000;
-    self.fps = Math.floor(1000 / self.delay);
+    var fps = Math.floor(1000 / self.delay);
+    self.getWidth = function() {return width};
+    self.getHeight = function() {return height};
+    self.getPlayer = function() {return player;};
     self.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
                  //enemey should be removed
         function(o) {
@@ -84,7 +96,7 @@ function Game(canvas, options) {
             var enemy = o.spawn();
             if (enemy) {
                 if (enemy instanceof Array) {
-                    self.enemies = self.enemies.concat(enemy);
+                    enemies = enemies.concat(enemy);
                 }
                 else{
                   self.addEnemy(enemy);
@@ -93,10 +105,9 @@ function Game(canvas, options) {
         }
     },
     self.oob = function(o) {
-        var self = this;
         var pos = o.pos;
-        return (pos.x < -self.margin.x || pos.y < -self.margin.y || 
-                pos.x > self.width + self.margin.x || pos.y > self.height + self.margin.y);
+        return (pos.x < -margin.x || pos.y < -margin.y || 
+                pos.x > width + margin.x || pos.y > height + margin.y);
     };
     self.move = function(o) {
         var self = this;
@@ -117,7 +128,6 @@ function Game(canvas, options) {
         }
         return true;
     };
-    self.enemies = [];
     self.start = self.resume = function() {
         var self = this;
         self.state = "playing";
@@ -142,33 +152,37 @@ function Game(canvas, options) {
         }
     };
     self.debug = function() {
-        console.log(self.enemies.length);
+        if (!isDebug) return;
+        if (console.log == "function") {
+            console.log(enemies.length);
+        }
+        if (debugPanel) {
+            debugPanel.text = 1;
+        }
     };
     self.loop = function() {
         var self = this;
-        if (self.frame % self.fps == 0) {
+        if (frame % self.fps == 0) {
             self.debug();
         }
         var c = self.context;
         c.save();
         c.setTransform(1, 0, 0, 1, 0, 0);
-        var width = self.canvas.width;
-        var height = self.canvas.height;
-        c.clearRect(0, 0, width, height);
+        c.clearRect(0, 0, canvas.width,  canvas.height);
         c.restore();
-        if (self.isDebug) {
+        if (isDebug) {
             c.strokeStyle = "black";
             c.strokeRect(0,0,self.width,self.height);
         }
-        if (!self.levels[self.levelIdx].loop(self)) {
-            self.levelIdx++;
-            if (self.levelIdx > self.levels.length) {
+        if (!levels[levelIdx].loop(self)) {
+            levelIdx++;
+            if (levelIdx > levels.length) {
                 self.gameComplete = true;
             }
             return;
         }
-        for (var i=self.enemies.length - 1; i > -1; i--) {
-            var e = self.enemies[i];
+        for (var i=enemies.length - 1; i > -1; i--) {
+            var e = enemies[i];
             var success;
             if (typeof e.loop == "function") {
                 success = e.loopE(self);
@@ -177,7 +191,7 @@ function Game(canvas, options) {
                 var success = self.loopE(e);
             }
             if (!success) {
-                self.enemies.splice(i, 1);
+                enemies.splice(i, 1);
             }
             if (e.draw) {
                 e.draw(self.context,e);
@@ -196,7 +210,7 @@ function Game(canvas, options) {
                 self.drawPlayer(c,p);
            }
         }
-        self.frame++;
+        frame++;
     };
     self.draw = function(ctx,o) {
         var self = this;
@@ -223,19 +237,25 @@ function Game(canvas, options) {
     }
     
     self.addEnemy = function(e) {
-        self.enemies.push(e);
+        enemies.push(e);
     };
     self.addLevel = function(l) {
-        self.levels.push(l); 
+        levels.push(l); 
     };
-    return self;
-}
-
-function player(game) {
-    var self = {};
-    self.pos = {x:game.width/2,y:game.height - 10};
-    self.r = 5;
-    self.r2 = 20;
+    
+    self.initPlayer = function(options) {
+        
+    };
+    
+    //functions
+    function _player(options) {
+        var p = {};
+        p.pos = {x:width/2,y:height - 10};
+        p.r = 5;
+        p.r2 = 20;
+        return p;
+    }
+    
     return self;
 }
 
