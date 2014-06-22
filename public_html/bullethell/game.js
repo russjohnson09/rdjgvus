@@ -25,8 +25,17 @@ var document = window.document;
 //given, finally draw as circle.
 //collision - are two objects in a state of collision function
 
-var Game = function(canvas,options) {
+var Game = function(canvas,radio,options) {
+    var SPACE = 32;
+    var SHIFT = 16;
+    var LEFT = 37;
+    var UP = 38;
+    var RIGHT = 39;
+    var DOWN = 40;
+    var Z = 90;
+ 
     //declaration of 'private' variables
+    var debugBroadcast = radio("changeDebug");
     var game = {};
     var seed = options.seed || 0;
     var canvas = canvas;
@@ -43,6 +52,7 @@ var Game = function(canvas,options) {
     var levelIdx = 0; //position in level array
     var gameComplete = false; //set to true on completion of all levels
     var levels = [];  //array of levels
+    var playerBullets = [];
     var debugPanel;
     var trace;
     var player;
@@ -64,15 +74,30 @@ var Game = function(canvas,options) {
         get: function() {return isDebug},
         set: function(val) {isDebug = val}
     });
+    Object.defineProperties(game, {
+        "width": {
+            get: function() {return width}
+        },
+        "height": {
+            get: function() {return height}
+        },
+        "player": {
+        },
+        "enemies": {
+            length: function() {return enemies.length}
+        },
+        "state": {
+            get: function() {return state}
+        }
+    });
     game.getWidth = function() {return width};
     game.getHeight = function() {return height};
     game.getPlayer = function() {return player;};
-    game.loopE = //loop executed by a basic enemy used if enemy does not define its own loop returns false if
-                 //enemey should be removed
+    game.loopE =
         function(o) {
             var self = this;
             var result;
-            if (game.oob(o)) {  //game defines out of boundness for an object
+            if (game.oob(o)) {
                 return false;
             }
             if (typeof o.move == "function") {
@@ -135,7 +160,7 @@ var Game = function(canvas,options) {
     game.start = game.resume = function() {
         player = initPlayer(options);
         state = "playing";
-        interval = setInterval(function(){game.loop();},
+        interval = setInterval(function(){game.tick()},
         delay);
     };
     game.pause = function() {
@@ -164,7 +189,7 @@ var Game = function(canvas,options) {
             debugPanel.text = 1;
         }
     };
-    game.loop = function() {
+    game.tick = function() {
         var self = this;
         if (frame % fps == 0) {
             game.debug();
@@ -213,6 +238,10 @@ var Game = function(canvas,options) {
            }
         }
         frame++;
+        debugBroadcast.broadcast({
+            player:player,
+            
+        });
     };
     game.draw = function(o) {
         var self = this;
@@ -233,8 +262,7 @@ var Game = function(canvas,options) {
     game.addLevel = function(l) {
         levels.push(l); 
     };
-    
-    
+
     game.utils = { 
         addBasicLevel: function(e,delay) {
             var lvl = {};
@@ -256,20 +284,49 @@ var Game = function(canvas,options) {
     };
      
     return game;
-
-
+    
     //helper functions
-    function initPlayer(options) {
+    function initPlayer() {
         var p = {};
-        p.pos = {x:width/2,y:height - 10};
-        p.r = 5;
-        p.r2 = 20;
+        var pos = {x:width/2,y:height - 10};
+        var r1 = 5;
+        var r2 = 20;
+        var currentState = null;
+        var isFiring = false;
+        var isBombing = false;
+        var isShift = false;
+        var keys = {};
+        Object.defineProperties(p,{
+            position: {
+                get: function() {return pos;},
+                set: function(val) {pos = val;}
+            },
+            innerRadius: {
+                get: function() {return r1;}
+            },
+            outerRadius: {
+                get: function() {return r2;}
+            }
+        });
+        
+        p.move = function() {
+            
+        };
+        window.addEventListener('keyup', function (e) {
+            //e.preventDefault();
+            console.log(e.keyCode);   
+        });
+        
+        window.addEventListener('keydown', function (e) {
+            //e.preventDefault();
+        });
+        
         return p;
     }
     
     function drawPlayer() {
-        drawCircle(ctx,player.pos.x,player.pos.y,player.r2,"rgba(40, 40, 215, 0.3)");
-        drawCircle(ctx,player.pos.x,player.pos.y,player.r,"rgba(40, 40, 215, 1)");
+        drawCircle(ctx,player.position.x,player.position.y,player.outerRadius,"rgba(40, 40, 215, 0.3)");
+        drawCircle(ctx,player.position.x,player.position.y,player.innerRadius,"rgba(40, 40, 215, 1)");
     }
     
     function drawDebug(ctx,o) {

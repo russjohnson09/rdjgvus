@@ -10,19 +10,37 @@
     div.ctlPanel {
         border: 1px solid black;
     }
+    .sidebar {
+        float: right;
+    }
+    #debugSidebar {
+    
+    }
+    #debugSidebar ul {
+        list-style: none;
+        padding-right: 20px;
+    }
 </style>
 </head>
 <body>
+<div class="debug sidebar" id="debugSidebar">
+<ul>
+<li>fps: <span id="fps"></span></li>
+<li>Enemy Count <span id="enemyCount"></span></li>
+<li>Player X-coordinate: <span id="playerX"></span></li>
+<li>Player Y-coordinate: <span id="playerY"></span></li>
+</ul>
+</div>
 <canvas id="canvas" width="0" height="0">No canvas</canvas></br>
 <button id="play">Play</button>
 <button id="debug">Debug off</button>
-
 <h1>Enemy spawner</h1>
 <label><input type="radio" name="eType" value="basicArc">Basic Arc</label><br/>
 <label><input type="radio" name="eType" value="burst">Burst Shot</label><br/>
 <label><input type="radio" name="eType" value="seeker">Seeker Bullets</label><br/>
 <button id="spawner">Spawn</button>
-    
+
+<script src="radio.js"></script>
 <script src="../js/physics.js"></script>
 <script src="../js/jquery.js"></script>
 <script src="seedrandom.js"></script>
@@ -31,9 +49,13 @@
 $(function(){
     var canvas = document.getElementById("canvas");
     var opts = {margin: {x:70,y:70},isDebug:true,width: 500, height: 500, delay:30};
-    var game = Game(canvas,opts);
-    console.log(game);
+    var game = Game(canvas,radio,opts);
     var utils = game.utils;
+    var debugSidebar = document.getElementById("debugSidebar");
+    var fps = document.getElementById('fps');
+    var ememyCount = document.getElementById('enemyCount');
+    var playerX = document.getElementById('playerX');
+    var playerY = document.getElementById('playerY');
     utils.addBasicLevel();
     $("#play").on("click",function(e) {
         togglePause();
@@ -73,6 +95,14 @@ $(function(){
         }
     }
     togglePause();
+    
+    radio('changeDebug').subscribe(debug);
+    
+    function debug(data) {
+        if (!data) return;
+        fps.textContent = data.fps;
+        enemyCount.textContent = data.enemyCount
+    }
 });
 </script>
 </body>
