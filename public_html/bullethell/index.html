@@ -26,7 +26,7 @@
 <div class="debug sidebar" id="debugSidebar">
 <ul>
 <li>fps: <span id="fps"></span></li>
-<li>Enemy Count <span id="enemyCount"></span></li>
+<li>Enemy Count: <span id="enemyCount"></span></li>
 <li>Player X-coordinate: <span id="playerX"></span></li>
 <li>Player Y-coordinate: <span id="playerY"></span></li>
 </ul>
@@ -48,8 +48,8 @@
 <script>
 $(function(){
     var canvas = document.getElementById("canvas");
-    var opts = {margin: {x:70,y:70},isDebug:true,width: 500, height: 500, delay:30};
-    var game = Game(canvas,radio,opts);
+    var opts = {margin: {x:70,y:70},isDebug:true,width: 500, height: 500, delay:1000/60};
+    var game = new Game(canvas,radio,opts);
     var utils = game.utils;
     var debugSidebar = document.getElementById("debugSidebar");
     var fps = document.getElementById('fps');

@@ -1,0 +1,32 @@
+[Constructor]
+interface Vector2d {
+    attribute x;
+    attribute y;
+    
+    Vector2d add(Vector2d vector);
+    Vector2d dotProduct(Vector2d vector);
+};
+
+
+exception MathException {
+
+};
+
+
+
+typedef float f;
+
+dictionary EventInit {
+  boolean debug;
+  boolean cancel;  
+};
+
+
+[Constructor(Vector2d vector, optional EventInit events)]
+interface Event {
+    void initEvent(type, boolean debug, boolean cancel);
+};
+
+
+
+

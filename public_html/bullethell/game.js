@@ -36,7 +36,7 @@ var Game = function(canvas,radio,options) {
  
     //declaration of 'private' variables
     var debugBroadcast = radio("changeDebug");
-    var game = {};
+    var game = this;
     var seed = options.seed || 0;
     var canvas = canvas;
     var ctx = canvas.getContext('2d');
@@ -88,29 +88,26 @@ var Game = function(canvas,radio,options) {
         },
         "state": {
             get: function() {return state}
+        },
+        "margin": {
+            get: function() {return margin}
         }
     });
     game.getWidth = function() {return width};
     game.getHeight = function() {return height};
     game.getPlayer = function() {return player;};
     game.loopE =
-        function(o) {
-            var self = this;
+        function(e) {
             var result;
-            if (game.oob(o)) {
+            if (oob(e)) {
                 return false;
             }
-            if (typeof o.move == "function") {
-                result = o.move(self);
-            }
-            else {
-                result = game.move(o);
-            }
+            result = e.move();
             if (!result) return false;
-            var spawnObject = o.spawnObject;
+            var spawnObject = e.spawnObject;
             if (spawnObject) {
                 if (typeof spawnObject.loop == "function") {
-                    spawnObject.loop(self);
+                    spawnObject.loop();
                 }
                 else {
                     game.spawn(spawnObject);
@@ -133,30 +130,6 @@ var Game = function(canvas,radio,options) {
             }
         }
     },
-    game.oob = function(o) {
-        var pos = o.pos;
-        return (pos.x < -margin.x || pos.y < -margin.y || 
-                pos.x > width + margin.x || pos.y > height + margin.y);
-    };
-    game.move = function(o) {
-        var self = this;
-        var pos = o.pos;
-        var v = o.v;
-        pos.x += v.x * delay;
-        pos.y += v.y * delay;
-        var a = o.a;
-        if (typeof o.vFunc == "function") {
-            o.vFunc();
-        }
-        else if (a) {
-            v.x += a.x * delay;
-            v.y += a.y * delay;
-        }
-        if (typeof o.aFunc == "function") {
-            o.aFunc();
-        }
-        return true;
-    };
     game.start = game.resume = function() {
         player = initPlayer(options);
         state = "playing";
@@ -181,17 +154,15 @@ var Game = function(canvas,radio,options) {
         }
     };
     game.debug = function() {
-        if (!isDebug) return;
-        if (console.log == "function") {
-            console.log(enemies.length);
-        }
-        if (debugPanel) {
-            debugPanel.text = 1;
-        }
+        debugBroadcast.broadcast({
+            player:player.position,
+            fps:fps,
+            enemyCount:enemies.length
+        });
     };
     game.tick = function() {
         var self = this;
-        if (frame % fps == 0) {
+        if (isDebug && frame % fps == 0) {
             game.debug();
         }
         ctx.save();
@@ -225,7 +196,7 @@ var Game = function(canvas,radio,options) {
                 e.draw(ctx,e);
             }
             else {
-                game.draw(e);
+                draw(e);
             }
         }
         if (player) {
@@ -238,23 +209,7 @@ var Game = function(canvas,radio,options) {
            }
         }
         frame++;
-        debugBroadcast.broadcast({
-            player:player,
-            
-        });
     };
-    game.draw = function(o) {
-        var self = this;
-        drawCircle(ctx,o.pos.x,o.pos.y,o.r);
-        if (isDebug) {
-            if (o.drawDebug == "function") {
-                o.drawDebug(ctx,game);
-            }
-            else {
-                drawDebug(ctx,o);
-            }
-        }
-    }
         
     game.addEnemy = function(e) {
         enemies.push(e);
@@ -267,14 +222,13 @@ var Game = function(canvas,radio,options) {
         addBasicLevel: function(e,delay) {
             var lvl = {};
             Math.seedrandom(1);
-            lvl.eFunc = e || simpleArc02;
+            lvl.eFunc = e;
             if (!(delay > 0)) lvl.delay = 100;
             lvl.frame = 0;
-            lvl.spf = game.spf;
             lvl.loop = function(game){
                 var lvl = this;
                 if (lvl.frame % lvl.delay == 0) {
-                    game.addEnemy(lvl.eFunc());
+                    game.addEnemy(new lvl.eFunc());
                 }
                 lvl.frame++;
                 return true;
@@ -282,8 +236,27 @@ var Game = function(canvas,radio,options) {
             game.addLevel(lvl);
         }
     };
-     
-    return game;
+    
+    
+    function oob(e) {
+        var pos = e.position;
+        return (pos.x < -margin.x || pos.y < -margin.y || 
+                pos.x > width + margin.x || pos.y > height + margin.y);
+    }
+
+    function draw(o) {
+        var self = this;
+        var pos = o.position;
+        drawCircle(ctx,pos.x,pos.y,o.radius);
+        if (isDebug) {
+            if (o.drawDebug == "function") {
+                o.drawDebug(ctx,game);
+            }
+            else {
+                drawDebug(ctx,o);
+            }
+        }
+    }
     
     //helper functions
     function initPlayer() {
@@ -330,8 +303,14 @@ var Game = function(canvas,radio,options) {
     }
     
     function drawDebug(ctx,o) {
-        if (o.v) {drawLine(ctx,o.pos.x,o.pos.y,o.v.x * 1000,o.v.y * 1000,"blue");}
-        if (o.a) {drawLine(ctx,o.pos.x,o.pos.y,o.a.x * 1000 * 1000 ,o.a.y * 1000 * 1000,"red");}
+        var v = o.velocity;
+        if (v) {
+            drawLine(ctx,o.pos.x,o.pos.y,o.v.x * 1000,o.v.y * 1000,"blue");
+        }
+        var a = o.acceleration;
+        if (a) {
+            drawLine(ctx,o.pos.x,o.pos.y,a.x * 1000 * 1000 ,a.y * 1000 * 1000,"red");
+        }
     }
    
     function randInt(min,max) {
@@ -366,174 +345,45 @@ var Game = function(canvas,radio,options) {
         ctx.closePath();
         ctx.fill();
     }
-}
-
-function simpleArc02(spawnObject,delay,spawn,bullet,target) {
-    var self = {};
-    self.r = 10;
-    self.v = {x:0.1,y:0.1};
-    self.pos = {x:0,y:0};
-    self.a = {x:0,y:-0.00005};
-    self.spawnObject = spawnObject || bs03(self,delay,spawn,bullet,target);
-    return self;
-}
-
-
-//burst bullet returns array of five bullets
-function rpBurst(o) {
-    var result = [];
-    for (var i=0; i<5; i++) {
-        result.push(
-            { r: 5,
-            pos: {x:o.pos.x,y:o.pos.y},
-            v: {x:(i-2)*0.1,y:0.1}
-            }
-        );
+    
+    
+    function Enemy(spawnObject,delay,spawn,bullet,target) {
+        var r = 10;
+        var v = {x:0.1,y:0.1};
+        var a = {x:0,y:-0.0005};
+        var pos = {x:0,y:0};
+        Object.defineProperties(this, {
+            "radius": {
+                get: function() {return r}
+            },
+            "velocity": {
+                get: function() {return v}
+            },
+            "acceleration": {
+                get: function() {return a}
+            },
+            "position": {
+                get: function() {return pos}
+            },
+        });
     }
-    return result;
-};
-
-//construct that takes parent,delay,spawn, and bullet
-function bs03(parent,delay,spawn,bullet,target) {
-    return {
-    parent: parent,
-    frame: 0,
-    delay: delay || 500,
-    spawn : spawn || function() {
-        if (typeof bullet == "function") {
-            return bullet(this.parent,target);
+    
+    function move(e) {
+        pos.x += v.x * game.delay;
+        pos.y += v.y * game.delay;
+        if (typeof vFunc == "function") {
+            vFunc();
         }
-        else {
-            return rp02(this.parent);
+        else if (a) {
+            v.x += a.x * game.delay;
+            v.y += a.y * game.delay;
         }
+        if (typeof aFunc == "function") {
+            aFunc();
+        }
+        return true;
     }
-    }
+
+
 }
 
-function aimed(o,target) {
-}
-
-function bseek(o,target,vx,vy) {
-    var self = {};
-    self.r = 5;
-    self.target = target;
-    self.pos = {x:o.pos.x,y:o.pos.y};
-    self.v = {};
-    self.v.x = o.v.x;
-    self.v.y = o.v.y;
-    self.a = {x:0,y:0};
-    self.aFunc = function() {
-        var self = this;
-        var mass = 1;
-        var c = 30;
-        var r2 = Math.pow((self.target.pos.x - self.pos.x),2) + Math.pow((self.target.pos.y - self.pos.y),2);
-        var sum = Math.abs(self.target.pos.x - self.pos.x) + Math.abs((self.target.pos.y - self.pos.y));
-        var ratioX = (self.target.pos.x - self.pos.x)/sum;
-        var ratioY = (self.target.pos.y - self.pos.y)/sum;
-        self.a.x = ratioX * 1/r2 * c;
-        self.a.y = ratioY * 1/r2 * c;
-    };
-    return self;
-}
-
-
-
-function bseek02(o,target,vx,vy) {
-    var self = {};
-    self.r = 5;
-    self.target = target;
-    self.pos = {x:o.pos.x,y:o.pos.y};
-    self.v = {};
-    self.v.x = o.v.x;
-    self.v.y = o.v.y;
-    self.a = {x:0,y:0};
-    self.aFunc = function() {
-        var self = this;
-        if (self.pos.x < self.target.pos.x) {
-            self.a.x = 0.001;
-        }
-        else if (self.pos.x > self.target.pos.x) {
-            self.a.x = -0.0001;
-        }
-    };
-    return self;
-}
-
-function bseek01(o,target,vx,vy) {
-    var self = {};
-    self.r = 5;
-    self.target = target;
-    self.pos = {x:o.pos.x,y:o.pos.y};
-    self.v = {};
-    self.v.x = o.v.x;
-    self.v.y = o.v.y;
-    self.vFunc = function() {
-        var self = this;
-        if (self.pos.x < self.target.pos.x) {
-            self.v.x = self.v.x + 0.01;
-        }
-        else if (self.pos.x > self.target.pos.x) {
-            self.v.x = self.v.x - 0.01;
-        }
-    };
-    return self;
-}
-
-
-
-function bs02(o) {
-    return {
-        parent: o,
-        frame: 0,
-        delay: 500, //delay in milliseconds
-        spawn: function() {
-            return rp02(this.parent);
-        }
-    };
-}
-
-function bs01(o) {
-    return {
-        parent: o,
-        frame: 0,
-        delay: 500, //delay in milliseconds
-        spawn: function() {
-            return rp01(this.parent);
-        }
-    };
-}
-
-//relative positioning no moves tangently
-function rp01(o) {
-    return {
-        r: 5,
-        pos: {x:o.pos.x,y:o.pos.y},
-        v: {x:o.v.x,y:o.v.y}
-    };
-}
-
-//add a little umph
-function rp02(o) {
-    var self = {};
-    self.r = 5;
-    self.pos = {x:o.pos.x,y:o.pos.y};
-    self.v = {};
-    self.v.x = o.v.x - 0.1;
-    self.v.y = o.v.y - 0.1;
-    if (self.v.x < 0.05) {
-        self.v.x = 0.05;
-    }
-    if (self.v.y < 0.05) {
-        self.v.y = 0.1;
-    }
-    return self;
-}
-
-function eb1() {
-    return {
-        r: 10,
-        v: {x:0.1,y:0.1},
-        pos: {x:0,y:0},
-        a: {x:0,y:-0.00005}
-    }
-}
