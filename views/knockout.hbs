@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head>
+    <title>Knockout demo</title>
 </head>
 <body>
 <style>
@@ -10,24 +11,39 @@ a.catRec {
 
 }
 </style>
-<input id="cat"></input>
-<button id="add">Add</button>
-<button id="del">Delete</button>
-<button id="refresh">Refresh</button>
-<div data-bind="text: data"></div>
-<div class="error" data-bind="text: error"></div>
-<div class="response" data-bind="text: response"></div>
-<ul class="items" data-bind="foreach: items">
-   <li><a class="catRec" data-bind="attr: { 'data-id': _id }"><span data-bind="text: cat"></span></a></li>
-</ul></a>
+
+<div id="container">
+
+    <p>
+        This is a test of knockout and mongo. I have an interest in mongo as a database, because it
+        seems like it will work well with node. I'm not sure if knockout meets all of my needs, however.
+        What I have been trying to do here has already been done with meteor and I am currently working
+        with meteor to make a simple AR manager.
+    </p>
+    <h1>Instructions</h1>
+    <p>
+        Enter a value to be stored. Delete deletes all records. Refresh loads all records from the database.
+    </p>
+
+    <input id="cat"></input>
+    <button id="add">Add</button>
+    <button id="del">Delete</button>
+    <button id="refresh">Refresh</button>
+    <div data-bind="text: data"></div>
+    <div class="error" data-bind="text: error"></div>
+    <div class="response" data-bind="text: response"></div>
+    <ul class="items" data-bind="foreach: items">
+       <li><a class="catRec" data-bind="attr: { 'data-id': _id }"><span data-bind="text: cat"></span></a></li>
+    </ul></a>
+</div>
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
 <script type="text/javascript">
 var poll = {
-    data : ko.observable("345"),
+    data : ko.observable(),
     testLoad : function() {
-        this.data("test");
+        //this.data("test");
     },
     response : ko.observable(),
     addCat : function(txt){
@@ -90,6 +106,8 @@ $(function() {
     });
 });
 </script>
+
+    <link rel="stylesheet" href="/css/main.css">
 
 </body>
 </html>
