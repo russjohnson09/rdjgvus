@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="favicon.ico">
+        <title>Ajax</title>
+    </head>
+            
+<body>
+    <div id="container">
+    <h1 id="ajax">Ajax Example</h1>
+    <p>
+        Here is a straight-forward asyncornous call using jquery's ajax helper.
+        
+        A random greeting is returned from the server.
+    </p>
+    <button id="ajax-send">Request Greeting</button>
+    <div id="serverheader" class="hide">The server says:</div>
+    <div id="ajax-res"></div>
+    </div>
+    
+    
+    <script src="/js/jquery.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    
+    
+    <script>
+    $(function() {
+        $("#ajax-send").bind("click",function(){
+           $.ajax({
+           	type: 'GET',
+            dataType: 'text',
+            url: "/request",
+            context: $("#ajax-res")
+            }).done(function(data) {
+                this.text(data);
+                $("#serverheader").removeClass("hide");
+            }).fail(function(){
+                alert("error or something");
+            });
+         });
+    });
+    </script>
+    
+    
+    <style>
+         #serverheader {
+            margin-top: 50px;
+         }
+    </style>
+</body>
+
+</html>

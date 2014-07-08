@@ -55,12 +55,14 @@
         });
 
         table.bind("addRec", function(e, rec) {
-            table.find("tbody").append(getRow(rec));
+            var tr = getRow(rec);
+            //table.trigger('addRows', [tr, true]);
+            table.find("tbody").append(tr);
             var tx = db.transaction(["contact"], "readwrite");
             var os = tx.objectStore("contact");
             var req = os.put(rec);
             req.onsuccess = function(e) {
-                //console.log("successfully added record", rec);
+                console.log("successfully added record", rec);
             };
             req.onerror = function(e) {
                 console.log("Error", e);

@@ -112,7 +112,7 @@ app.get("/request",function(req,res){
     var greeting = randElement(greetings);
     res.writeHead(200, {
   'Content-Type': 'text/html' });
-  res.end("<html><head>" + "<meta charset='UTF-8'>" + "</head><body>" + greeting + "</body></html>");
+  res.end(greeting);
 });
 
 app.get("/testdb", function(req,res) {
@@ -194,7 +194,7 @@ app.post("/knockout/del",function(req,res){
 
 app.listen(3000);
 
-var greetings = ["Hello","こんにちは","夜露死苦"];
+var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];
 
 function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
