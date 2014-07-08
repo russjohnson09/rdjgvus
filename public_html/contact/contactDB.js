@@ -56,8 +56,8 @@
 
         table.bind("addRec", function(e, rec) {
             var tr = getRow(rec);
-            //table.trigger('addRows', [tr, true]);
             table.find("tbody").append(tr);
+            table.trigger('addRow', [tr]);
             var tx = db.transaction(["contact"], "readwrite");
             var os = tx.objectStore("contact");
             var req = os.put(rec);

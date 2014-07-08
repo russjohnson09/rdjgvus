@@ -8,9 +8,8 @@
         var currentRow;
         var table = this;
 
-        this.bind("addRows", function(e, row) {
-            //trs = $(selector).find("tr");
-            //trs.bind("click", _select);
+        this.bind("addRow", function(e, row) {
+            trs = $(selector).find("tr");
             row.bind("click", _select);
         });
         
@@ -23,6 +22,7 @@
                 table.trigger("removeRec",[$(el).data("id")]);
                 $(el).remove();
             });
+            table.trigger("update");
         });
         
         trs.bind("click", _select);

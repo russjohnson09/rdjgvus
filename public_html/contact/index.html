@@ -54,33 +54,15 @@ $(function() {
         table.tablesorter().tableSelect();
         $("html").bind("keypress", function(e) {
             if (e.key == "Del") {
-                //$("tr.selected").each(function(ix, el) {
-                //    var recId = $(el).data("id");
-                //    console.log(recId);
-                //    table.trigger("removeRec", [recId]);
-                //});
                 table.trigger("removeRows");
-                table.tablesorter().tableSelect();
             }
         });
     });
-    //table.bind("removeRow", function(e, row) {
-    //    var recId = $(el).data("id");
-    //    table.trigger("removeRec", [recId]);
-    //});
-    //table.bind("rowsRemoved", function(e, rows) {
-    //    rows.each(function(ix, el) {
-    //        var recId = $(el).data("id");
-    //        console.log(recId);
-    //        table.trigger("removeRec", [recId]);
-    //    });
-    //});
 
     $("#gen").bind("click", function(e) {
         e.preventDefault();
         var contact = $.testData.genContact();
         table.trigger("addRec", [contact]);
-        //table.trigger("addRows");
     });
 
     $("#addContact").bind("click", function(e) {
