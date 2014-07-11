@@ -15,6 +15,9 @@ var knockoutCollection;
 var todos;
 var baseUrl = mConfig.baseUrl;
 var http = require('http');
+var basePort = parseInt(mConfig.basePort);
+var meteorPort = basePort+1;
+var mainAppPort = basePort+2;
 
 var httpProxy = require('http-proxy');
 var proxy = httpProxy.createProxy();
@@ -24,23 +27,19 @@ var proxyServer = http.createServer(function(req, res) {
     var u = req.url.substring(0,5);
     if (u != "/mete" && u != "/sock" && u != "/0546" && u != "/1c62") {
       proxy.web(req, res, {
-        target: 'http://127.0.0.1:3001'
+        target: baseUrl +':' + mainAppPort
      });
     }
     else {
       proxy.web(req, res, {
-        target: 'http://127.0.0.1:3002'}, function(e) {
+        target: baseUrl + ':' + meteorPort}, function(e) {
             console.log(e);
             }
       );
     }
 });
 
-//proxyServer.on('upgrade', function (req, socket, head) {
-//  proxy.ws(req, socket, head);
-//});
-
-proxyServer.listen(3000);
+proxyServer.listen(basePort);
 
 w.add(w.transports.File, { filename: './error.log' });
 
@@ -220,20 +219,18 @@ app.post("/knockout/del",function(req,res){
     });
 });
 
-app.listen(3001);
-
 var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];
 
 function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
     }
     
+    
+app.listen(mainAppPort);
 
 
 //meteor app
-
-
 process.env['MONGO_URL'] = dbUrl;
-process.env['ROOT_URL']=baseUrl + 'meteor'
-process.env['PORT']=3002;
+process.env['ROOT_URL']=baseUrl + '/meteor'
+process.env['PORT']=meteorPort;
 require("./ar_man/main.js");
