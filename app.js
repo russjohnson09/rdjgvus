@@ -23,7 +23,7 @@ var httpProxy = require('http-proxy');
 var proxy = httpProxy.createProxy();
 
 var proxyServer = http.createServer(function(req, res) {
-    console.log(req.url);
+    w.info(req.url);
     var u = req.url.substring(0,5);
     if (u != "/mete" && u != "/sock" && u != "/0546" && u != "/1c62") {
       proxy.web(req, res, {
@@ -33,7 +33,7 @@ var proxyServer = http.createServer(function(req, res) {
     else {
       proxy.web(req, res, {
         target: baseUrl + ':' + meteorPort}, function(e) {
-            console.log(e);
+            w.info(e);
             }
       );
     }
@@ -228,9 +228,11 @@ function randElement(ary) {
     
 app.listen(mainAppPort);
 
-
 //meteor app
 process.env['MONGO_URL'] = dbUrl;
 process.env['ROOT_URL']=baseUrl + '/meteor'
 process.env['PORT']=meteorPort;
 require("./ar_man/main.js");
+
+
+w.info('server started');
