@@ -1,22 +1,182 @@
 <!DOCTYPE HTML>
-
-
 <html>
 
 <head>
+
+<!-- <link href="/css/main.css" rel="stylesheet"> -->
 
 </head>
 
 
 <body>
+<div id="container">
 
+<h1>About</h1>
+    This page is for demoing bootstrap related components used on my site.
 
+<div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+    Dropdown
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <li><a href="#">Action</a></li>
+    <li><a href="#">Another action</a></li>
+    <li><a href="#">Something else here</a></li>
+    <li class="divider"></li>
+    <li><a href="#">Separated link</a></li>
+  </ul>
+</div>
 
+<h1>Tabular input/output</h1>
+<p>A single row of input with actions, modify, add, delete.</p>
+<div id="contacts">
+    <table>
+        <tr>
+        <th>
+        First Name
+        </th>
+        <th>
+        Last Name
+        </th>
+        <th>
+        Sex
+        </th>
+        <th>Email</th>
+        </tr>
+        <tbody>
+        <tr>
+            <td><input class="form-control" type="text"></td>
+            <td><input class="form-control" type="text"></td>
+            <td><input class="form-control" type="text"></td>
+            <td><input class="form-control" type="text" list="email" /></td>
+            <td><button id="add-contact" class="btn btn-default">Add</button></td>
+        </tr>
+        </tbody>
+    </table>
+    <span class="divider"></span>
+    <table class="table">
+        <tr>
+        <th>
+        First Name
+        </th>
+        <th>
+        Last Name
+        </th>
+        <th>Sex</th>
+        <th>Email</th>
+        </tr>
+        <tbody data-bind="foreach: contacts">
+            <tr>
+                <td><span data-bind="text: first"></span></td>
+                <td><span data-bind="text: last"></span></td>
+                <td><span data-bind="text: sex"></span></td>
+                <td><span data-bind="text: email"></span></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
+<!--container-->
+</div>
 
+<div class="datalists">
+    <datalist id="email" data-bind="foreach: contacts">
+        <option data-bind="attr { value: email }">
+    </datalist>
+</div>
+
+<script src="/js/jquery.js"></script>
+<script src="/js/knockout.js"></script>
 <script src="/js/bootstrap.min.js"></script>
-
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+
+<script>
+$(function(){
+    var data = {
+        error : ko.observable(),
+        contacts : ko.observableArray([]),
+        addContact: function(o) {
+            var self = this;
+            $.ajax({
+            data: {'id':catId},
+           	type: 'POST',
+            url: "/contacts/add",
+            }).done(function(data,status,xhr) {
+                self.response(data.txt);
+                self.load();
+            }).fail(function(xhr,status,err){
+                self.error(err);
+            })
+            this.contacts.push(o);
+        },
+        loadServer : function() {
+            var self = this;
+            $.ajax({
+            data: {limit:100},
+           	type: 'GET',
+           	contentType: "application/json; charset=utf-8",
+            url: "/contacts/load",
+            }).done(function(data,status,xhr) {
+                self.contacts(data);
+            }).fail(function(xhr,status,err){
+                self.error(err);
+            });
+        },
+        remove : function() {
+            var self = this;
+            $.ajax({
+            data: {'id':catId},
+           	type: 'POST',
+            url: "/knockout/del",
+            }).done(function(data,status,xhr) {
+                self.response(data.txt);
+                self.load();
+            }).fail(function(xhr,status,err){
+                self.error(err);
+            })
+        }
+    };
+    
+    ko.applyBindings(data);
+    var $contact = $("#contacts input");
+    
+    $("#add-contact").on("click", function(e) {
+        data.addContact({
+        first:  $contact[0].value,
+        last:   $contact[1].value,
+        sex:    $contact[2].value,
+        email:  $contact[3].value
+        });
+    });
+    
+    //data.addContact({first:"russ",last:"last",sex:"male"});
+    
+});
+
+</script>
+
+<style>
+#container {
+    margin: 10px;
+}
+
+body {
+    color: #FFF;
+    background-color: #333;
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAADklEQVQIW2NgQAXGZHAAGioAza6+Hk0AAAAASUVORK5CYII=");
+}
+
+span.divider {
+    margin:0;padding:0;
+    display: inline-block;
+    height: 1px;
+    width: 100%;
+    margin: 10px 0;
+}
+
+</style>
+
 </body>
 
 
