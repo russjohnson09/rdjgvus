@@ -14,6 +14,14 @@
             You can sort on multiple columns using shift. You can delete information by selecting 
             a row and pressing delete. Multiple rows can be selected using ctl or shift.
             </p>
+        <div class="btn-group" id="db-select" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input type="radio" name="options" id="db1" checked> IndexedDB
+          </label>
+          <label class="btn btn-primary">
+            <input type="radio" name="options" id="db2"> MongoDB
+          </label>
+        </div>
             <div id="todoDemo">
                 <div id="contacts-container">
                     <table>
@@ -57,6 +65,15 @@
         
 <script>
 $(function() {
+    if (document.getElementById("db2").checked) {
+        indexedDb();
+    }
+    else {
+    
+    }
+}); 
+
+function indexedDb() {
     var divContainer = $("#contacts-container");
     var table = $("#contactsTable");
     var contact = $("#contacts-container input");
@@ -85,7 +102,11 @@ $(function() {
             phone   : contact[3].value
         }]);
     });
-}); 
+    
+    $("#db-select").on("click", function(e) {
+        console.log(e);
+    });
+}
 
 </script>
 </body>
