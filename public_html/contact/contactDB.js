@@ -15,6 +15,7 @@
         var ver = opts.ver;
         var res = indexedDB.open(dbName, ver);
         var table = this;
+        var sexList = [];
 
         res.onsuccess = function(e) {
             db = e.target.result;
@@ -45,11 +46,16 @@
 
             c.onsuccess = function(e) {
                 var res = e.target.result;
-                if (!res)
+                if (!res) {
                     return;
+                }
+                var sex = res.value.sex
+                if (typeof sex == "string" && sex.length > 0 &&
+                    sexList.indexOf(sex) < 0) {
+                    sexList.push(sex);
+                }
                 tbody.append(getRow(res.value,res.key));
-                res.
-                continue();
+                res.continue();
             };
 
         });
@@ -92,7 +98,11 @@
             tr.data("id",key);
             return tr;
         }
+        
+        table.getSexList = function() {
+            return sexList;
+        }
 
-        return this;
+        return table;
     };
 })(jQuery);

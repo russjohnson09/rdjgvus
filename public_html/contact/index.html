@@ -22,7 +22,7 @@
             <input type="radio" name="options" id="db2"> MongoDB
           </label>
         </div>
-            <div id="todoDemo">
+            <div id="contactsDemo">
                 <div id="contacts-container">
                     <table>
                     <tr>
@@ -32,12 +32,12 @@
                         <tr>
                         <td><input class="form-control no-radius"></td>
                         <td><input class="form-control no-radius"></td>
-                        <td><input class="form-control no-radius"></td>
+                        <td><input class="form-control no-radius" list="sexList"></td>
                         <td><input class="form-control no-radius"></td>
                         <td><button class="btn btn-default no-radius" id="addContact">
                             Add Contact
                         </button></td>
-                        <td><button class="btn btn-default no-radius" id="gen">
+                        <td><button class="btn btn-default no-radius main-blue" id="gen">
                         Generate Contact
                         </button></td>
                         </tr>
@@ -48,6 +48,13 @@
                 </div>
             </div>
 
+       </div>
+       
+       <div id="dataList">
+        <datalist id="sexList" data-bind="foreach: sexList">
+            <option data-bind="attr { value: $data }">
+        </datalist>
+       
        </div>
             
             
@@ -66,14 +73,26 @@
 <script>
 $(function() {
     if (document.getElementById("db2").checked) {
-        indexedDb();
+        mongoDb();
     }
     else {
-    
+        indexedDb();
     }
 }); 
 
+function mongoDb() {
+
+}
+
 function indexedDb() {
+    var data = {
+        sexList : ko.observableArray([])
+    }
+    
+    ko.applyBindings(data);
+    
+    //data.sexList.push('1');
+
     var divContainer = $("#contacts-container");
     var table = $("#contactsTable");
     var contact = $("#contacts-container input");
@@ -85,6 +104,7 @@ function indexedDb() {
                 table.trigger("removeRows");
             }
         });
+        data.sexList(table.getSexList());
     });
 
     $("#gen").bind("click", function(e) {
@@ -93,18 +113,27 @@ function indexedDb() {
         table.trigger("addRec", [contact]);
     });
 
-    $("#addContact").bind("click", function(e) {
-        e.preventDefault();
+    $("#addContact").on("click", addContact);
+    
+    $("#contacts-container").on("keypress", function(e) {
+        //console.log(e);
+        if (e.key == "Enter") {
+            addContact(e);
+        }
+    });
+    
+    function addContact(e) {
         table.trigger("addRec", [{
             fname   : contact[0].value,
             lname   : contact[1].value,
             sex     : contact[2].value,
             phone   : contact[3].value
         }]);
-    });
+        e.preventDefault();
+    }
     
     $("#db-select").on("click", function(e) {
-        console.log(e);
+        //console.log(e);
     });
 }
 
