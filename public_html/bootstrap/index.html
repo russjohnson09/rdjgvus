@@ -46,11 +46,11 @@
         </tr>
         <tbody>
         <tr>
-            <td><input class="form-control" type="text"></td>
-            <td><input class="form-control" type="text"></td>
-            <td><input class="form-control" type="text"></td>
-            <td><input class="form-control" type="text" list="email" /></td>
-            <td><button id="add-contact" class="btn btn-default">Add</button></td>
+            <td><input class="form-control no-radius" type="text"></td>
+            <td><input class="form-control no-radius" type="text"></td>
+            <td><input class="form-control no-radius" type="text" list="sexList"></td>
+            <td><input class="form-control no-radius" type="text" list="email" /></td>
+            <td><button id="add-contact" class="btn btn-default no-radius">Add</button></td>
         </tr>
         </tbody>
     </table>
@@ -84,6 +84,9 @@
     <datalist id="email" data-bind="foreach: contacts">
         <option data-bind="attr { value: email }">
     </datalist>
+    <datalist id="sexList" data-bind="foreach: sexList">
+        <option data-bind="attr { value: $data }">
+    </datalist>
 </div>
 
 <script src="/js/jquery.js"></script>
@@ -95,20 +98,27 @@
 $(function(){
     var data = {
         error : ko.observable(),
+        sexList : ko.observableArray([]),
         contacts : ko.observableArray([]),
         addContact: function(o) {
             var self = this;
             $.ajax({
-            data: {'id':catId},
+            data: o,
            	type: 'POST',
             url: "/contacts/add",
             }).done(function(data,status,xhr) {
-                self.response(data.txt);
-                self.load();
+                var error = data.error;
+                if (error) {
+                    console.log(error);
+                }
+                else {
+                    console.log(data.result);
+                    self.loadServer();
+                }
             }).fail(function(xhr,status,err){
                 self.error(err);
             })
-            this.contacts.push(o);
+            //this.contacts.push(o);
         },
         loadServer : function() {
             var self = this;
@@ -118,22 +128,34 @@ $(function(){
            	contentType: "application/json; charset=utf-8",
             url: "/contacts/load",
             }).done(function(data,status,xhr) {
-                self.contacts(data);
+                var error = data.error;
+                if (error) {
+                
+                }
+                else {
+                    self.contacts(data);
+                }
             }).fail(function(xhr,status,err){
-                self.error(err);
+            });
+            $.ajax({
+            data: {limit:100},
+           	type: 'GET',
+           	contentType: "application/json; charset=utf-8",
+            url: "/contacts/getsex",
+            }).done(function(data,status,xhr) {
+                self.sexList(data);
+            }).fail(function(xhr,status,err){
             });
         },
-        remove : function() {
+        remove : function(id) {
             var self = this;
             $.ajax({
-            data: {'id':catId},
+            data: {id:id},
            	type: 'POST',
-            url: "/knockout/del",
+            url: "/contacts/del",
             }).done(function(data,status,xhr) {
-                self.response(data.txt);
-                self.load();
+                self.loadServer();
             }).fail(function(xhr,status,err){
-                self.error(err);
             })
         }
     };
@@ -141,14 +163,23 @@ $(function(){
     ko.applyBindings(data);
     var $contact = $("#contacts input");
     
-    $("#add-contact").on("click", function(e) {
+    $("#add-contact").on("click", addContact);
+    $("#contacts").on("keypress", function(e) {
+        if (e.key == "Enter") {
+            addContact(e);
+        }
+    });
+    
+    function addContact(e) {
         data.addContact({
         first:  $contact[0].value,
         last:   $contact[1].value,
         sex:    $contact[2].value,
         email:  $contact[3].value
         });
-    });
+    }
+    
+    data.loadServer();
     
     //data.addContact({first:"russ",last:"last",sex:"male"});
     
@@ -173,6 +204,10 @@ span.divider {
     height: 1px;
     width: 100%;
     margin: 10px 0;
+}
+
+input.no-radius,button.no-radius {
+    border-radius:0;
 }
 
 </style>

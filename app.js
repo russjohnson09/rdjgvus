@@ -12,6 +12,7 @@ var PROD = config.isPROD;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
+var contacts;
 var todos;
 var baseUrl = mConfig.baseUrl;
 var http = require('http');
@@ -55,6 +56,7 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         }
         w.info("connected");
         knockoutCollection = db.collection("knockout");
+        contacts = db.collection('contacts');
         todos = db.collection('todos');
         patients = db.collection('patients');
 });
@@ -216,6 +218,38 @@ app.post("/knockout/del",function(req,res){
         else {
             res.json({txt:result + " category documents have been deleted."});
         }
+    });
+});
+
+app.get("/contacts/load",function(req,res) {
+    var val = req.query.x;
+    contacts.find().toArray(function(err, items) {
+        if (err) {
+            res.json({error:'error'});
+            return;
+        }
+        res.json(items);
+    });
+});
+
+app.post("/contacts/add",function(req,res) {
+    //var cat = req.body.cat;
+    console.log(req.body);
+    contacts.insert(req.body,{w:1}, function(err,result) {
+        if (err) {
+            res.json({error:err});
+        }
+        else {
+            res.json({result: result + " added."});
+        }
+    });
+});
+
+app.get("/contacts/getsex",function(req,res) {
+    //console.log(contacts);
+    contacts.distinct('sex',function(err,docs) {
+        console.log(docs);
+        res.json(docs);
     });
 });
 
