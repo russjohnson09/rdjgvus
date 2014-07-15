@@ -17,30 +17,6 @@ var todos;
 var baseUrl = mConfig.baseUrl;
 var http = require('http');
 var basePort = parseInt(mConfig.basePort);
-var meteorPort = basePort+1;
-var mainAppPort = basePort+2;
-
-var httpProxy = require('http-proxy');
-var proxy = httpProxy.createProxy();
-
-var proxyServer = http.createServer(function(req, res) {
-    w.info(req.url);
-    var u = req.url.substring(0,5);
-    if (u != "/mete" && u != "/sock" && u != "/0546" && u != "/1c62") {
-      proxy.web(req, res, {
-        target: baseUrl +':' + mainAppPort
-     });
-    }
-    else {
-      proxy.web(req, res, {
-        target: baseUrl + ':' + meteorPort}, function(e) {
-            w.info(e);
-            }
-      );
-    }
-});
-
-proxyServer.listen(basePort);
 
 w.add(w.transports.File, { filename: './error.log' });
 
@@ -260,13 +236,7 @@ function randElement(ary) {
     }
     
     
-app.listen(mainAppPort);
-
-//meteor app
-process.env['MONGO_URL'] = dbUrl;
-process.env['ROOT_URL']=baseUrl + '/meteor'
-process.env['PORT']=meteorPort;
-require("./ar_man/main.js");
+app.listen(basePort);
 
 
 w.info('server started');
