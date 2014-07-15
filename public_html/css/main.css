@@ -18,7 +18,6 @@ a {
 }
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: relative;
     color: #FFF;
     background-color: #333;
@@ -73,6 +72,10 @@ label input {
     right: 0;
 }
 
+input {
+    color: #000;
+}
+
 
 #container {
     margin: 10px;
@@ -81,4 +84,8 @@ label input {
 .hide {
     display: none;
 
+}
+
+input.no-radius,button.no-radius {
+    border-radius:0;
 }
