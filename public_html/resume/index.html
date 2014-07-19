@@ -11,25 +11,37 @@
 <div class="container">
 
 
+    <h1 class="center">Russell Johnson</h1>
+
     <div class="contact">
-        <h1>Contact</h1>
+        <h1><span data-bind="{text: contact_info}"></span></h1>
             <ul id="contactList" data-bind="foreach: contacts">
 			    <li><span data-bind="{text: $data}"></span></li>
-            </option></ul>
+            </ul>
     </div>
 
     <div class="section">
     <h1>Education</h1>
             <ul id="education" data-bind="foreach: education">
 			    <li><span data-bind="{text: $data}" ></span></li>
-            </option></ul>
+            </ul>
     </div>
 
     <div class="section">
     <h1>Programming</h1>
             <ul class="comma-list" id="programming" data-bind="foreach: programming">
 			    <li class=""><span data-bind="{text: $data}" ></span></li>
-            </option></ul>
+            </ul>
+    </div>
+    
+    <div id="language-select">
+        <h1>Language Select</h1>
+            <div class="choices">
+                <ul id="education" data-bind="foreach: language_select">
+			        <label><span data-bind="text: label" ></span><input data-bind="attr: { value: value }"
+			         type="radio" name="language" data-bind="attr: { id: value }"></label>
+                </ul>
+             </div>
     </div>
 
 <!-- container-->
@@ -45,26 +57,68 @@
 
 <style>
     
-    * {
+    
+    
+    d {
         border: 1px solid;
     }
     
+    #language-select {
+        margin: 20px 0;
+        width: 300px;
+        border: 1px solid;
+        padding: 10px;
+        position: absolute;
+        left: 40%
+    }
+    
+    #language-select input {
+        right: 0;
+    }
+    
+    #language-select h1 {
+        border-bottom: 1px solid;
+        font-size: 25px;
+    }
+    
+    #language-select label {
+        width: 100%;
+    }
+    
+    #language-select .choices {
+        max-width: 200px;
+        width: 90%;
+    }
+    
+    .container {
+		margin: 20px 10px 10px 10px;
+	}
+	
+	.contact h1 {
+	    font-size: 25px;
+	}
+    
+    .center {
+        text-align: center;
+    }
+    
     .contact {
-        /*position: absolute;*/
-            
+        /*position: absolute;*/   
     }
 
-	body,html,div,ul,h1 {
+	body,html,div,ul {
 		margin:0;padding:0;
+	}
+	
+	h1 {
+	    padding:0;
+	    margin:0 0 5px 0;
 	}
 	
 	body,html,div,ul {
 	    position: relative;
 	}
-	
-	.container {
-		margin: 10px;
-	}
+
 	
 	ul {
 		list-style: none;
@@ -73,6 +127,14 @@
 	ul.comma-list>li {
 	    display: inline;
 	}
+	
+	ul.comma-list>li:after {
+        content: ", ";
+    }
+    
+    ul.comma-list>li:last-child:after {
+    content: "";
+    }
 	
 	div.section {
 	    margin:50px 0 0 100px; 
@@ -87,12 +149,15 @@
 
 <script>
 var data,delay;
+var language = "eng";
 $(function() {
 	data = {
-		education : ko.observableArray(education()),
-		skills_web: ko.observableArray(web()),
-		programming: ko.observableArray(programming()),
-		contacts: ko.observableArray(contacts()),
+		'education' : ko.observableArray(education()),
+		'skills_web': ko.observableArray(web()),
+		'programming': ko.observableArray(programming()),
+		'contacts': ko.observableArray(contacts()),
+		'contact_info': ko.observable("Contact Info"),
+		'language_select': ko.observableArray(languages()),
 	}
 	var education = education();
 	data.education.push(education[0]);
@@ -114,8 +179,13 @@ $(function() {
 	}
 	
 	function contacts() {
-	    return ["russgvsu@gmail.com"]
+	    return ["russgvsu@gmail.com"];
     }
+    
+    function languages() {
+        return [{'label':'English','value':'eng'},{'label':'Japanese','value':'jpn'}];
+    }
+    
 });
 
 
