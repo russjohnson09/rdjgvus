@@ -11,10 +11,10 @@
 <div class="container">
 
 
-    <h1 class="center">Russell Johnson</h1>
+    <h1 class="center" data-bind="text:i18n().russ_full"></h1>
 
     <div class="contact">
-        <h1><span data-bind="{text: contact_info}"></span></h1>
+        <h1><span data-bind="{text: i18n().contact_info}"></span></h1>
             <ul id="contactList" data-bind="foreach: contacts">
 			    <li><span data-bind="{text: $data}"></span></li>
             </ul>
@@ -150,11 +150,16 @@
 
 <script>
 var data,delay;
-var i18n = {'contact_info':
-            {'eng': 'Contact Info',
-            'jpn': 'Kontakuto Inforu'
-            }
-            };
+            
+var i18n = {
+    'eng': {
+        'contact_info': 'Contact Info',
+        'russ_full' : 'Russell Johnson',
+    },
+    'jpn': {
+        'contact_info':'Kontakuto Inforu',
+    },
+}
 
 $(function() {
 
@@ -166,9 +171,6 @@ $(function() {
 	    self.contacts = ko.observableArray(contacts()),
 	    self.language = ko.observable('eng');
 	    self.language_select = ko.observableArray(languages());
-	    self.contact_info = ko.computed(function() {
-            return getStr('contact_info',self.language());
-        });
         self.i18n = ko.computed(function() {
             return getI18N(self.language());
         });
