@@ -38,8 +38,9 @@
         <h1>Language Select</h1>
             <div class="choices">
                 <ul id="education" data-bind="foreach: language_select">
-			        <label><span data-bind="text: label" ></span><input data-bind="attr: { value: value }"
-			         type="radio" name="language" data-bind="attr: { id: value }"></label>
+			        <label><span data-bind="text: label" ></span>
+			        <input type="radio" name="language" data-bind="attr: { id: value }">
+			         </label>
                 </ul>
              </div>
     </div>
@@ -149,22 +150,51 @@
 
 <script>
 var data,delay;
-var language = "eng";
+var i18n = {'contact_info':
+            {'eng': 'Contact Info',
+            'jpn': 'Kontakuto Inforu'
+            }
+            };
+
 $(function() {
-	data = {
-		'education' : ko.observableArray(education()),
-		'skills_web': ko.observableArray(web()),
-		'programming': ko.observableArray(programming()),
-		'contacts': ko.observableArray(contacts()),
-		'contact_info': ko.observable("Contact Info"),
-		'language_select': ko.observableArray(languages()),
-	}
-	var education = education();
+
+    function ViewModel() {
+        var self = this;
+        self.education = ko.observableArray(education());
+	    self.skills_web = ko.observableArray(web());
+	    self.programming = ko.observableArray(programming());
+	    self.contacts = ko.observableArray(contacts()),
+	    self.language = ko.observable('eng');
+	    self.language_select = ko.observableArray(languages());
+	    self.contact_info = ko.computed(function() {
+            return getStr('contact_info',self.language());
+        });
+        self.i18n = ko.computed(function() {
+            return getI18N(self.language());
+        });
+	    return self;
+    }
+	
+	data = new ViewModel();
 	data.education.push(education[0]);
 	var p = programming();
 	var w = web();
 	
 	ko.applyBindings(data);
+	
+	var input = document.getElementById('eng');
+	
+	if (input) {
+	    input.checked = true; 
+	}
+
+	function getI18N(lang) {
+	    return i18n[lang];
+	}
+	
+	function getStr(key,lang) {
+	    return i18n[key][lang] || i18n[key]['eng']; //default to english
+	}
 	
 	function education() {
 		return ["Grand Valley","3.65"];
@@ -185,6 +215,12 @@ $(function() {
     function languages() {
         return [{'label':'English','value':'eng'},{'label':'Japanese','value':'jpn'}];
     }
+    
+    $("#language-select input").on("click", function(e) {
+        var lan = e.target.id;
+        data.language(lan || data.language);
+        console.log(data.language());
+    });
     
 });
 
