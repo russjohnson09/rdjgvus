@@ -28,6 +28,15 @@ body {
     position: fixed;
     top: 30%;
     left: 10px;
+    width: 100px;
+}
+
+#sidebar div {
+    margin: 10px 0 0 10px;
+}
+
+#sidebar h1 {
+    font-size: 20px;
 }
 
 #sidebar ul {
@@ -37,10 +46,16 @@ body {
 }
 
 #sidebar a {
-    background-color: #444;
-    border-radius: 5px;
     color: #FFF;
     text-decoration: none;
+}
+
+#sidebar li:hover,#sidebar h1:hover {
+    background-color: #999;
+}
+
+#sidebar li:hover {
+    font-size: 110%;
 }
 
 footer {
