@@ -30,9 +30,13 @@
     <div class="section">
     <h1 data-bind="text: i18n().programming"></h1>
             <ul class="comma-list" id="programming" data-bind="foreach: programming">
-			    <li class=""><span data-bind="{text: $data}" ></span></li>
+			    <li class=""><span data-bind="text: string" ></span></li>
             </ul>
     </div>
+    
+    <div 
+    
+    Node.js, Django, HTML5, CSS, XML/XSL, Meteor
     
     <div id="language-select">
         <h1>Language Select</h1>
@@ -183,11 +187,11 @@ function Localized(data) {
 
 function ViewModel() {
     var self = {};
-    self.education = ko.observableArray();
-    self.skills_web = ko.observableArray(web());
-    self.programming = ko.observableArray(programming());
-    self.contacts = ko.observableArray(contacts()),
     self.language = ko.observable('eng');
+    self.education = ko.observableArray(education(self));
+    self.skills_web = ko.observableArray(web());
+    self.programming = ko.observableArray(programming(self));
+    self.contacts = ko.observableArray(contacts()),
     self.language_select = ko.observableArray(languages());
     self.i18n = ko.computed(function() {
         return getI18N(self.language());
@@ -201,8 +205,13 @@ function education(parent) {
 	return [{type:'str_key',data:"grand_valley"},{type:'num',data:"3.65"}];
 }
 
-function programming() {
-	return ["C#","Python","Javascript","Visual Basic","Mumps","C++"];
+function programming(parent) {
+    var ary = ["csharp","python","javascript","vb","mumps","cplus"];
+    var ary2 = [];
+    for (var i=0;i<ary.length;i++) {
+        ary2.push(Localized({parent:parent,key:ary[i]}));
+    }
+	return ary2;
 }
 
 function web() {
@@ -219,12 +228,10 @@ function languages() {
 
 $(function() {
 
-	
 	data = new ViewModel();
-	data.education(education(data));
+	//data.education(education(data));
+	//data.programming(programming(data))
 	//data.education.push(education[0]);
-	var p = programming();
-	var w = web();
 	
 	ko.applyBindings(data);
 	

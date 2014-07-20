@@ -9,8 +9,18 @@ var i18n = {
         'programming' : 'Programming',
         'web' : 'Web',
         'javascript': 'Javascript',
+        'csharp': 'C#',
+        'mumps': 'Mumps',
+        'python': 'Python',
         'cplus': 'C++',
-        'grand_valley': 'Grand Valley State University'
+        'vb': 'Visual Basic',
+        'grand_valley': 'Grand Valley State University',
+        'node':'Node.js',
+        'django': 'Django',
+        'html': 'HTML5',
+        'css': 'CSS',
+        'xml_xsl': 'XML/XSL',
+        'meteor': 'Meteor'
     },
     'jpn': {
         'contact_info':'連絡',
