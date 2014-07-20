@@ -32,6 +32,10 @@
             <ul class="comma-list" id="programming" data-bind="foreach: programming">
 			    <li class=""><span data-bind="text: string" ></span></li>
             </ul>
+        <h2 data-bind="text: i18n().web"></h2>
+            <ul class="comma-list" id="web" data-bind="foreach: web">
+			    <li class=""><span data-bind="text: string" ></span></li>
+            </ul>
     </div>
     
     <div 
@@ -156,23 +160,6 @@
 
 var debug;
 
-ko.extenders.localalized = function(target,language) {
-    var result = ko.computed({
-        read: target,
-        write: function(newVal) {
-            target.notifySubscribers('1');
-            return;
-            var current = target();
-            if (newVal.data == current.data) {
-                return;
-            }
-            target.notifySubscribers(getStr(language,newVal.data));
-        }
-    }).extend({notify: 'always'});
-    result(target());
-    return result;
-};
-
 
 var data,delay;
 
@@ -180,7 +167,8 @@ function Localized(data) {
     var self = {};
     self.data = ko.observable(data);
     self.string = ko.computed(function() {
-        return getStr(self.data().parent.language(),self.data().key);
+        //return '';
+        return getStr(self.data().parent.language(),self.data().key) || '';
     });
     return self;
 }
@@ -189,7 +177,7 @@ function ViewModel() {
     var self = {};
     self.language = ko.observable('eng');
     self.education = ko.observableArray(education(self));
-    self.skills_web = ko.observableArray(web());
+    self.web = ko.observableArray(web(self));
     self.programming = ko.observableArray(programming(self));
     self.contacts = ko.observableArray(contacts()),
     self.language_select = ko.observableArray(languages());
@@ -206,16 +194,19 @@ function education(parent) {
 }
 
 function programming(parent) {
-    var ary = ["csharp","python","javascript","vb","mumps","cplus"];
-    var ary2 = [];
-    for (var i=0;i<ary.length;i++) {
-        ary2.push(Localized({parent:parent,key:ary[i]}));
-    }
-	return ary2;
+    return getLocalizedAryFromKeys(["csharp","python","javascript","vb","mumps","cplus"],parent);
 }
 
-function web() {
-	return [];
+function getLocalizedAryFromKeys(keys,parent) {
+    var ary = [];
+    for (var i=0;i<keys.length;i++) {
+        ary.push(Localized({parent:parent,key:keys[i]}));
+    }
+    return ary;
+}
+
+function web(parent) {
+    return getLocalizedAryFromKeys(['node','django','html','css','xml_xsl','meteor'],parent)
 }
 
 function contacts() {
@@ -229,9 +220,6 @@ function languages() {
 $(function() {
 
 	data = new ViewModel();
-	//data.education(education(data));
-	//data.programming(programming(data))
-	//data.education.push(education[0]);
 	
 	ko.applyBindings(data);
 	

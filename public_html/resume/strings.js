@@ -39,6 +39,7 @@ function getI18N(lang) {
 }
 
 function getStr(lang,key) {
-    console.log(lang);
-    return i18n[lang][key] || i18n['eng'][key]; //default to english
+    var result = i18n[lang][key] || i18n['eng'][key];
+    console.log(result);
+    return  result //default to english
 }
