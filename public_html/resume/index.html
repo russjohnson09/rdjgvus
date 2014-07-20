@@ -21,14 +21,14 @@
     </div>
 
     <div class="section">
-    <h1>Education</h1>
+    <h1 data-bind="text: i18n().education"></h1>
             <ul id="education" data-bind="foreach: education">
 			    <li><span data-bind="{text: $data}" ></span></li>
             </ul>
     </div>
 
     <div class="section">
-    <h1>Programming</h1>
+    <h1 data-bind="text: i18n().programming"></h1>
             <ul class="comma-list" id="programming" data-bind="foreach: programming">
 			    <li class=""><span data-bind="{text: $data}" ></span></li>
             </ul>
@@ -54,6 +54,7 @@
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
+<script src="strings.js"></script>
 
 
 <style>
@@ -119,7 +120,6 @@
 	body,html,div,ul {
 	    position: relative;
 	}
-
 	
 	ul {
 		list-style: none;
@@ -150,16 +150,6 @@
 
 <script>
 var data,delay;
-            
-var i18n = {
-    'eng': {
-        'contact_info': 'Contact Info',
-        'russ_full' : 'Russell Johnson',
-    },
-    'jpn': {
-        'contact_info':'Kontakuto Inforu',
-    },
-}
 
 $(function() {
 
