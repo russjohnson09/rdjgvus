@@ -9,7 +9,8 @@ var i18n = {
         'programming' : 'Programming',
         'web' : 'Web',
         'javascript': 'Javascript',
-        'cplus': 'C++'
+        'cplus': 'C++',
+        'grand_valley': 'Grand Valley State University'
     },
     'jpn': {
         'contact_info':'連絡',
@@ -19,5 +20,15 @@ var i18n = {
         'javascript': 'ジャヴァスクリプト',
         'java': 'ジャバ',
         'cplus' : 'シープラスプラス',
+        'grand_valley': 'グランドバレー州立大学'
     },
+}
+
+function getI18N(lang) {
+    return i18n[lang];
+}
+
+function getStr(lang,key) {
+    console.log(lang);
+    return i18n[lang][key] || i18n['eng'][key]; //default to english
 }

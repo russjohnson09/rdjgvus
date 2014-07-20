@@ -16,14 +16,14 @@
     <div class="contact">
         <h1><span data-bind="{text: i18n().contact_info}"></span></h1>
             <ul id="contactList" data-bind="foreach: contacts">
-			    <li><span data-bind="{text: $data}"></span></li>
+			    <li><span data-bind="text: $data"></span></li>
             </ul>
     </div>
 
     <div class="section">
     <h1 data-bind="text: i18n().education"></h1>
             <ul id="education" data-bind="foreach: education">
-			    <li><span data-bind="{text: $data}" ></span></li>
+			    <li><span data-bind="text: $data.string" ></span></li>
             </ul>
     </div>
 
@@ -149,26 +149,80 @@
 
 
 <script>
+
+var debug;
+
+ko.extenders.localalized = function(target,language) {
+    var result = ko.computed({
+        read: target,
+        write: function(newVal) {
+            target.notifySubscribers('1');
+            return;
+            var current = target();
+            if (newVal.data == current.data) {
+                return;
+            }
+            target.notifySubscribers(getStr(language,newVal.data));
+        }
+    }).extend({notify: 'always'});
+    result(target());
+    return result;
+};
+
+
 var data,delay;
+
+function Localized(data) {
+    var self = {};
+    self.data = ko.observable(data);
+    self.string = ko.computed(function() {
+        return getStr(self.data().parent.language(),self.data().key);
+    });
+    return self;
+}
+
+function ViewModel() {
+    var self = {};
+    self.education = ko.observableArray();
+    self.skills_web = ko.observableArray(web());
+    self.programming = ko.observableArray(programming());
+    self.contacts = ko.observableArray(contacts()),
+    self.language = ko.observable('eng');
+    self.language_select = ko.observableArray(languages());
+    self.i18n = ko.computed(function() {
+        return getI18N(self.language());
+    });
+    return self;
+}
+
+function education(parent) {
+    return [Localized({parent:parent,key:'grand_valley'})];
+    return [{data: function() {return 1}}];
+	return [{type:'str_key',data:"grand_valley"},{type:'num',data:"3.65"}];
+}
+
+function programming() {
+	return ["C#","Python","Javascript","Visual Basic","Mumps","C++"];
+}
+
+function web() {
+	return [];
+}
+
+function contacts() {
+    return ["russgvsu@gmail.com"];
+}
+
+function languages() {
+    return [{'label':'English','value':'eng'},{'label':'Japanese','value':'jpn'}];
+}
 
 $(function() {
 
-    function ViewModel() {
-        var self = this;
-        self.education = ko.observableArray(education());
-	    self.skills_web = ko.observableArray(web());
-	    self.programming = ko.observableArray(programming());
-	    self.contacts = ko.observableArray(contacts()),
-	    self.language = ko.observable('eng');
-	    self.language_select = ko.observableArray(languages());
-        self.i18n = ko.computed(function() {
-            return getI18N(self.language());
-        });
-	    return self;
-    }
 	
 	data = new ViewModel();
-	data.education.push(education[0]);
+	data.education(education(data));
+	//data.education.push(education[0]);
 	var p = programming();
 	var w = web();
 	
@@ -179,34 +233,6 @@ $(function() {
 	if (input) {
 	    input.checked = true; 
 	}
-
-	function getI18N(lang) {
-	    return i18n[lang];
-	}
-	
-	function getStr(key,lang) {
-	    return i18n[key][lang] || i18n[key]['eng']; //default to english
-	}
-	
-	function education() {
-		return ["Grand Valley","3.65"];
-	}
-	
-	function programming() {
-		return ["C#","Python","Javascript","Visual Basic","Mumps","C++"];
-	}
-	
-	function web() {
-		return [];
-	}
-	
-	function contacts() {
-	    return ["russgvsu@gmail.com"];
-    }
-    
-    function languages() {
-        return [{'label':'English','value':'eng'},{'label':'Japanese','value':'jpn'}];
-    }
     
     $("#language-select input").on("click", function(e) {
         var lan = e.target.id;
