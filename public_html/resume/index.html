@@ -26,24 +26,39 @@
 			    <li><span data-bind="text: $data.string" ></span></li>
             </ul>
     </div>
+    
+    <div class="section">
+    <h1 data-bind="text: i18n().employment"></h1>
+        <h2 data-bind="text: i18n().epic_full"></h2>
+        <p data-bind="text: i18n().epic_exposition"></p>
+    </div>
 
     <div class="section">
     <h1 data-bind="text: i18n().programming"></h1>
-            <ul class="comma-list" id="programming" data-bind="foreach: programming">
-			    <li class=""><span data-bind="text: string" ></span></li>
-            </ul>
         <h2 data-bind="text: i18n().web"></h2>
             <ul class="comma-list" id="web" data-bind="foreach: web">
 			    <li class=""><span data-bind="text: string" ></span></li>
             </ul>
+        <h2 data-bind="text: i18n().javascript"></h2>
+            <ul class="comma-list" id="javascript" data-bind="foreach: javascript">
+			    <li class=""><span data-bind="text: string" ></span></li>
+            </ul>
+        <h2 data-bind="text: i18n().languages"></h2>
+            <ul class="comma-list" id="programming" data-bind="foreach: programming">
+			    <li class=""><span data-bind="text: string" ></span></li>
+            </ul>
+        <h2 data-bind="text: i18n().database"></h2>
+            <ul class="comma-list" data-bind="foreach: database">
+			    <li class=""><span data-bind="text: string" ></span></li>
+            </ul>
+        <h2 data-bind="text: i18n().industry_knowledge"></h2>
+            <ul class="comma-list" data-bind="foreach: industry">
+			    <li class=""><span data-bind="text: string" ></span></li>
+            </ul>
     </div>
     
-    <div 
-    
-    Node.js, Django, HTML5, CSS, XML/XSL, Meteor
-    
     <div id="language-select">
-        <h1>Language Select</h1>
+        <h1 data-bind="text: i18n().language_select"></h1>
             <div class="choices">
                 <ul id="education" data-bind="foreach: language_select">
 			        <label><span data-bind="text: label" ></span>
@@ -149,7 +164,12 @@
 	    margin:50px 0 0 100px; 
 	}
 	
-	ul {
+	h2 {
+	    font-size: 20px;
+	    margin: 5px 10px;
+	}
+	
+	ul,p {
 	    margin:0 0 0 50px;
 	}
 	
@@ -167,7 +187,6 @@ function Localized(data) {
     var self = {};
     self.data = ko.observable(data);
     self.string = ko.computed(function() {
-        //return '';
         return getStr(self.data().parent.language(),self.data().key) || '';
     });
     return self;
@@ -176,9 +195,15 @@ function Localized(data) {
 function ViewModel() {
     var self = {};
     self.language = ko.observable('eng');
+    
     self.education = ko.observableArray(education(self));
     self.web = ko.observableArray(web(self));
     self.programming = ko.observableArray(programming(self));
+    self.javascript = ko.observableArray(javascript(self));
+    self.industry = ko.observableArray(industry(self));
+    self.database = ko.observableArray(database(self));
+    
+    
     self.contacts = ko.observableArray(contacts()),
     self.language_select = ko.observableArray(languages());
     self.i18n = ko.computed(function() {
@@ -187,14 +212,25 @@ function ViewModel() {
     return self;
 }
 
+
+function database(parent) {
+    return getLocalizedAryFromKeys(['mongo','indexed','sqlite','chronicles'],parent);
+}
+
 function education(parent) {
     return [Localized({parent:parent,key:'grand_valley'})];
-    return [{data: function() {return 1}}];
-	return [{type:'str_key',data:"grand_valley"},{type:'num',data:"3.65"}];
 }
 
 function programming(parent) {
     return getLocalizedAryFromKeys(["csharp","python","javascript","vb","mumps","cplus"],parent);
+}
+
+function javascript(parent) {
+    return getLocalizedAryFromKeys(["handlebars","jquery",'knockout','radio'],parent);
+}
+
+function industry(parent) {
+    return getLocalizedAryFromKeys(['emr_abr','pb'],parent);
 }
 
 function getLocalizedAryFromKeys(keys,parent) {
