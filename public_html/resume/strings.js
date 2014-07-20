@@ -32,7 +32,7 @@ var i18n = {
         'sqlite': 'SQLite',
         'chronicles': 'Chronicles',
         'lib': 'Library',
-        'ed2': 'BA in Mathematics with a Minor in Computer Science (GPA 3.65)',
+        'e2': 'BA in Mathematics with a Minor in Computer Science (GPA 3.65)',
         'handlebars': 'Handlebars',
         'jquery': 'jQuery',
         'knockout': 'Knockout',
@@ -60,7 +60,9 @@ var i18n = {
         'language': '言語',
         'language_select': '言語を選択',
         'industry_knowledge': '業界の知識',
-        'employment': '職歴'
+        'employment': '職歴',
+        'eng': '英語',
+        'jpn': '日本語'
     },
 }
 

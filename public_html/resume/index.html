@@ -10,8 +10,7 @@
 
 <div class="container">
 
-
-    <h1 class="center" data-bind="text:i18n().russ_full"></h1>
+    <h1 class="header" data-bind="text:i18n().russ_full"></h1>
 
     <div class="contact">
         <h1><span data-bind="{text: i18n().contact_info}"></span></h1>
@@ -61,8 +60,8 @@
         <h1 data-bind="text: i18n().language_select"></h1>
             <div class="choices">
                 <ul id="education" data-bind="foreach: language_select">
-			        <label><span data-bind="text: label" ></span>
-			        <input type="radio" name="language" data-bind="attr: { id: value }">
+			        <label><span data-bind="text: string" ></span>
+			        <input type="radio" name="language" data-bind="attr: { id: data().key }">
 			         </label>
                 </ul>
              </div>
@@ -117,6 +116,15 @@
     
     .container {
 		margin: 20px 10px 10px 10px;
+		margin: 0 0 0 20%;
+	}
+	
+	.container p,li {
+	    max-width: 800px;
+	}
+	
+	.header {
+	    margin: 10px 0 50px 0;
 	}
 	
 	.contact h1 {
@@ -203,9 +211,8 @@ function ViewModel() {
     self.industry = ko.observableArray(industry(self));
     self.database = ko.observableArray(database(self));
     
-    
     self.contacts = ko.observableArray(contacts()),
-    self.language_select = ko.observableArray(languages());
+    self.language_select = ko.observableArray(languages(self));
     self.i18n = ko.computed(function() {
         return getI18N(self.language());
     });
@@ -218,6 +225,7 @@ function database(parent) {
 }
 
 function education(parent) {
+    return getLocalizedAryFromKeys(['grand_valley','e2'],parent);
     return [Localized({parent:parent,key:'grand_valley'})];
 }
 
@@ -249,7 +257,8 @@ function contacts() {
     return ["russgvsu@gmail.com"];
 }
 
-function languages() {
+function languages(parent) {
+    return getLocalizedAryFromKeys(['eng','jpn'],parent)
     return [{'label':'English','value':'eng'},{'label':'Japanese','value':'jpn'}];
 }
 
@@ -268,9 +277,7 @@ $(function() {
     $("#language-select input").on("click", function(e) {
         var lan = e.target.id;
         data.language(lan || data.language);
-        console.log(data.language());
     });
-    
 });
 
 
