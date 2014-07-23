@@ -8,19 +8,24 @@ var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
-var PROD = config.isPROD;
+var PROD = config.app.isProd;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
 var contacts;
 var todos;
-var baseUrl = mConfig.baseUrl;
 var http = require('http');
-var basePort = parseInt(mConfig.basePort);
+var appPort = config.app.port;
+var Pusher = require("pusher");
+var pusherOpts = config.pusher;
 
 w.add(w.transports.File, { filename: './error.log' });
 
 w.info(dbUrl);
+
+w.info(pusherOpts);
+
+var pusher = new Pusher(pusherOpts);
 
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: 
 	{socketOptions: {connectTimeoutMS: 500}}}}, 
@@ -53,6 +58,17 @@ app.set('view engine', 'hbs');
 app.use(bodyparser());
 app.use("/",express.static(__dirname + "/public_html"));
 
+
+app.get("/pusher/update",function(req,res){    
+    pusher.trigger('test', 'test', {
+      "message": "hello world"
+    });
+    var greeting = randElement(greetings);
+    res.writeHead(200, {
+  'Content-Type': 'text/html' });
+  res.end('triggered');
+    w.info('triggered');
+});
 
 app.get('/ben', function(req,res){
     patients.find().toArray(function(err, items) {
@@ -235,8 +251,9 @@ function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
     }
     
-    
-app.listen(basePort);
+var port = appPort || 8080;
+w.info("listening on port " + port);
+app.listen(port);
 
 
 w.info('server started');
