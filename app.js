@@ -8,15 +8,14 @@ var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
-var PROD = config.isPROD;
+var PROD = config.app.isProd;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
 var contacts;
 var todos;
-var baseUrl = mConfig.baseUrl;
 var http = require('http');
-var basePort = parseInt(mConfig.basePort);
+var appPort = config.app.port;
 
 w.add(w.transports.File, { filename: './error.log' });
 
@@ -235,8 +234,9 @@ function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
     }
     
-    
-app.listen(basePort);
+var port = appPort || 8080;
+w.info("listening on port " + port);
+app.listen(port);
 
 
 w.info('server started');
