@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<body>
+
+<div id="container">
+
+</div>
+
+<script src="/js/pusher.js"></script>
+
+<script>
+var app_key = '9a9def4508d9a882c969';
+var pusher = new Pusher(app_key);
+var channel = pusher.subscribe('my-channel');
+
+Pusher.log = function(msg) {
+    console.log(msg);
+};
+
+var channel = pusher.subscribe('test');
+
+channel.bind('test', function(data) {
+    console.log(data);
+});
+
+
+</script>
+
+</body>
+
+</html>
