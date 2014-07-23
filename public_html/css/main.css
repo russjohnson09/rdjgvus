@@ -3,6 +3,14 @@ html, body {
     padding: 0;
 }
 
+<<<<<<< HEAD
+=======
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+>>>>>>> 07e589fbf7b2960aa1467c1f8b31cc137e5a1280
 a {
     color: #FFF;
 }
@@ -13,7 +21,6 @@ a {
 }
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: relative;
     color: #FFF;
     background-color: #333;
@@ -24,6 +31,15 @@ body {
     position: fixed;
     top: 30%;
     left: 10px;
+    width: 100px;
+}
+
+#sidebar div {
+    margin: 10px 0 0 10px;
+}
+
+#sidebar h1 {
+    font-size: 20px;
 }
 
 #sidebar ul {
@@ -33,10 +49,16 @@ body {
 }
 
 #sidebar a {
-    background-color: #444;
-    border-radius: 5px;
     color: #FFF;
     text-decoration: none;
+}
+
+#sidebar li:hover,#sidebar h1:hover {
+    background-color: #999;
+}
+
+#sidebar li:hover {
+    font-size: 110%;
 }
 
 footer {
@@ -68,3 +90,20 @@ label input {
     right: 0;
 }
 
+input {
+    color: #000;
+}
+
+
+#container {
+    margin: 10px;
+}
+
+.hide {
+    display: none;
+
+}
+
+input.no-radius,button.no-radius {
+    border-radius:0;
+}

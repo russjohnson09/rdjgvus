@@ -12,7 +12,11 @@ var PROD = config.isPROD;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
+var contacts;
 var todos;
+var baseUrl = mConfig.baseUrl;
+var http = require('http');
+var basePort = parseInt(mConfig.basePort);
 
 w.add(w.transports.File, { filename: './error.log' });
 
@@ -28,6 +32,7 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         }
         w.info("connected");
         knockoutCollection = db.collection("knockout");
+        contacts = db.collection('contacts');
         todos = db.collection('todos');
         patients = db.collection('patients');
 });
@@ -112,7 +117,7 @@ app.get("/request",function(req,res){
     var greeting = randElement(greetings);
     res.writeHead(200, {
   'Content-Type': 'text/html' });
-  res.end("<html><head>" + "<meta charset='UTF-8'>" + "</head><body>" + greeting + "</body></html>");
+  res.end(greeting);
 });
 
 app.get("/testdb", function(req,res) {
@@ -192,10 +197,46 @@ app.post("/knockout/del",function(req,res){
     });
 });
 
-app.listen(3000);
+app.get("/contacts/load",function(req,res) {
+    var val = req.query.x;
+    contacts.find().toArray(function(err, items) {
+        if (err) {
+            res.json({error:'error'});
+            return;
+        }
+        res.json(items);
+    });
+});
 
-var greetings = ["Hello","こんにちは","夜露死苦"];
+app.post("/contacts/add",function(req,res) {
+    //var cat = req.body.cat;
+    console.log(req.body);
+    contacts.insert(req.body,{w:1}, function(err,result) {
+        if (err) {
+            res.json({error:err});
+        }
+        else {
+            res.json({result: result + " added."});
+        }
+    });
+});
+
+app.get("/contacts/getsex",function(req,res) {
+    //console.log(contacts);
+    contacts.distinct('sex',function(err,docs) {
+        console.log(docs);
+        res.json(docs);
+    });
+});
+
+var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];
 
 function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
     }
+    
+    
+app.listen(basePort);
+
+
+w.info('server started');

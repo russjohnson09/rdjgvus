@@ -8,9 +8,10 @@
         var currentRow;
         var table = this;
 
-        this.bind("addRows", function(e, row) {
+        this.bind("addRow", function(e, row) {
             trs = $(selector).find("tr");
             row.bind("click", _select);
+            table.trigger("update");
         });
         
         this.bind("sortEnd update", function(e) {
@@ -22,9 +23,7 @@
                 table.trigger("removeRec",[$(el).data("id")]);
                 $(el).remove();
             });
-            //var rowsRemoved = $(this).find("tbody tr." + selectedClass).remove();
-            //$(this).trigger("update");
-            //$(this).trigger("rowsRemoved",[rowsRemoved]);
+            table.trigger("update");
         });
         
         trs.bind("click", _select);

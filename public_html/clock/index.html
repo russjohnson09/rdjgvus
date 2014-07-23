@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="favicon.ico">
+        <title>Clock</title>
+    </head>
+    <body>
+    <div id="container">
+    <h1>Instructions</h1>
+    <p>
+            This is a clock.
+    </p>
+        <div id="options">
+        <h1>Clock Options</h1>
+       <label>Bland<input type="radio" name="group1"></label>
+       <label>Psychedelic<input type="radio" name="group1"></label>
+       </div>
+       
+       <div id="clock"></div>
+            
+            
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/table-select.css">
+        <link rel="stylesheet" href="/css/main.css">
+        
+        <script src="/js/jquery.js"></script>
+        <script src="/js/knockout.js"></script>
+        <script src="/js/raphael.js"></script>
+        <script src="/js/bootstrap.min.js"></script>
+        
+    </div>
+        
+<script>
+    var R = Raphael; //because I'm not used to typing raphael
+    var r;
+    var c;
+    var hh,mh,sh;
+    var isPsych;
+    //var clock;
+    
+$(function() {
+    //isPsych = 
+    c = Raphael("clock",200, 200);
+    draw_clock(c);
+    options =$("#options input");
+    isPsych = options[1].checked;
+        
+    $("#options").on("click", function(e){
+        isPsych = options[1].checked;
+        console.log(isPsych);
+    });
+});
+
+function draw_clock(c){
+    var elAry = [];
+	var clock = c.circle(100,100,95);
+	elAry.push(clock);
+    clock.attr({fill:"#FFF",stroke:"grey","stroke-width":5});
+	for(i=0;i<12;i++) {
+		var start_x = 100+Math.round(80*Math.cos(30*i*Math.PI/180));
+		var start_y = 100+Math.round(80*Math.sin(30*i*Math.PI/180));
+		var end_x = 100+Math.round(90*Math.cos(30*i*Math.PI/180));
+		var end_y = 100+Math.round(90*Math.sin(30*i*Math.PI/180));	
+		var p1 = c.path("M"+start_x+" "+start_y+"L"+end_x+" "+end_y);
+		elAry.push(p1);
+	}
+	hh = c.path("M100 100L100 50").attr({stroke: "grey", "stroke-width": 5});
+	mh = c.path("M100 100L100 40").attr({stroke: "grey", "stroke-width": 3});
+	sh = c.path("M100 110L100 25").attr({stroke: "grey", "stroke-width": 2}); 
+	var pin = c.circle(100, 100, 5).attr("fill", "#000");
+	elAry.push(hh);
+	elAry.push(mh);
+	elAry.push(sh);
+	elAry.push(pin);
+	update_clock();
+	setInterval(function() {
+	    update_clock();
+	},100);
+	
+	function update_clock(){
+	    //console.log(isPsych);
+        if (isPsych) {
+            for (var i=0;i<elAry.length;i++) {
+                var el=elAry[i];
+                console.log(el);
+                el.attr({fill:randColor(),stroke:randColor()});
+            }
+        }
+	    var now = new Date();
+	    var minutes = now.getMinutes();
+	    var hour_tstr = "r"+(30*now.getHours()+(minutes/2.5))+",100,100"
+	    var minute_tstr = "r"+6*minutes+",100,100";
+	    var second_tstr = "r"+6*now.getSeconds()+",100,100";
+	    hh.transform(hour_tstr);
+	    mh.transform(minute_tstr);
+	    sh.transform(second_tstr);
+    }
+}
+
+function randColor() {
+    var res ="";
+    for (var i=0;i<3;i++) {
+        res += randInt(0,17).toString(16);
+    }
+    return "#" + res;
+}
+
+//[min,max) rand integer
+function randInt(min,max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+</script>
+
+
+<style>
+
+    .c1 {
+        stroke: "red";
+    }
+    
+    #options {
+        border: 1px solid #FFF;
+        width: 200px;
+        padding: 10px;
+    }
+    
+    #options h1 {
+        font-size: 20px;
+        border-bottom: 1px solid #FFF;
+    }
+    
+    #options h1::after {
+    }
+    
+    #clock {
+        margin: 10px 0 0 10%;
+    }
+
+</style>
+</body>
+
+</html>
+

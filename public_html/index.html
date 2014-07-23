@@ -8,103 +8,113 @@
     </head>
     <body>
         <div id="sidebar">
-            <ul>
-                <li>
-                    <a href="#about">About Me</a>
-                </li>
-                <li>
-                    <a href="#contact">Contact Demo</a>
-                </li>
-                <li>
-                    <a href="#japanese">Japanese</a>
-                </li>
-                <li>
-                    <a href="#javascript">Javascript</a>
-                </li>
-                <li>
-                    <a href="#misc">Misc</a>
-                </li>
-            </ul>
+            <a href="/"><h1>Home</h1></a>
+            <div id="options">
+                <ul>
+                    <li>
+                        <a href="/#about">About Me</a>
+                    </li>
+                    <li>
+                        <a href="/#japanese">Japanese</a>
+                    </li>
+                    <li>
+                        <a href="/#demo">Demos</a>
+                    </li>
+                    <li>
+                        <a href="/resume">Resume</a>
+                    </li>
+                </ul>
+             </div>
         </div>
 
         <div id="main">
-            <h1 id="ajax">Ajax Example</h1>
-            <button id="ajax-send">Send request</button>
-            <div id="ajax-res"></div>
             
             <h1 id="about">About Me</h1>
             <p>
-                My name is Russ, I work as a software developer at Epic Systems in Verona, WI. One of my hobbies is studying Japanese and I hope to visit Japan sometime in 2014. This site is somewhat of a mix between a blog and some more technical stuff. I may throw in some entries on web development, python, japanese, mathematics, or whatever interests me at the time.
+                My name is Russ, I work as a software developer at Epic Systems in Verona, WI. 
+                One of my hobbies is studying Japanese and I hope to visit Japan sometime in 2014. 
+                This site is somewhat of a mix between a blog and some more technical stuff. 
+                I may throw in some entries on web development, python, Japanese, mathematics, or 
+                whatever interests me at the time.
             </p>
-
-            <h1 id="contact">Contact demo</h1>
-            Enter contact information here. Data will be stored locally using IndexedDB. Sort column functionality provided by <a href="http://tablesorter.com">tablesorter</a>. You can sort on multiple columns using shift. You can delete information by selecting a row and pressing delete. Multiple rows can be selected using ctl or shift.
-            <div id="todoDemo">
-                <div id="contacts-container">
-                    <button id="gen">
-                        Generate Contact
-                    </button>
-                    <form>
-                        <label> First Name:
-                            <input id="fname">
-                        </label>
-                        <label> Last Name:
-                            <input id="lname">
-                        </label>
-                        <label>Sex:
-                            <input id="sex">
-                        </label>
-                        <label> Phone:
-                            <input id="phone">
-                        </label>
-
-                        <button id="addContact">
-                            Add Contact
-                        </button>
-                    </form>
-                    <table id="contactsTable" class="tablesorter-blue tableSelect-default"></table>
-                    <h1>Show/Hide Columns</h1>
-                </div>
-            </div>
+            
             <h1 id="japanese">Short Japanese Lesson</h1>
             <p>
-                The japanese alphabet is broken up into two distinct parts. Hiragana(ひらがな)/katakana(カタカナ) together make up the gana and kanji (漢字) which are characters adbopted from China.
+                The Japanese alphabet is broken up into two distinct parts. Hiragana(ひらがな)/katakana(カタカナ)
+                together make up the gana and kanji (漢字) which are characters adopted from China.
             </p>
+            <h2>Basic Radicals</h2>
+                Here are the basic radicals used in kanji. Most of these radicals by themselves have meaning.
+                They can also be used to make more complex kanji. These radicals are either used to add meaning
+                to a new kanji character or help with its pronunciation. For example, 語 means language. In this
+                character we see 話 (talk), which gives the character meaning. We also see 五 (five) which does
+                not aid in its meaning, but is included because both 語 and 五 are pronounced "go."
+                <ul>
+                <li>口 (くち) mouth</li>
+                <li>水/氵 (みず) water</li>
+                <li>木 (き) tree</li>
+                <li>人/亻 (ひと) person</li>
+                <li>手/扌 (て) hand</li>
+                <li>心/忄 (こころ) heart</li>
+                <li>言 (こと) word</li>
+                <li>日 (ひ/にち) sun/day</li>
+                <li>糸・幺 (いと) thread</li>
+                <li>肉･月 (にく・つき) meat/organ (moon)</li>
+                <li>土 (つち) ground</li>
+                <li>道 go/road radical</li>
+                <li>艹 grass/plant radical</li>
+                <li>宀 roof/crown radical</li>
+                <li>貝 (かい) shell</li>
+                <li>女 (おんな) woman</li>
+                <li>阝 village (right) wall (left) radical</li>
+                <li>金 (きん) gold/metal</li>
+                <li>一 (いち) one</li>
+                <li>刀/刂 (かたな) sword</li>
+                <li>十 (じゅう) ten</li>
+                <li>田 (た) rice field</li>
+                <li>火/灬 (ひ/か) fire</li>
+                <li>大 (おお) big</li>
+                <li>山 (やま) mountain</li>
+                <li>食 (しょく) meal</li>
+                <li>車 (くるま) vehicle</li>
+                <li>彳 walking person radical</li>
+                <li>目 (め) eye</li>
+                <li>雨 (あめ) rain</li>
+                <li>犬 (いぬ) dog</li>
+                <li>玉（王） (たま・おう) ball (king)</li>
+                <li>石 (いし) stone</li>
+                <li>力 (ちから) power</li>
+                <li>衣/衤 (ころも) garment</li>
+                <li>弓 (ゆみ) bow</li>
+                <li>竹 (たけ) bamboo</li>
+                <li>又 (また) again</li>
+                <li>攵/夂 action radical</li>
+                <li>示/礻 (しめす) show on an altar radical</li>
+                <li>酉 (とり) alcohol radical</li>
+                <li>囗 (くにがまえ) enclosure radical</li>
+                <li>禾 grain radical</li>
+                <li>广 building on a cliff radical</li>
+                <li>疒 sickness radical</li>
+                <li>巾 (きん/はば) cloth radical</li>
+                <li>尸 (し) corpse radical</li>
+                <li>寸 (すん) inch/sundial degree radical</li>
+                </ul>
 
-            <h1 id="javascript">Javascript</h1>
-            <h2>Jquery Snippets</h2>
-            The following code snippets use <a href="http://prismjs.com/">primjs</a> to hightlight text. <h3>Print every keystroke event to the console.</h3>
-            <pre>
-<code class="language-javascript">$(function(){
-    $("html").bind("keypress",function(e){
-       console.log(e); 
-    });
-})</code></pre>
-            <h3><a href="https://api.jquery.com/toggleClass/">Toggling a class</a> when element with id="switch" is pressed.</h3>
-            <pre>
-<code class="language-javascript">$("#switch").bind("click",function(e) {
-    $(".switchable").toggleClass("on");
-});
-</code>
-</pre>                                                                        
-
- <h1 id="misc">Misc. Stuff</h1>
-            <img src="http://i.imgur.com/4BEitgf.gif">
+        <h1 id="demo">Demos</h1>
+            <p>
+            This is where I keep most of my demos, some of them are more complete than others.
+            </p>
+        <ul>
+            <li><a href="/ajax">Ajax Example</a> - A simple ajax example for reference.</li>
+            <li><a href="/contact">Contacts</a>-Stores a table of contacts using IndexedDB</li>
+            <li><a href="/bullethell">Bullethell</a>-Simple 2d shooter I've been working on.</li>
+            <li><a href="/knockout">Knockout</a></li>
+            <li><a href="/codesnippets">Code snippets using primjs.</a> (Not really worth mentioning aside
+                from having syntax highlighting when demoing pieces of code is nice to have.)</li>
+            <li><a href="/clock">Clock</a></li>
+        </ul>
         </div>
-
-        <link rel="stylesheet" href="./css/table-select.css">
-        <link rel="stylesheet" href="./css/main.css">
-        <link rel="stylesheet" href="./css/prism.css">
-        <script src="./js/jquery.js"></script>
-        <script src="./js/table.js"></script>
-        <script src="./js/table-select.js"></script>
-        <script src="./js/contactDB.js"></script>
-        <script src="./js/showhide.js"></script>
-        <script src="./js/main.js"></script>
-        <script src="./js/prism.js"></script>
-        
-        <script src="./tablesorter/js/jquery.tablesorter.js"></script>
-        <link rel="stylesheet" href="./tablesorter/css/theme.blue.css">
+        <link rel="stylesheet" href="/css/main.css">
 
     </body>
 

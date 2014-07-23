@@ -15,6 +15,7 @@
         var ver = opts.ver;
         var res = indexedDB.open(dbName, ver);
         var table = this;
+        var sexList = [];
 
         res.onsuccess = function(e) {
             db = e.target.result;
@@ -45,22 +46,30 @@
 
             c.onsuccess = function(e) {
                 var res = e.target.result;
-                if (!res)
+                if (!res) {
                     return;
+                }
+                var sex = res.value.sex
+                if (typeof sex == "string" && sex.length > 0 &&
+                    sexList.indexOf(sex) < 0) {
+                    sexList.push(sex);
+                }
                 tbody.append(getRow(res.value,res.key));
-                res.
-                continue();
+                res.continue();
             };
 
         });
 
         table.bind("addRec", function(e, rec) {
-            table.find("tbody").append(getRow(rec));
             var tx = db.transaction(["contact"], "readwrite");
             var os = tx.objectStore("contact");
             var req = os.put(rec);
             req.onsuccess = function(e) {
-                //console.log("successfully added record", rec);
+                var tr = getRow(rec,e.originalTarget.result);
+                table.find("tbody").append(tr);
+                table.trigger('addRow', [tr]);
+                console.log(e.originalTarget.result);
+                console.log("successfully added record", rec);
             };
             req.onerror = function(e) {
                 console.log("Error", e);
@@ -89,7 +98,11 @@
             tr.data("id",key);
             return tr;
         }
+        
+        table.getSexList = function() {
+            return sexList;
+        }
 
-        return this;
+        return table;
     };
 })(jQuery);

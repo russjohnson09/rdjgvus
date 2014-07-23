@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="favicon.ico">
+        <title>Snippets</title>
+    </head>
+            
+<body>
+
+    <div id="container">
+        <p>
+        The following code snippets use <a href="http://prismjs.com/">primjs</a> to hightlight text.
+        </p>
+            <h1 id="javascript">Javascript</h1>
+            <h2>Jquery Snippets</h2>
+            <h3>Print every keystroke event to the console.</h3>
+<pre>
+<code class="language-javascript">$(function(){
+    $("html").bind("keypress",function(e){
+       console.log(e); 
+    });
+})</code></pre>
+            <h3><a href="https://api.jquery.com/toggleClass/">Toggling a class</a> when element with id="switch" is pressed.</h3>
+<pre>
+<code class="language-javascript">$("#switch").bind("click",function(e) {
+    $(".switchable").toggleClass("on");
+});
+</code>
+</pre>   
+
+</div>
+
+    <script src="/js/jquery.js"></script>
+    <script src="/js/prism.js"></script>
+    <link rel="stylesheet" href="/css/prism.css">
+    <link rel="stylesheet" href="/css/main.css">
+
+</body>
+
+
+</html> 
