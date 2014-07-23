@@ -17,10 +17,16 @@ var todos;
 var baseUrl = mConfig.baseUrl;
 var http = require('http');
 var basePort = parseInt(mConfig.basePort);
+var Pusher = require("pusher");
+var pusherOpts = config.pusher;
 
 w.add(w.transports.File, { filename: './error.log' });
 
 w.info(dbUrl);
+
+w.info(pusherOpts);
+
+//var pusher = new Pusher(pusherOpts);
 
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: 
 	{socketOptions: {connectTimeoutMS: 500}}}}, 
