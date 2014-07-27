@@ -58,17 +58,20 @@
        </div>
             
             
-        <link href="/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="/css/table-select.css">
-        <link rel="stylesheet" href="/css/main.css">
-        <script src="/js/jquery.js"></script>
-        <script src="/js/knockout.js"></script>
-        <script src="/js/bootstrap.min.js"></script>
-        <script src="/js/table.js"></script>
-        <script src="/js/table-select.js"></script>
-        <script src="contactDB.js"></script>     
-        <script src="/tablesorter/js/jquery.tablesorter.js"></script>
-        <link rel="stylesheet" href="/tablesorter/css/theme.blue.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/table-select.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/tablesorter/css/theme.blue.css">
+
+    <script src="/js/jquery.js"></script>
+    <script src="/js/knockout.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/tablesorter/js/jquery.tablesorter.js"></script>
+    <script src="./contact-db.js"></script>
+    <script src="/js/table-select.js"></script>
+    
+    
+    <script src="./contactDB.js"></script>
         
 <script>
 $(function() {
@@ -85,6 +88,7 @@ function mongoDb() {
 }
 
 function indexedDb() {
+    var utils = $.contactTable.utils;
     var data = {
         sexList : ko.observableArray([])
     }
@@ -109,7 +113,7 @@ function indexedDb() {
 
     $("#gen").bind("click", function(e) {
         e.preventDefault();
-        var contact = $.testData.genContact();
+        var contact = utils.genContact();
         table.trigger("addRec", [contact]);
     });
 
