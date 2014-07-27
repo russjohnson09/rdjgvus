@@ -7,6 +7,8 @@
         var selectedClass = options.selectedClass;
         var currentRow;
         var table = this;
+        
+        table.options = options;
 
         this.bind("addRow", function(e, row) {
             trs = $(selector).find("tr");

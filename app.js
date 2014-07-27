@@ -195,6 +195,20 @@ app.post("/knockout/del",function(req,res){
     });
 });
 
+app.post("contact/add",function(req,res) {
+    console.log(req.body);
+    contacts.insert(req.body,{w:1}, function(err,result) {
+        if (err) {
+            w.info(err);
+            res.json({err:err});
+        }
+        else {
+            w.info(result);
+            res.json({result: result});
+        }
+    });
+});
+
 app.get("/contacts/load",function(req,res) {
     var val = req.query.x;
     contacts.find().toArray(function(err, items) {

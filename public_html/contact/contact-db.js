@@ -79,6 +79,9 @@
         var res = indexedDB.open(dbName, ver);
         var table = this;
         var sexList = [];
+        var fNames = [];
+        var lNames = [];
+        var phones = [];
 
         res.onsuccess = function(e) {
             db = e.target.result;
@@ -117,6 +120,16 @@
                     sexList.indexOf(sex) < 0) {
                     sexList.push(sex);
                 }
+                var fname = res.value.fname;
+                if (typeof fname == "string" && fname.length > 0 &&
+                    fNames.indexOf(fname) < 0) {
+                    fNames.push(fname);
+                }
+                var lname = res.value.lname;
+                if (typeof lname == "string" && lname.length > 0 &&
+                    lNames.indexOf(lname) < 0) {
+                    lNames.push(lname);
+                }
                 tbody.append(getRow(res.value,res.key));
                 res.continue();
             };
@@ -149,6 +162,14 @@
         
         table.getSexList = function() {
             return sexList;
+        }
+        
+        table.getFNames = function() {
+            return fNames;
+        }
+        
+        table.getLNames = function() {
+            return lNames;
         }
 
         return table;

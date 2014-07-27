@@ -14,12 +14,12 @@
             You can sort on multiple columns using shift. You can delete information by selecting 
             a row and pressing delete. Multiple rows can be selected using ctl or shift.
             </p>
-        <div class="btn-group" id="db-select" data-toggle="buttons">
+        <div class="btn-group" id="dbselect" data-toggle="buttons">
           <label class="btn btn-primary active">
-            <input type="radio" name="options" id="db1" checked> IndexedDB
+            <input type="radio" name="options" value="indexed" id="db1" checked> IndexedDB
           </label>
           <label class="btn btn-primary">
-            <input type="radio" name="options" id="db2"> MongoDB
+            <input type="radio" name="options" value="mongo" id="db2"> MongoDB
           </label>
         </div>
             <div id="contactsDemo">
@@ -30,8 +30,8 @@
                     </tr>
                     <tbody>
                         <tr>
-                        <td><input class="form-control no-radius"></td>
-                        <td><input class="form-control no-radius"></td>
+                        <td><input class="form-control no-radius" list="fnamelist"></td>
+                        <td><input class="form-control no-radius" list="lnamelist"></td>
                         <td><input class="form-control no-radius" list="sexList"></td>
                         <td><input class="form-control no-radius"></td>
                         <td><button class="btn btn-default no-radius" id="addContact">
@@ -50,12 +50,17 @@
 
        </div>
        
-       <div id="dataList">
+    <div id="dataList">
         <datalist id="sexList" data-bind="foreach: sexList">
             <option data-bind="attr { value: $data }">
         </datalist>
-       
-       </div>
+        <datalist id="fnamelist" data-bind="foreach: fnamelist">
+            <option data-bind="attr { value: $data }">
+        </datalist>
+        <datalist id="lnamelist" data-bind="foreach: lnamelist">
+            <option data-bind="attr { value: $data }">
+        </datalist>
+    </div>
             
             
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -74,42 +79,17 @@
     <script src="./contactDB.js"></script>
         
 <script>
+var d;
+
 $(function() {
-    if (document.getElementById("db2").checked) {
-        mongoDb();
-    }
-    else {
-        indexedDb();
-    }
+    indexedDb();
 }); 
 
-function mongoDb() {
-
-}
-
 function indexedDb() {
+    var table,type;
     var utils = $.contactTable.utils;
-    var data = {
-        sexList : ko.observableArray([])
-    }
-    
-    ko.applyBindings(data);
-    
-    //data.sexList.push('1');
-
-    var divContainer = $("#contacts-container");
-    var table = $("#contactsTable");
-    var contact = $("#contacts-container input");
-    table.contactTable();
-    table.bind("contactTableComplete", function(e) {
-        table.tablesorter().tableSelect();
-        $("html").bind("keypress", function(e) {
-            if (e.key == "Del") {
-                table.trigger("removeRows");
-            }
-        });
-        data.sexList(table.getSexList());
-    });
+    table = $("#contactsTable");
+    init(table);
 
     $("#gen").bind("click", function(e) {
         e.preventDefault();
@@ -127,17 +107,49 @@ function indexedDb() {
     });
     
     function addContact(e) {
+        var contact = $("#contacts-container input");
+        var sex = contact[2].value;
         table.trigger("addRec", [{
             fname   : contact[0].value,
             lname   : contact[1].value,
-            sex     : contact[2].value,
+            sex     : contact[1].value,
             phone   : contact[3].value
         }]);
         e.preventDefault();
     }
     
-    $("#db-select").on("click", function(e) {
-        //console.log(e);
+    $("#dbselect").on("click","label", function(e) {
+        var type = this.children[0].value;
+        console.log(type);
+        d = this;
+        if ( type != table.options.type) {
+            init(table,{type:type});
+        }
+    });
+}
+
+function init(table,opts) {
+    table[0].innerHTML = "";
+    table.contactTable(opts);
+    table.bind("contactTableComplete", function(e) {
+        table.tablesorter().tableSelect();
+        $("html").bind("keypress", function(e) {
+            if (e.key == "Del") {
+                table.trigger("removeRows");
+            }
+        });
+        console.log(e);
+        var sexList = table.getSexList();
+        var fnamelist = table.getFNames();
+        var lnamelist = table.getLNames();
+        console.log(fnamelist);
+        console.log(sexList);
+        var data = {
+            sexList : ko.observableArray(sexList),
+            fnamelist : ko.observableArray(fnamelist),
+            lnamelist : ko.observableArray(lnamelist),
+        };
+        ko.applyBindings(data);
     });
 }
 
