@@ -1,11 +1,11 @@
 rdjgvus
 =======
-A node thing for stuff.
-
-another small change
-
-another cahnge
+This is the source code for my site. 
 
 
-234
-123tqw
+Contacts
+==
+*Default control - 
+*Default view - The following items are available to the view. persons - list
+
+

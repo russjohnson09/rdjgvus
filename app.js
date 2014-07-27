@@ -2,7 +2,6 @@ var config = require('./config.js');
 var u = require('./util_modules/utils.js')({seed:100});
 var express = require('express');
 var app = express();
-var hb = require('express3-handlebars');
 var http = require("http");
 var bodyparser = require("body-parser");
 var m = require("mongodb");
@@ -42,19 +41,6 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         patients = db.collection('patients');
 });
 
-app.engine('hbs', hb({extname:'hbs',defaultLayout:"empty.hbs", 
-	helpers: {
-		list: function(items,options) {
-		  var out = "<ul>";
-		  for(var i=0, l=items.length; i<l; i++) {
-			out = out + "<li>" + options.fn(items[i]) + "</li>";
-		  }
-		  return out + "</ul>";
-		}}
-
-}));
-
-app.set('view engine', 'hbs');
 app.use(bodyparser());
 app.use("/",express.static(__dirname + "/public_html"));
 
@@ -89,10 +75,6 @@ app.get('/benmock', function(req,res){
 	}
 	//u.seed = req.seed;
 	res.render('ben',{patients: u.getPatientList()});	
-});
-
-app.get('/todo', function(req,res){
-    res.render('todo',{});
 });
 
 app.get('/todo/load', function(req,res){
