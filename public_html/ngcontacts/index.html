@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="favicon.ico">
+        <title>Contact Demo</title>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/angular.js"></script>
+    <script src="/js/ng-grid.js"></script>
+<script>
+    var app = angular.module('myApp', ['ngGrid']);
+    app.controller('MyCtrl', function($scope) {
+        $scope.myData = [{name: "Moroni", age: 50},
+        {name: "Tiancum", age: 43},
+        {name: "Jacob", age: 27},
+        {name: "Nephi", age: 29},
+        {name: "Enos", age: 34}];
+        $scope.gridOptions = { data: 'myData' };
+    });
+
+</script>
+</head>
+    <body ng-controller="MyCtrl">
+        <div class="gridStyle" ng-grid="gridOptions"></div>
+            
+    <link rel="stylesheet" href="/css/ng-grid.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <style>
+        /*style.css*/
+        .gridStyle {
+            border: 1px solid rgb(212,212,212);
+            width: 400px; 
+            height: 300px
+        }
+    </style>
+       
+</body>
+
+</html>
