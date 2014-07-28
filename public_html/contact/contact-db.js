@@ -85,7 +85,7 @@
 
         res.onsuccess = function(e) {
             db = e.target.result;
-            table.trigger("contactDBConnected");
+            table.trigger("connected");
         };
 
         res.onupgradeneeded = function(e) {
@@ -98,7 +98,7 @@
             });
         };
 
-        table.bind("contactDBConnected", function(e) {
+        table.bind("connected", function(e) {
             var thead = $("<thead>");
             thead.append($("<tr><th>First Name</th><th>Last Name</th><th>Sex</th><th>Phone</th></tr>"));
             table.append(thead);
@@ -107,7 +107,7 @@
             var tx = db.transaction(["contact"]);
             var c = tx.objectStore("contact").openCursor(IDBKeyRange.lowerBound(0));
             tx.oncomplete = function(e) {
-                table.trigger("contactTableComplete");
+                table.trigger("loadComp");
             };
 
             c.onsuccess = function(e) {
@@ -139,9 +139,10 @@
         table.bind("addRec", function(e, rec) {
             addRec(db,rec,{type:opts.type,
             onsuccess: function(rec,key) {
+                    var resort;
                     var tr = getRow(rec,key);
                     table.find("tbody").append(tr);
-                    table.trigger('addRow', [tr]);
+                    table.trigger('addRow', [tr,resort]);
                     console.log(key);
                     console.log("successfully added record", rec);
                 }
@@ -157,6 +158,7 @@
             };
             req.onerror = function(e) {
                 console.log("Error removing", e);
+                table.trigger("err");
             };
         });
         
@@ -201,6 +203,7 @@
             };
             req.onerror = function(e) {
                 console.log("Error", e);
+                table.trigger("err");
             };
         }
      }

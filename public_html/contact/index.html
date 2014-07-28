@@ -100,7 +100,6 @@ function indexedDb() {
     $("#addContact").on("click", addContact);
     
     $("#contacts-container").on("keypress", function(e) {
-        //console.log(e);
         if (e.key == "Enter") {
             addContact(e);
         }
@@ -131,7 +130,7 @@ function indexedDb() {
 function init(table,opts) {
     table[0].innerHTML = "";
     table.contactTable(opts);
-    table.bind("contactTableComplete", function(e) {
+    table.bind("loadComp", function(e) {
         table.tablesorter().tableSelect();
         $("html").bind("keypress", function(e) {
             if (e.key == "Del") {
@@ -150,6 +149,12 @@ function init(table,opts) {
             lnamelist : ko.observableArray(lnamelist),
         };
         ko.applyBindings(data);
+    });
+    table.bind("err", function(e) { //unspecified error reload
+        $("#dbselect")[0].children[0].checked = true;
+        if ( type != table.options.type) {
+            init(table);
+        }
     });
 }
 
