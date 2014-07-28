@@ -221,7 +221,9 @@ app.get("/arman/employees",function(req,res) {
 });
 
 app.get("/arman/lists",function(req,res) {
-        res.json({paytypes:['Hourly','Salary']});
+    contacts.distinct('paytype',function(err,docs) {
+        res.json({'paytypes':docs});
+    });
 });
 
 app.post("/arman/addemployee", function(req,res) {

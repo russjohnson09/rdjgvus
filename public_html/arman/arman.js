@@ -5,8 +5,9 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
   
   $scope.employees = [];
   
-  $scope.refresh = refresh = function() {
+  var refresh = $scope.refresh = function() {
       $http.get('./employees').success(function(data) {
+        console.log('employees');
         console.log(data);
         $scope.employees = data;
       });
@@ -16,23 +17,6 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
         $scope.paytypes = data.paytypes;
         console.log($scope.paytypes);
       });
-      
-      $scope.finance = {
-        gross: 10000,
-        taxRate: 0.30, //percent
-        checking: 100,
-        savings: 200,
-        four01k: 10000,
-        house: 100000,
-        insurance: {
-            health: 200,
-            car: 100,
-        },
-        net: function() {
-            var self = this;
-            return fin.net(self.gross,self.taxRate);
-        }
-      };
   }
   
   $scope.totals = function () {
@@ -57,6 +41,7 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
     hourly: hourly,
     other: other,
     total: hourly + salary + other};
+    console.log('totals');
     console.log(result);
     return result;
   };
