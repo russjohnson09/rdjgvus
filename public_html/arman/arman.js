@@ -3,6 +3,8 @@ var payroll = angular.module('payroll', []);
 payroll.controller('PayrollCtrl', function ($scope,$http) {
   var fin = Finance();
   
+  $scope.employees = [];
+  
   $scope.refresh = refresh = function() {
       $http.get('./employees').success(function(data) {
         console.log(data);
@@ -15,11 +17,9 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
         console.log($scope.paytypes);
       });
       
-      $scope.paytypes = [1,2]
-      
       $scope.finance = {
         gross: 10000,
-        taxRate: 30, //percent
+        taxRate: 0.30, //percent
         checking: 100,
         savings: 200,
         four01k: 10000,
@@ -35,6 +35,32 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
       };
   }
   
+  $scope.totals = function () {
+    var hourly = 0;
+    var salary = 0;
+    var other = 0;
+    var employees = $scope.employees;
+    for (var i=0;i<employees.length;i++) {
+        var e = employees[i];
+        if (e.paytype == "Hourly") {
+           hourly += (parseFloat(e.hourly) || 0); 
+        } 
+        else if (e.paytype == "Salary") {
+            salary += (parseFloat(e.hourly) || 0); 
+        }
+        else {
+            other += (parseFloat(e.hourly) || 0); 
+        }
+    }
+    var result = {
+    salary: salary,
+    hourly: hourly,
+    other: other,
+    total: hourly + salary + other};
+    console.log(result);
+    return result;
+  };
+  
   refresh();
   
   $scope.addEmployee = function() {
@@ -43,8 +69,16 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
         url: "./addemployee",
         data: {
             name: $scope.name,
-            status: "Best Friend"
+            paytype: $scope.paytype,
+            hourly: $scope.hourly
         }
+    });
+    request.success(function(data) {
+        console.log(data);
+        refresh();
+    });
+    request.error(function(data) {
+        console.log(data);
     });
   }
   
@@ -55,6 +89,7 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
     });
     request.success(function(data) {
         console.log(data);
+        refresh();
     });
   }
 

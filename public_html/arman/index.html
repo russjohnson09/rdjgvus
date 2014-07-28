@@ -11,11 +11,17 @@
 
 <div id="container">
     <div ng-controller="PayrollCtrl">
+        <h1>About</h1>
+        <p>Work in progress. Simple accounts payable application using AngularJs.</p>
+        <h1>Todo</h1>
+        <ul>
+        <li>Add a pie chart to break down expenses for each employee role and paytype.</li>
+        </ul>
         <h1>Employee Table</h1>
         <table class="table-basic">
             <thead>
             <tr>
-            <th>Name</th><th>Hourly Rate</th><th>Pay Type</th>
+            <th>Name</th><th>Hourly Rate</th><th>Paytype</th>
             </tr>
             </thead>
             <tbody>
@@ -24,6 +30,21 @@
             </tr>
             </tbody>
         </table>
+        <h1>Payable per Hour</h1>
+        <table class="table-basic">
+        <thead>
+        <tr>
+        <th>Salaried</th><th>Hourly</th><th>Other</th><th>Total</th>
+        </tr>
+        <tbody>
+        <tr>
+        <td>{{totals().salary}}</td><td>{{totals().hourly}}</td>
+        <td>{{totals().other}}</td><td>{{totals().total}}</td>
+        </tr>
+        </tbody>
+        </thead>
+        </table>
+        <h1>Add Employee</h1>
         <table>
             <thead>
             <tr>
@@ -32,9 +53,9 @@
             </thead>
             <tbody>
                 <tr>
-                <td><input ng-model="name"></td>
-                <td><input ng-model="hourly"></td>
-                <td><input ng-model="paytype" list="paytypelist"></td>
+                <td><input ng-model="name" ng-required="true"></td>
+                <td><input ng-model="hourly" ng-required="true"></td>
+                <td><input ng-model="paytype" list="paytypelist" ng-required="true"></td>
                 <td>
                 <button ng-click="addEmployee()">Add</button></td>
                 </td>
@@ -50,7 +71,8 @@
         
         
         <h1>My Finances</h1>
-        {{finance.gross}} <button id="add">Add</button>
+            Gross Monthly : {{finance.gross}} <br/>
+            Net Monthly : {{finance.net()}}
         
         <h1>Paytypes</h1>
         <ul>
