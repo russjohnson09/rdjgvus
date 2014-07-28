@@ -7,7 +7,6 @@
     <title>Payroll</title>
 </head>
 
-
 <body>
 
 <div id="container">
@@ -25,15 +24,49 @@
             </tr>
             </tbody>
         </table>
+        <table>
+            <thead>
+            <tr>
+            <th>Name</th><th>Hourly Rate</th><th>Paytype</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                <td><input ng-model="name"></td>
+                <td><input ng-model="hourly"></td>
+                <td><input ng-model="paytype" list="paytypelist"></td>
+                <td>
+                <button ng-click="addEmployee()">Add</button></td>
+                </td>
+                <td>
+                <button ng-click="refresh()">Refresh</button>
+                </td>
+                <td>
+                <button ng-click="clearAll()">Clear</button>
+                </td>
+                </tr>
+            </tbody>
+        </table>
+        
         
         <h1>My Finances</h1>
         {{finance.gross}} <button id="add">Add</button>
+        
+        <h1>Paytypes</h1>
+        <ul>
+        <li ng-repeat="p in paytypes">{{p}}</li>
+        </ul>
+<div id="datalists">
+    <datalist id="paytypelist">
+        <option ng-repeat="p in paytypes" value={{p}}>
+    </datalist>
+</div>
 
+    <!-- ng -->
     </div>
 
 <!-- container-->
 </div>
-
 <script src="js/jquery.js"></script>
 <script src="/js/angular.js"></script>
 <script src="arman.js"></script>

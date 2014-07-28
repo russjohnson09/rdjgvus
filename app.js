@@ -11,7 +11,7 @@ var PROD = config.app.isProd;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
-var contacts;
+var contacts,employees;
 var todos;
 var http = require('http');
 var appPort = config.app.port;
@@ -39,6 +39,7 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         contacts = db.collection('contacts');
         todos = db.collection('todos');
         patients = db.collection('patients');
+        employees = db.collection('employees');
 });
 
 app.use(bodyparser());
@@ -210,9 +211,40 @@ app.post("contact/add",function(req,res) {
 });
 
 app.get("/arman/employees",function(req,res) {
-    res.json([{name:'Greg',hourly:10,paytype:'Hourly'},
-     {name:'Mark',hourly:40,paytype:'Salary'}
-    ]);
+    employees.find().toArray(function(err, items) {
+        if (err) {
+            res.json({error:'error'});
+            return;
+        }
+        res.json(items);
+    });
+});
+
+app.get("/arman/lists",function(req,res) {
+        res.json({paytypes:['Hourly','Monthly']});
+});
+
+app.post("/arman/addemployee", function(req,res) {
+    console.log(req.body);
+    employees.insert(req.body,{w:1}, function(err,result) {
+        if (err) {
+            res.json({error:err});
+        }
+        else {
+            res.json({result: result + " added."});
+        }
+    });
+});
+
+app.post("/arman/clear", function(req,res) {
+    employees.remove({},{w:1},function(err,result){
+        if (err) {
+            res.json({txt:err});
+        }
+        else {
+            res.json({txt:result + " employees have been deleted."});
+        }
+    });
 });
 
 app.get("/contacts/load",function(req,res) {
