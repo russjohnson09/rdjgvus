@@ -3,14 +3,6 @@ html, body {
     padding: 0;
 }
 
-<<<<<<< HEAD
-=======
-html, body {
-    margin: 0;
-    padding: 0;
-}
-
->>>>>>> 07e589fbf7b2960aa1467c1f8b31cc137e5a1280
 a {
     color: #FFF;
 }
@@ -106,4 +98,8 @@ input {
 
 input.no-radius,button.no-radius {
     border-radius:0;
+}
+
+.unstyled {
+    list-style: none;
 }

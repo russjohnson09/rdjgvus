@@ -5,25 +5,35 @@
     <meta charset="UTF-8">
     <link rel="icon" href="favicon.ico">
     <title>Payroll</title>
-    
-<script src="/js/angular.js"></script>
-<script src="arman.js"></script>
 </head>
 
 
 <body>
 
-<div ng-controller="PayrollCtrl">
-    <h1 ng-repeat="e in employees">{{e.name}}</h1>
-    <ul>
-        <li ng-repeat="e in employees">
-            {{e.name}}
-        </li>
-    
-    </ul>
+<div id="container">
+    <div ng-controller="PayrollCtrl">
+        <div ng-repeat="e in employees">
+        <h1>{{e.name}}</h1>
+        <ul class="unstyled">
+            <li>Payrate (hourly): {{e.hourly}}</li>
+        </ul>
+        </div>
+        <ul>
+            <li ng-repeat="e in employees">
+                {{e.name}}
+            </li>
+        
+        </ul>
 
+    </div>
+
+<!-- container-->
 </div>
 
 
+<script src="/js/angular.js"></script>
+<script src="arman.js"></script>
 
+<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="payroll.css">
 </body>
