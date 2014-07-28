@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html ng-app="payroll">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="favicon.ico">
+    <title>Payroll</title>
+    
+<script src="/js/angular.js"></script>
+<script src="arman.js"></script>
+</head>
+
+
+<body>
+
+<div ng-controller="PayrollCtrl">
+    <h1 ng-repeat="e in employees">{{e.name}}</h1>
+    <ul>
+        <li ng-repeat="e in employees">
+            {{e.name}}
+        </li>
+    
+    </ul>
+
+</div>
+
+
+
+</body>
