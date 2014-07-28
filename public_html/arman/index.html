@@ -12,6 +12,7 @@
 
 <div id="container">
     <div ng-controller="PayrollCtrl">
+        <h1>Employee Table</h1>
         <table class="table-basic">
             <thead>
             <tr>
@@ -24,28 +25,16 @@
             </tr>
             </tbody>
         </table>
-        <div ng-repeat="e in employees">
-        <tr ng-repeat="(key, value) in data">
-          <td> {{key}} </td> <td> {{ value }} </td>
-        </tr>
-        <h1>{{e.name}}</h1>
-        <ul class="unstyled">
-            <li>Payrate (hourly): {{e.hourly}}</li>
-        </ul>
-        </div>
-        <ul>
-            <li ng-repeat="e in employees">
-                {{e.name}}
-            </li>
         
-        </ul>
+        <h1>My Finances</h1>
+        {{finance.gross}} <button id="add">Add</button>
 
     </div>
 
 <!-- container-->
 </div>
 
-
+<script src="js/jquery.js"></script>
 <script src="/js/angular.js"></script>
 <script src="arman.js"></script>
 

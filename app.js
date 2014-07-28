@@ -209,6 +209,12 @@ app.post("contact/add",function(req,res) {
     });
 });
 
+app.get("/arman/employees",function(req,res) {
+    res.json([{name:'Greg',hourly:10,paytype:'Hourly'},
+     {name:'Mark',hourly:40,paytype:'Salary'}
+    ]);
+});
+
 app.get("/contacts/load",function(req,res) {
     var val = req.query.x;
     contacts.find().toArray(function(err, items) {
