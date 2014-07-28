@@ -12,7 +12,22 @@
 
 <div id="container">
     <div ng-controller="PayrollCtrl">
+        <table class="table-basic">
+            <thead>
+            <tr>
+            <th>Name</th><th>Hourly Rate</th><th>Pay Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="e in employees">
+            <td>{{e.name}}</td><td>{{e.hourly}}</td><td>{{e.paytype}}</td>
+            </tr>
+            </tbody>
+        </table>
         <div ng-repeat="e in employees">
+        <tr ng-repeat="(key, value) in data">
+          <td> {{key}} </td> <td> {{ value }} </td>
+        </tr>
         <h1>{{e.name}}</h1>
         <ul class="unstyled">
             <li>Payrate (hourly): {{e.hourly}}</li>

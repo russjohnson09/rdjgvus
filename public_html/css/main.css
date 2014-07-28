@@ -103,3 +103,17 @@ input.no-radius,button.no-radius {
 .unstyled {
     list-style: none;
 }
+
+table.table-basic {
+    border-collapse: collapse;
+}
+
+table.table-basic, table.table-basic td, table.table-basic th  {
+    border: 1px solid #FFF;
+}
+
+table.table-basic td, table.table-basic th {
+    padding: 10px;
+}
+
+
