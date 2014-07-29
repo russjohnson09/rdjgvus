@@ -1,0 +1,22 @@
+{
+  "name": "rdjgvus",
+  "version": "0.0.0",
+  "homepage": "https://github.com/russjohnson09/rdjgvus",
+  "authors": [
+    "russ <russjohnson09@gmail.com>"
+  ],
+  "description": "rdj",
+  "main": "app.js",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.21"
+  }
+}
