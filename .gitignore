@@ -4,3 +4,4 @@ node_modules
 .dispatch.fcgi*
 *.log*
 *config.js
+*bower_comp*
