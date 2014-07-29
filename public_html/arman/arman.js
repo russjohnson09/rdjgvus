@@ -5,8 +5,9 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
   
   $scope.employees = [];
   
-  $scope.refresh = refresh = function() {
+  var refresh = $scope.refresh = function() {
       $http.get('./employees').success(function(data) {
+        console.log('employees');
         console.log(data);
         $scope.employees = data;
       });
@@ -16,50 +17,35 @@ payroll.controller('PayrollCtrl', function ($scope,$http) {
         $scope.paytypes = data.paytypes;
         console.log($scope.paytypes);
       });
-      
-      $scope.finance = {
-        gross: 10000,
-        taxRate: 0.30, //percent
-        checking: 100,
-        savings: 200,
-        four01k: 10000,
-        house: 100000,
-        insurance: {
-            health: 200,
-            car: 100,
-        },
-        net: function() {
-            var self = this;
-            return fin.net(self.gross,self.taxRate);
-        }
-      };
+      $scope.$watch('employees', function() {
+        popTotals();
+      });
   }
   
-  $scope.totals = function () {
-    var hourly = 0;
-    var salary = 0;
-    var other = 0;
+  function popTotals() {
+    var result = {};
+    var headers = [];
+    var values = [];
     var employees = $scope.employees;
+    var total = 0;
     for (var i=0;i<employees.length;i++) {
         var e = employees[i];
-        if (e.paytype == "Hourly") {
-           hourly += (parseFloat(e.hourly) || 0); 
-        } 
-        else if (e.paytype == "Salary") {
-            salary += (parseFloat(e.hourly) || 0); 
-        }
-        else {
-            other += (parseFloat(e.hourly) || 0); 
-        }
+        var type = e.paytype || 'NA';
+        var value = parseFloat(e.hourly) || 0;
+        result[type] = result[type] || 0;
+        result[type] += value;
+        total += value;
     }
-    var result = {
-    salary: salary,
-    hourly: hourly,
-    other: other,
-    total: hourly + salary + other};
-    console.log(result);
-    return result;
-  };
+    
+    for (var k in result) {
+        headers.push(k);
+        values.push(result[k]);
+    }
+    $scope.totals = result;
+    $scope.totals.headers = headers;
+    $scope.totals.values = values;
+    $scope.totals.total = total;
+  }
   
   refresh();
   

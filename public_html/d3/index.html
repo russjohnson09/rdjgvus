@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+
+<script src="/bower_components/angular/angular.js"></script>
+<script src="/bower_components/d3/d3.js"></script>
+<script src="/bower_components/nvd3/nv.d3.js"></script>
+<script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+<link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
+
+    <script>
+        var app = angular.module("nvd3TestApp", ['nvd3ChartDirectives']);
+
+        function ExampleCtrl($scope){
+            var s = $scope;
+            $scope.exampleData = [
+              { 
+                "label": "One",
+                "value" : 29.765957771107
+              } , 
+              { 
+                "label": "Two",
+                "value" : 20
+              } , 
+              { 
+                "label": "Three",
+                "value" : 32.807804682612
+              } , 
+              { 
+                "label": "Four",
+                "value" : 196.45946739256
+              } , 
+              { 
+                "label": "Five",
+                "value" : 0.19434030906893
+              } , 
+              { 
+                "label": "Six",
+                "value" : 98.079782601442
+              } , 
+              { 
+                "label": "Seven",
+                "value" : 13.925743130903
+              } , 
+              { 
+                "label": "Eight",
+                "value" : 5.1387322875705
+              }
+            ];
+            
+            s.xFunction = function() {
+                return function(d) {
+                    //console.log(d);
+                    return d.label;
+                }
+            };
+            
+            s.yFunction = function() {
+                return function(d) {
+                    //console.log(d);
+                    return d.value;
+                }
+            };
+        }
+    </script>
+
+</head>
+    
+    <body ng-app='nvd3TestApp'>
+<h1>Pie Chart</h1>
+<div ng-controller="ExampleCtrl">
+	<nvd3-pie-chart
+    	data="exampleData"
+        id="pie"
+        width="550"
+        height="350"
+        x="xFunction()"
+        y="yFunction()"
+        showLegend="true"
+        objectequality="true"
+        noData="No data to display.">
+        <svg></svg>
+    </nvd3-pie-chart>
+    
+    <table style="margin-top:-300px;">
+    <thead>
+    <tr>
+    <th>Label</th><th>Value</th>
+    </tr>
+    </thead>
+    <tr ng-repeat="e in exampleData">
+        <td><input ng-model="e.label"></td><td><input ng-model="e.value"></td>
+    </tr>
+    </table>
+    
+    
+    <h1>Name binding</h1>
+    <input type="text" ng-model="name">
+    <span>{{name}}</span>
+</div>
+
+
+</body>
+</html>
