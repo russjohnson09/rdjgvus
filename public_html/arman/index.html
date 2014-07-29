@@ -34,12 +34,11 @@
         <table class="table-basic">
         <thead>
         <tr>
-        <th>Salaried</th><th>Hourly</th><th>Other</th><th>Total</th>
+        <th ng-repeat="h in totals.headers">{{h}}</th><th>Total</th>
         </tr>
         <tbody>
         <tr>
-        <td>{{totals().salary}}</td><td>{{totals().hourly}}</td>
-        <td>{{totals().other}}</td><td>{{totals().total}}</td>
+        <td ng-repeat="v in totals.values">{{v}}</td><td>{{totals.total}}</td>
         </tr>
         </tbody>
         </thead>
