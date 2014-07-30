@@ -213,7 +213,7 @@ app.post("contact/add",function(req,res) {
     });
 });
 
-app.get("/quiz/userdata",function(req,res){
+app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress || 'ANON';
@@ -221,7 +221,7 @@ app.get("/quiz/userdata",function(req,res){
     res.json({ip: ip});
 });
 
-app.post("/quiz/testquiz",function(req,res){
+app.post("/quiz/test/testquiz",function(req,res){
     //console.log(req);
     var quiz = req.body.quiz;
     if (!quiz) {
@@ -251,7 +251,7 @@ app.post("/quiz/testquiz",function(req,res){
     });
 });
 
-app.post("/quiz/submit",function(req,res){
+app.post("/quiz/test/submit",function(req,res){
     //console.log(req.body);
     var _id = ObjectID(req.body['quiz_id']);
     var responses = req.body.responses;
