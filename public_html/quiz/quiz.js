@@ -5,6 +5,7 @@ function Quiz($scope,$http){
     s.user = {};
     s.user.responses = [];
     s.quiz = {};
+    s.testData = [];
     
     $http.get('./userdata').success(function(data) {
         console.log(data);
@@ -12,7 +13,7 @@ function Quiz($scope,$http){
     });
     
     s.testQuiz = {
-        id: 1,
+        id: 3,
         title: 'Test Quiz',
         questions: [
             {
@@ -26,7 +27,7 @@ function Quiz($scope,$http){
                 ]
             },
             {
-                title: 'What is the capitol of Michigan?',
+                title: 'What is the capital of Michigan?',
                 opts: {answer:1,type:'multiple'},
                 responses: [
                     {title:'Detroit'},
@@ -72,7 +73,8 @@ function Quiz($scope,$http){
         });
         request.success(function(data) {
             s.isLocked = true;
-            s.responses = data;
+            s.responses = data['user_submissions'];
+            s.setData(s.responses);
         });
         request.error(function(data) {
             console.log(data);
@@ -131,49 +133,45 @@ function Quiz($scope,$http){
         return response == responses[question];
     }
     
-    s.responseData = function() {
-        return [
-                 {"key": "Series 1",
-                 "values": [ [ 1025409600000 , 0] , 
-                 [ 1028088000000 , -6.3382185140371] , 
-                 [ 1030766400000 , -5.9507873460847] , 
-                 [ 1033358400000 , -11.569146943813] , 
-                 [ 1036040400000 , -5.4767332317425] , 
-                 [ 1038632400000 , 0.50794682203014] , 
-                 [ 1041310800000 , -5.5310285460542] , 
-                 [ 1043989200000 , -5.7838296963382] , [ 1046408400000 , -7.3249341615649] ,
-                  [ 1049086800000 , -6.7078630712489] , [ 1051675200000 , 0.44227126150934] , 
-                  [ 1054353600000 , 7.2481659343222] , [ 1056945600000 , 9.2512381306992] ]
-                 }]
-    };
+    s.setData = function(submissions) {
+        s.testData = [];
+        var questions = s.quiz.questions;
+        for (var i in questions) {
+            var q = questions[i];
+            s.testData[i] = [{
+                key: "chart" + i,
+                values: []
+            }];
+            var values = s.testData[i][0].values;
+            var responses = q.responses;
+            for (var j in responses) {
+                values.push([j,0]);
+            }
+        }
+        for (var i in submissions) {
+            var submission = submissions[i];
+            console.log(submission);
+            var responses = submission.responses;
+            for (var j in responses) {
+                s.testData[j][0].values[responses[j]][1] += 1;
+            }
+        }
+        
+        console.log(s.testData);
+    }
     
-    s.testData = [
-    [
-                 {"key": "Series 1",
-                 "values": [ [ 1025409600000 , 0] , 
-                 [ 1028088000000 , -6.3382185140371] , 
-                 [ 1030766400000 , -5.9507873460847] , 
-                 [ 1033358400000 , -11.569146943813] , 
-                 [ 1036040400000 , -5.4767332317425] , 
-                 [ 1038632400000 , 0.50794682203014] , 
-                 [ 1041310800000 , -5.5310285460542] , 
-                 [ 1043989200000 , -5.7838296963382] , [ 1046408400000 , -7.3249341615649] ,
-                  [ 1049086800000 , -6.7078630712489] , [ 1051675200000 , 0.44227126150934] , 
-                  [ 1054353600000 , 7.2481659343222] , [ 1056945600000 , 9.2512381306992] ]
-                 }],
-    [
-                 {"key": "Series 1",
-                 "values": [ [ 1025409600000 , 0] , 
-                 [ 1028088000000 , -6.3382185140371] , 
-                 [ 1030766400000 , -5.9507873460847] , 
-                 [ 1033358400000 , -11.569146943813] , 
-                 [ 1036040400000 , -5.4767332317425] , 
-                 [ 1038632400000 , 0.50794682203014] , 
-                 [ 1041310800000 , -5.5310285460542] , 
-                 [ 1043989200000 , -5.7838296963382] , [ 1046408400000 , -7.3249341615649] ,
-                  [ 1049086800000 , -6.7078630712489] , [ 1051675200000 , 0.44227126150934] , 
-                  [ 1054353600000 , 7.2481659343222] , [ 1056945600000 , 9.2512381306992] ]
-                 }],
-                 ];
+    s.xFunction = function() {
+        return function(d) {
+            return d[0];
+        };
+    }
+    
+    s.yFunction = function() {
+        return function(d) {
+            return d[1];
+        };
+    }
+    
+
     
 }

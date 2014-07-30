@@ -230,20 +230,24 @@ app.post("/quiz/testquiz",function(req,res){
     }
     var id = quiz.id;
     quizes.find({id:id}, function(err,c) {
-        if (c.count == 0) {
-            quizes.insert(quiz, {w:1}, function(err,result) {
-                w.info("inserted");
-                w.info(result);
-                res.json(result);
-            });
-        }
-        else {
-            c.nextObject(function(err,item) {
-                w.info("found");
-                w.info(item);
-                res.json(item);
-            });
-        }
+        console.log(c);
+        c.count(function(err,count) {
+            if (count == 0) {
+                console.log(1);
+                quizes.insert(quiz, {w:1}, function(err,result) {
+                    w.info("inserted");
+                    w.info(result);
+                    res.json(result);
+                });
+            }
+            else {
+                c.nextObject(function(err,item) {
+                    w.info("found");
+                    w.info(item);
+                    res.json(item);
+                });
+            };
+        });
     });
 });
 
@@ -260,7 +264,7 @@ app.post("/quiz/submit",function(req,res){
             submissions.update({id:user_id},{id:user_id,quiz_id:_id,responses:responses},
             {upsert:true,w:1},function(err,result) {
                 //res.json(result);
-               submissions.find({},function(err,c){
+               submissions.find({quiz_id:_id},function(err,c){
                     c.toArray(function(err,submissionsAry) {
                         console.log(submissionsAry);
                         res.json({user_submissions:submissionsAry});
