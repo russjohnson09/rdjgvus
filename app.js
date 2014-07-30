@@ -11,7 +11,7 @@ var PROD = config.app.isProd;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
-var contacts,employees;
+var contacts,employees,quizes,submissions;
 var todos;
 var http = require('http');
 var appPort = config.app.port;
@@ -40,6 +40,8 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         todos = db.collection('todos');
         patients = db.collection('patients');
         employees = db.collection('employees');
+        quizes = db.collection("quizes");
+        submissions = db.collection("submissions");
 });
 
 app.use(bodyparser());
@@ -207,6 +209,71 @@ app.post("contact/add",function(req,res) {
         else {
             w.info(result);
             res.json({result: result});
+        }
+    });
+});
+
+app.get("/quiz/userdata",function(req,res){
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress || 'ANON';
+    
+    res.json({ip: ip});
+});
+
+app.post("/quiz/testquiz",function(req,res){
+    //console.log(req);
+    var quiz = req.body.quiz;
+    if (!quiz) {
+        res.json({});
+        return;
+    }
+    var id = quiz.id;
+    quizes.find({id:id}, function(err,c) {
+        console.log(c);
+        c.count(function(err,count) {
+            if (count == 0) {
+                console.log(1);
+                quizes.insert(quiz, {w:1}, function(err,result) {
+                    w.info("inserted");
+                    w.info(result);
+                    res.json(result);
+                });
+            }
+            else {
+                c.nextObject(function(err,item) {
+                    w.info("found");
+                    w.info(item);
+                    res.json(item);
+                });
+            };
+        });
+    });
+});
+
+app.post("/quiz/submit",function(req,res){
+    //console.log(req.body);
+    var _id = ObjectID(req.body['quiz_id']);
+    var responses = req.body.responses;
+    var user_id = req.body['user_id'];
+    //console.log(_id);
+    console.log(responses);
+    quizes.findOne({_id:_id},function(err,quiz){
+        //console.log(quiz);
+        if (quiz) {
+            submissions.update({id:user_id},{id:user_id,quiz_id:_id,responses:responses},
+            {upsert:true,w:1},function(err,result) {
+                //res.json(result);
+               submissions.find({quiz_id:_id},function(err,c){
+                    c.toArray(function(err,submissionsAry) {
+                        console.log(submissionsAry);
+                        res.json({user_submissions:submissionsAry});
+                    });
+               });
+            });
+        }
+        else {
+            res.json({});
         }
     });
 });
