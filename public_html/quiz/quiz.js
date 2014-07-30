@@ -4,6 +4,8 @@ function Quiz($scope){
     var s = $scope;
     s.responses = [{text:"1"},{text:"2"}];
     
+    //s.test = "hello";
+    
     s.quiz = {
         title: 'Test Quiz',
         questions: [
@@ -27,7 +29,6 @@ function Quiz($scope){
                     {title:'Yes'}
                 ]
             },
-        
         ]
     };
     
@@ -38,5 +39,29 @@ function Quiz($scope){
             
     }
     
+    s.toggleSelection = function(response) {
+        console.log(response);
     
+    };
+    
+    s.addQestionResponse = function() {
+        console.log("quiz");
+    };
+    
+}
+
+function Question($scope) {
+    $scope.addResponse = function() {
+        console.log("qustion");   
+        $scope.addQestionResponse(); 
+    }
+}
+
+function Response($scope) {
+    $scope.test = "1";
+    $scope.toggleSelection = function() {
+        console.log("response");
+        //console.log($index);
+        $scope.addResponse();
+    };
 }

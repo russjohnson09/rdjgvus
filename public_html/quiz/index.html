@@ -18,12 +18,21 @@
 
     <div class="quiz">
         <h1>{{quiz.title}}</h1>
-        <div class="question" ng-repeat="q in quiz.questions">
+        <div class="question" 
+        ng-controller="Question"
+        ng-repeat="q in quiz.questions">
         <h2>{{q.title}}</h2>
-            <div ng-repeat="r in q.responses">
+            <div 
+            ng-controller="Response"
+            ng-repeat="r in q.responses">
                 <label>
-                    <input type="radio" name="question{{$parent.$index}}" value="{{$index}}">
+                    <input
+                     ng-click="toggleSelection()" 
+                     type="radio" 
+                     name="question{{$parent.$parent.$index}}" 
+                     value="{{$index}}">
                     {{r.title}}
+                    {{$root.test}}
                 </label>
             </div>
         </div>
