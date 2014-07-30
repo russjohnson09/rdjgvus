@@ -211,6 +211,14 @@ app.post("contact/add",function(req,res) {
     });
 });
 
+app.get("/quiz/userdata",function(req,res){
+    var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress || 'ANON';
+    
+    res.json({ip: ip});
+});
+
 app.get("/arman/employees",function(req,res) {
     employees.find().toArray(function(err, items) {
         if (err) {

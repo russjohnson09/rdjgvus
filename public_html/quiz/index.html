@@ -16,21 +16,24 @@
 <h1>Pie Chart</h1>
 <div ng-controller="Quiz">
 
+    <div>
+    <input ng-model="user.ip">{{user.ip}}
+    </div>
+
     <div class="quiz">
         <h1>{{quiz.title}}</h1>
-        <div class="question" 
-        ng-controller="Question"
+        <div class="question"
         ng-repeat="q in quiz.questions">
         <h2>{{q.title}}</h2>
-            <div 
-            ng-controller="Response"
-            ng-repeat="r in q.responses">
+            <div
+            ng-repeat="r in q.responses"
+            >
                 <label>
                     <input
-                     ng-click="toggleSelection()" 
+                     ng-click="toggleSelection($parent.$index,$index)" 
                      type="radio" 
-                     name="question{{$parent.$parent.$index}}" 
-                     value="{{$index}}">
+                     name="question{{$parent.$index}}" 
+                     >
                     {{r.title}}
                     {{$root.test}}
                 </label>
@@ -38,21 +41,12 @@
         </div>
         <button ng-click="submit()">Submit</button>
     </div>
-
-    <div class="question">
-        <h1>Question 1. What is waht?</h1>
-        <div class="radio" ng-repeat="r in responses">
-            <label>
-            <input type="radio" name="test" value="{{$index}}" ng-model="$parent.test">
-            {{r.text}}
-            </label>
-        </div>
-    </div>
-    <h1>Selected: {{test}}</h1>
     
-    <h1>Name binding</h1>
-    <input type="text" ng-model="name">
-    <span>{{name}}</span>
+    <div class="results">
+        Correct: ({{correct()}}/{{quiz.questions.length}}) <br/>
+        Unanswered: {{user.unanswered}}
+    </div>
+    
 </div>
 
 

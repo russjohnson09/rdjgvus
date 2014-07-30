@@ -1,8 +1,14 @@
 var app = angular.module("quiz", ['nvd3ChartDirectives']);
 
-function Quiz($scope){
+function Quiz($scope,$http){
     var s = $scope;
-    s.responses = [{text:"1"},{text:"2"}];
+    s.user = {};
+    s.user.responses = [];
+    
+    $http.get('./userdata').success(function(data) {
+        console.log(data);
+        s.user.data = data;
+    });
     
     //s.test = "hello";
     
@@ -41,27 +47,36 @@ function Quiz($scope){
     
     s.toggleSelection = function(response) {
         console.log(response);
-    
     };
     
-    s.addQestionResponse = function() {
-        console.log("quiz");
-    };
-    
-}
-
-function Question($scope) {
-    $scope.addResponse = function() {
-        console.log("qustion");   
-        $scope.addQestionResponse(); 
-    }
-}
-
-function Response($scope) {
-    $scope.test = "1";
-    $scope.toggleSelection = function() {
-        console.log("response");
+    s.toggleSelection = function(question,response) {
+        s.user.responses[question] = response;
         //console.log($index);
-        $scope.addResponse();
     };
+    
+    s.correct = function() {
+        var responses = s.user.responses;
+        var questions = s.quiz.questions;
+        var blankCount = 0;
+        var correctCount = 0;
+        for (var i in questions) {
+            var q = questions[i];
+            var answer = q.opts.answer;
+            var unanswered = (responses[i] === undefined || responses[i] === '');
+            if (unanswered) {
+                blankCount += 1;
+            }
+            else {
+                if (responses[i] == answer) {
+                    correctCount += 1;
+                }
+            }
+            
+            console.log(responses[i]);
+            responses[i];
+        }
+        s.user.unanswered = blankCount;
+        return correctCount;
+    }
+    
 }
