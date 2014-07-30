@@ -13,32 +13,51 @@
 </head>
     
 <body ng-app='quiz'>
-<div ng-controller="Quiz">
+<div ng-controller="Quiz" id="container">
     <div>
-    <input ng-model="user.data.ip">{{user.data.ip}}
+    <input 
+    ng-disabled="isLocked"
+    ng-model="user.data.ip">
+    {{user.data.ip}}
     </div>
 
-    <div class="quiz">
+    <div class="quiz" 
+    ng-class="isLocked ? 'locked' : ''">
         <h1>{{quiz.title}}</h1>
         <div class="question"
         ng-repeat="q in quiz.questions">
-        <h2>{{q.title}}</h2>
+        <div class="chart">
+            Hello
+        </div>
+        <h2>{{q.title}} 
+            <span ng-if="isLocked">
+                <span ng-if="isResponseCorrect($index)">
+                (O)
+                </span>
+                <span ng-if="!isResponseCorrect($index)">
+                (X)
+                </span>
+            </span>
+        </h2>
             <div
             ng-repeat="r in q.responses"
             >
-                <label>
+                <label ng-class="isCorrect($parent.$index,$index) ? 'correct' : ''"
+                       ng-class="isSelected($parent.$index,$index) ? 'selected : ''">
                     <input
                      ng-click="toggleSelection($parent.$index,$index)" 
                      type="radio" 
-                     name="question{{$parent.$index}}" 
+                     name="question{{$parent.$index}}"
+                     ng-disabled="isLocked"
                      >
                     {{r.title}}
                     {{$root.test}}
                 </label>
             </div>
         </div>
-        <button ng-click="submit()">Submit</button>
-        <button ng-click="generate()">Generate Test Quiz</button>
+        <button 
+        ng-disabled="isLocked"
+        ng-click="submit()">Submit</button>
     </div>
     
     <div class="results">
@@ -59,6 +78,29 @@
 
 
 <script src="quiz.js"></script>
+
+
+<link rel="stylesheet" href="/css/main.css">
+<style>
+
+    .chart {
+        display: none;
+        float: right;
+    }
+    
+    .locked .chart {
+        display: block;
+    }
+    
+    .locked label.correct {
+        background-color: green;
+    }
+    
+    label.selected {
+        background-color: blue;
+    }
+
+</style>
 
 </body>
 </html>

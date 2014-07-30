@@ -253,14 +253,19 @@ app.post("/quiz/submit",function(req,res){
     var responses = req.body.responses;
     var user_id = req.body['user_id'];
     //console.log(_id);
-    //console.log(responses);
+    console.log(responses);
     quizes.findOne({_id:_id},function(err,quiz){
         //console.log(quiz);
         if (quiz) {
             submissions.update({id:user_id},{id:user_id,quiz_id:_id,responses:responses},
-            {w:1,upsert:true},function(err,result) {
-                console.log(result);
-                res.json(result);
+            {upsert:true,w:1},function(err,result) {
+                //res.json(result);
+               submissions.find({},function(err,c){
+                    c.toArray(function(err,submissionsAry) {
+                        console.log(submissionsAry);
+                        res.json({user_submissions:submissionsAry});
+                    });
+               });
             });
         }
         else {

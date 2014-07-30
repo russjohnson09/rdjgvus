@@ -71,7 +71,8 @@ function Quiz($scope,$http){
             }
         });
         request.success(function(data) {
-            console.log(data);
+            s.isLocked = true;
+            s.responses = data;
         });
         request.error(function(data) {
             console.log(data);
@@ -109,5 +110,27 @@ function Quiz($scope,$http){
     }
     
     s.generate = function(){};
+    
+    s.isCorrect = function(question,response) {
+        return s.quiz.questions[question].opts.answer == response;
+    };
+    
+    s.isResponseCorrect = function(question) {
+        var responses = s.user.responses;
+        if (responses[question] === undefined || !responses[question]) {
+            return false;
+        }
+        else {
+            return s.quiz.questions[question].opts.answer == responses[question];
+        }
+    };
+    
+    s.isSelected = function(question,response) {
+        var responses = s.user.responses;
+        if (responses[question] === undefined || !responses[question]) {
+            return false;
+        }
+        return response == responses[question];
+    }
     
 }
