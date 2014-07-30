@@ -42,8 +42,8 @@
             <div
             ng-repeat="r in q.responses"
             >
-                <label ng-class="isCorrect($parent.$index,$index) ? 'correct' : ''"
-                       ng-class="isSelected($parent.$index,$index) ? 'selected : ''">
+                <label ng-class="{'correct' : isCorrect($parent.$index,$index),
+                        'selected' : isSelected($parent.$index,$index)}">
                     <input
                      ng-click="toggleSelection($parent.$index,$index)" 
                      type="radio" 
@@ -92,11 +92,11 @@
         display: block;
     }
     
-    .locked label.correct {
+    .locked label.correct, .locked label.correct.selected {
         background-color: green;
     }
     
-    label.selected {
+    .locked label.selected {
         background-color: blue;
     }
 

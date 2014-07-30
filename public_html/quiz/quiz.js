@@ -92,7 +92,7 @@ function Quiz($scope,$http){
         for (var i in questions) {
             var q = questions[i];
             var answer = q.opts.answer;
-            var unanswered = (responses[i] === undefined || !responses[i]); //undefined or blank or null
+            var unanswered = (responses[i] === undefined || (!responses[i] && (responses[i] !== 0))); //undefined or blank or null
             if (unanswered) {
                 blankCount += 1;
             }
@@ -117,7 +117,7 @@ function Quiz($scope,$http){
     
     s.isResponseCorrect = function(question) {
         var responses = s.user.responses;
-        if (responses[question] === undefined || !responses[question]) {
+        if (responses[question] === undefined || (!responses[question] && (responses[question] !== 0))) {
             return false;
         }
         else {
@@ -127,7 +127,7 @@ function Quiz($scope,$http){
     
     s.isSelected = function(question,response) {
         var responses = s.user.responses;
-        if (responses[question] === undefined || !responses[question]) {
+        if (responses[question] === undefined || (!responses[question] && (responses[question] !== 0))) {
             return false;
         }
         return response == responses[question];
