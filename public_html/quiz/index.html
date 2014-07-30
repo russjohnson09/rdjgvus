@@ -27,7 +27,15 @@
         <div class="question"
         ng-repeat="q in quiz.questions">
         <div class="chart">
-            Hello
+	        <nvd3-discrete-bar-chart
+            	data="testData[$index]"
+                id="chart{{$index}}"
+                showXAxis="true"
+                showYAxis="true"
+                width="550"
+                height="400">
+                	<svg></svg>
+            </nvd3-discrete-bar-chart>
         </div>
         <h2>{{q.title}} 
             <span ng-if="isLocked">
