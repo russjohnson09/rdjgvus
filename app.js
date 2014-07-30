@@ -247,6 +247,28 @@ app.post("/quiz/testquiz",function(req,res){
     });
 });
 
+app.post("/quiz/submit",function(req,res){
+    //console.log(req.body);
+    var _id = ObjectID(req.body['quiz_id']);
+    var responses = req.body.responses;
+    var user_id = req.body['user_id'];
+    //console.log(_id);
+    //console.log(responses);
+    quizes.findOne({_id:_id},function(err,quiz){
+        //console.log(quiz);
+        if (quiz) {
+            submissions.update({id:user_id},{id:user_id,quiz_id:_id,responses:responses},
+            {w:1,upsert:true},function(err,result) {
+                console.log(result);
+                res.json(result);
+            });
+        }
+        else {
+            res.json({});
+        }
+    });
+});
+
 app.get("/arman/employees",function(req,res) {
     employees.find().toArray(function(err, items) {
         if (err) {

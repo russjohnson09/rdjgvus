@@ -39,7 +39,7 @@ function Quiz($scope,$http){
     };
     
     
-    //test quiz
+    //test quiz creation
     (function(s) {
         console.log(s);
          var request = $http({
@@ -65,20 +65,16 @@ function Quiz($scope,$http){
             method: "post",
             url: "./submit",
             data: {
+                user_id: s.user.data.ip,
                 responses : s.user.responses,
                 quiz_id: s.quiz._id
             }
         });
         request.success(function(data) {
             console.log(data);
-            refresh();
         });
         request.error(function(data) {
             console.log(data);
-        });
-        $http.post('./submit').success(function(data) {
-            console.log(data);
-            s.user.data = data;
         });
     }
     
@@ -95,7 +91,7 @@ function Quiz($scope,$http){
         for (var i in questions) {
             var q = questions[i];
             var answer = q.opts.answer;
-            var unanswered = (responses[i] === undefined || responses[i] === '');
+            var unanswered = (responses[i] === undefined || !responses[i]); //undefined or blank or null
             if (unanswered) {
                 blankCount += 1;
             }
