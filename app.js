@@ -219,6 +219,11 @@ app.get("/quiz/userdata",function(req,res){
     res.json({ip: ip});
 });
 
+app.post("/quiz/testquiz",function(req,res){
+    //console.log(req);
+    res.json(req.body.quiz);
+});
+
 app.get("/arman/employees",function(req,res) {
     employees.find().toArray(function(err, items) {
         if (err) {

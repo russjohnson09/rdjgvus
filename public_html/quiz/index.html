@@ -13,11 +13,9 @@
 </head>
     
 <body ng-app='quiz'>
-<h1>Pie Chart</h1>
 <div ng-controller="Quiz">
-
     <div>
-    <input ng-model="user.ip">{{user.ip}}
+    <input ng-model="user.data.ip">{{user.data.ip}}
     </div>
 
     <div class="quiz">
@@ -40,6 +38,7 @@
             </div>
         </div>
         <button ng-click="submit()">Submit</button>
+        <button ng-click="generate()">Generate Test Quiz</button>
     </div>
     
     <div class="results">

@@ -4,15 +4,15 @@ function Quiz($scope,$http){
     var s = $scope;
     s.user = {};
     s.user.responses = [];
+    s.quiz = {};
     
     $http.get('./userdata').success(function(data) {
         console.log(data);
         s.user.data = data;
     });
     
-    //s.test = "hello";
-    
-    s.quiz = {
+    s.testQuiz = {
+        id: 1,
         title: 'Test Quiz',
         questions: [
             {
@@ -26,7 +26,7 @@ function Quiz($scope,$http){
                 ]
             },
             {
-                title: 'What is the captiol of Michigan?',
+                title: 'What is the capitol of Michigan?',
                 opts: {answer:1,type:'multiple'},
                 responses: [
                     {title:'Detroit'},
@@ -38,16 +38,53 @@ function Quiz($scope,$http){
         ]
     };
     
-    s.response = {};
+    (function(s) {
+        console.log(s);
+         var request = $http({
+            method: "post",
+            url: "./testquiz",
+            data: {
+                quiz : s.testQuiz 
+            }
+        });
+        request.success(function(data) {
+            console.log(data);
+            s.quiz = data;
+        });
+        request.error(function(data) {
+            console.log(data);
+        });
+    })(s);
     
-    
-    s.submit = function() {
-            
+    s.init = function() {
+        
     }
     
-    s.toggleSelection = function(response) {
-        console.log(response);
-    };
+    s.init();
+    
+    s.response = {};
+    
+    s.submit = function() {
+         var request = $http({
+            method: "post",
+            url: "./submit",
+            data: {
+                responses : s.user.responses,
+                quiz_id: s.quiz._id
+            }
+        });
+        request.success(function(data) {
+            console.log(data);
+            refresh();
+        });
+        request.error(function(data) {
+            console.log(data);
+        });
+        $http.post('./submit').success(function(data) {
+            console.log(data);
+            s.user.data = data;
+        });
+    }
     
     s.toggleSelection = function(question,response) {
         s.user.responses[question] = response;
@@ -78,5 +115,7 @@ function Quiz($scope,$http){
         s.user.unanswered = blankCount;
         return correctCount;
     }
+    
+    s.generate = function(){};
     
 }
