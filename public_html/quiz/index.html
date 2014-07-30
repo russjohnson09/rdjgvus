@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+
+
+<script src="/bower_components/angular/angular.js"></script>
+<script src="/bower_components/d3/d3.js"></script>
+<script src="/bower_components/nvd3/nv.d3.js"></script>
+<script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+<link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
+
+</head>
+    
+<body ng-app='quiz'>
+<h1>Pie Chart</h1>
+<div ng-controller="Quiz">
+
+    <div class="quiz">
+        <h1>{{quiz.title}}</h1>
+        <div class="question" ng-repeat="q in quiz.questions">
+        <h2>{{q.title}}</h2>
+            <div ng-repeat="r in q.responses">
+                <label>
+                    <input type="radio" name="question{{$parent.$index}}" value="{{$index}}">
+                    {{r.title}}
+                </label>
+            </div>
+        </div>
+        <button ng-click="submit()">Submit</button>
+    </div>
+
+    <div class="question">
+        <h1>Question 1. What is waht?</h1>
+        <div class="radio" ng-repeat="r in responses">
+            <label>
+            <input type="radio" name="test" value="{{$index}}" ng-model="$parent.test">
+            {{r.text}}
+            </label>
+        </div>
+    </div>
+    <h1>Selected: {{test}}</h1>
+    
+    <h1>Name binding</h1>
+    <input type="text" ng-model="name">
+    <span>{{name}}</span>
+</div>
+
+
+<script src="quiz.js"></script>
+
+</body>
+</html>
