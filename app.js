@@ -11,7 +11,7 @@ var PROD = config.app.isProd;
 var w = require('winston');
 var dbUrl = mConfig.url;
 var knockoutCollection;
-var contacts,employees;
+var contacts,employees,quizes,submissions;
 var todos;
 var http = require('http');
 var appPort = config.app.port;
@@ -40,6 +40,8 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         todos = db.collection('todos');
         patients = db.collection('patients');
         employees = db.collection('employees');
+        quizes = db.collection("quizes");
+        submissions = db.collection("submissions");
 });
 
 app.use(bodyparser());
@@ -221,7 +223,28 @@ app.get("/quiz/userdata",function(req,res){
 
 app.post("/quiz/testquiz",function(req,res){
     //console.log(req);
-    res.json(req.body.quiz);
+    var quiz = req.body.quiz;
+    if (!quiz) {
+        res.json({});
+        return;
+    }
+    var id = quiz.id;
+    quizes.find({id:id}, function(err,c) {
+        if (c.count == 0) {
+            quizes.insert(quiz, {w:1}, function(err,result) {
+                w.info("inserted");
+                w.info(result);
+                res.json(result);
+            });
+        }
+        else {
+            c.nextObject(function(err,item) {
+                w.info("found");
+                w.info(item);
+                res.json(item);
+            });
+        }
+    });
 });
 
 app.get("/arman/employees",function(req,res) {

@@ -38,6 +38,8 @@ function Quiz($scope,$http){
         ]
     };
     
+    
+    //test quiz
     (function(s) {
         console.log(s);
          var request = $http({
@@ -55,12 +57,6 @@ function Quiz($scope,$http){
             console.log(data);
         });
     })(s);
-    
-    s.init = function() {
-        
-    }
-    
-    s.init();
     
     s.response = {};
     
