@@ -14,21 +14,40 @@
 <body ng-controller="Quiz">
 
 <div id="container">
-    <div ng-hide="quizes.length || isLoading" class="no-data">
-        No quizes to display.
-    </div>
-    <div ng-hide="!isLoading">
-        Loading.
-    </div>
-    <div class="quiz-list"
-    ng-repeat="q in quizes">
-        <div class="quiz">
-            {{q.title}}
+    <div ng-hide="takingQuiz" class="quiz-list-container">
+        <div ng-hide="quizes.length || isLoading" class="no-data">
+            No quizes to display.
         </div>
+        <div ng-hide="!isLoading">
+            Loading.
+        </div>
+        <div class="quiz-list"
+        ng-repeat="q in quizes">
+            <div class="quiz">
+                <div>{{q.title}}</div> <div>({{q.questions.length}} Questions)</div> <div><button ng-click="take(q)">Take Quiz</button></div>
+            </div>
+        </div>
+        
+        <div class="options">
+            <a href="./create">Create New</a>
+            <button ng-click="removeBlank()">Remove Null Quizes</button>
+        </div>
+        
+        <!-- quiz-list-container -->
     </div>
     
-    <div class="options">
-        <a href="./create">Create New</a>
+    <div ng-hide="!takingQuiz">
+        <h1>{{quiz.title}}</h1>
+        <div class="question" ng-repeat="q in quiz.questions">
+            <h2>{{q.title}}</h2>
+            <div class="responses" ng-repeat="r in q.responses">
+                <label>{{r.text}}<input type="radio" ng-click="response($parent.$index,$index)"></label>
+            </div>
+        </div>
+        
+        <div class="bottom-bar">
+            <button ng-click="submit()">Submit</button>
+        </div>
     </div>
     
 <!-- container -->
@@ -42,6 +61,32 @@
     .options {
         margin: 20px 0 0 0;
     }
+    
+    div.quiz-list {
+        display:table;
+    }
+    
+    div.quiz-list > div.quiz {
+        display:table-row;
+    }
+    
+    .quiz div {
+        display:table-cell;
+        width: 25%;
+    }
+    
+    label, input {
+        position: relative;
+        display: block;
+    }
+    
+    label input {
+        position: relative;
+    }
+    
+    
+    
+    
 </style>
 
 </body>

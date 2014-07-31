@@ -232,6 +232,12 @@ app.post("/quiz/create",function(req,res){
     });
 });
 
+app.post("/quiz/removeBlank",function(req,res){
+    quizes.remove({questions: { $size: 0}},{w:1}, function(err,count) {
+        res.json({count:count});
+    });
+});
+
 app.post("/quiz/test/testquiz",function(req,res){
     //console.log(req);
     var quiz = req.body.quiz;
@@ -263,7 +269,7 @@ app.post("/quiz/test/testquiz",function(req,res){
 });
 
 app.get("/quiz/quiz_list",function(req,res){
-    quizes.find({}, function(err,c) {
+    quizes.find({active:true}, function(err,c) {
         c.toArray(function(err,quizAry){
             console.log(quizAry);
             res.json({quizAry:quizAry})

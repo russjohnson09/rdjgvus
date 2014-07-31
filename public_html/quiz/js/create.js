@@ -32,7 +32,7 @@ function Create($scope,$http){
         });
         
         request.success(function(id) {
-            window.location.href = "../take?id=" + id;
+            window.location.href = "../";
         });
         
         request.error(function(data) {
