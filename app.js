@@ -251,6 +251,15 @@ app.post("/quiz/test/testquiz",function(req,res){
     });
 });
 
+app.get("/quiz/quiz_list",function(req,res){
+    quizes.find({}, function(err,c) {
+        c.toArray(function(err,quizAry){
+            console.log(quizAry);
+            res.json({quizAry:quizAry})
+        });
+    });
+});
+
 app.post("/quiz/test/submit",function(req,res){
     //console.log(req.body);
     var _id = ObjectID(req.body['quiz_id']);
