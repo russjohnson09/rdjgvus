@@ -151,26 +151,16 @@ function Quiz($scope,$http){
     s.return = function() {
         s.viewingResults = false;
     }
-        /*
-        for (var i in subs) {
-            var sub = subs[i];
-            var responses = sub.responses;
-            for 
-                s.totals[j] += responses[]j]
-        }
-        
-        for (var i in questions) {
-            var q = questions[i];
-            var answer = q.opts.answer;
-            var unanswered = (responses[i] === undefined || (!responses[i] && (responses[i] !== 0)));
-            if (responses[i] == answer) {
-                totalPoints += 1;
-            }
-            responses[i];
-        }
-        
-        if (totalSubmissions > 0 && totalQuestions > 0) {
-            s.averageScore = totalPoints / (totalSubmissions * totalQuestions)
-        }
-        */
+    
+    s.xFunction = function() {
+        return function(d) {
+            return d[0];
+        };
+    }
+    
+    s.yFunction = function() {
+        return function(d) {
+            return d[1];
+        };
+    }
 }

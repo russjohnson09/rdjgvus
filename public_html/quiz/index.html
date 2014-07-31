@@ -60,11 +60,26 @@
             <h1>There are {{subTotals()}} submissions for quiz "{{quiz.title}}". 
             Average score is {{averageScore}}</h1>
         </div>
-        <div class="question" ng-repeat="q in quiz.questions">
-            <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
-            <div class="responses" ng-repeat="r in q.responses"
-            ng-class="{'correct' : q.answer == $index }">
-                {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
+        <div class="question-container" ng-repeat="q in quiz.questions">
+                <div class="question">
+                    <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
+                    <div class="responses" ng-repeat="r in q.responses"
+                    ng-class="{'correct' : q.answer == $index }">
+                        {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
+                    </div>
+                </div>
+            <div class="chart">
+	            <nvd3-discrete-bar-chart
+                	data="data[$index]"
+                    id="chart{{$index}}"
+                    showXAxis="true"
+                    showYAxis="true"
+                    width="550"
+                    height="400"
+                    x="xFunction()"
+                    y="yFunction()">
+                    	<svg></svg>
+                </nvd3-discrete-bar-chart>
             </div>
         </div>
         <div class="bottom-bar">
@@ -81,6 +96,8 @@
 <script src="./js/quiz.js"></script>
 <link rel="stylesheet" href="/css/main.css">
 <style>
+
+
 
     .options {
         margin: 20px 0 0 0;
@@ -101,13 +118,21 @@
     
     div.question {
         width: 200px;
-        margin: 20px;
+        margin: 20px 500px 20px 20px;
+        position: relative;
     }
     
     .question label {
         position: relative;
         display: block;
         width: 100%;
+    }
+    
+    .question-container {
+        padding:0;margin:0;
+        position: relative;
+        width: 100%;
+        height: 500px;
     }
     
     .question input {
@@ -122,6 +147,12 @@
     
     .correct {
         background-color: green;
+    }
+    
+    .chart {
+        position: absolute;
+        right:0;top:0;
+        padding:0;
     }
     
     
