@@ -14,7 +14,7 @@
 <body ng-controller="Quiz">
 
 <div id="container">
-    <div ng-hide="takingQuiz" class="quiz-list-container">
+    <div ng-hide="takingQuiz || viewingResults" class="quiz-list-container">
         <div ng-hide="quizes.length || isLoading" class="no-data">
             No quizes to display.
         </div>
@@ -24,7 +24,9 @@
         <div class="quiz-list"
         ng-repeat="q in quizes">
             <div class="quiz">
-                <div>{{q.title}}</div> <div>({{q.questions.length}} Questions)</div> <div><button ng-click="take(q)">Take Quiz</button></div>
+                <div>{{q.title}}</div> <div>({{q.questions.length}} Questions)</div> 
+                <div><button ng-click="take(q)">Take Quiz</button></div>
+                <div><button ng-click="viewResults(q)">View Results</button></div>
             </div>
         </div>
         
@@ -49,6 +51,16 @@
         <div class="bottom-bar">
             <button ng-click="submit()">Submit</button>
         </div>
+    </div>
+    
+    
+    <div class="results" ng-hide="!viewingResults">
+        <h1 ng-hide="!loadingResults">Loading</h1>
+        <div ng-hide="loadingResults">
+            <h1>{{quiz.title}}</h1>
+        </div>
+        
+    <!-- results -->
     </div>
     
 <!-- container -->

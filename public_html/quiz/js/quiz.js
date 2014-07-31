@@ -30,12 +30,25 @@ function Quiz($scope,$http){
             s.isLoading = false;
         });
     }
+    
+    function loadSubmissions() {
+        var request = $http({
+            method: "get",
+            url: "./submissions?quiz_id=" + s.quiz._id
+        });
+        request.success(function(data) {
+            console.log(data);
+            s.submissions = data.submissionsAry;
+            s.loadingResults = false;
+        });
+    }
 
     var s = $scope;
     s.isLoading = true;
     s.takingQuiz = false;
     s.quizes = [];
     s.responses = [];
+    s.viewingResults = false;
     
     refresh();
     
@@ -64,6 +77,13 @@ function Quiz($scope,$http){
         request.error(function(data) {
             //s.isLoading = false;
         });
+    }
+    
+    s.viewResults = function(q) {
+        s.viewingResults = true;
+        s.loadingResults = true;
+        s.quiz = q;
+        loadSubmissions();
     }
     
     

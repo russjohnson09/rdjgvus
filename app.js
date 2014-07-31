@@ -1,5 +1,6 @@
 var config = require('./config.js');
 var u = require('./util_modules/utils.js')({seed:100});
+var url = require('url');
 var express = require('express');
 var app = express();
 var http = require("http");
@@ -240,6 +241,17 @@ app.post("/quiz",function(req,res){
     submissions.insert({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
         console.log(result);
         res.json(result);
+    });
+});
+
+app.get("/quiz/submissions",function(req,res){
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    var quiz_id = ObjectID(query.quiz_id);
+    submissions.find({quiz_id:quiz_id},function(err,c){
+        c.toArray(function(err,subAry) {
+            res.json({submissionsAry:subAry});
+        });
     });
 });
 
