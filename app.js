@@ -1,5 +1,6 @@
 var config = require('./config.js');
 var u = require('./util_modules/utils.js')({seed:100});
+var url = require('url');
 var express = require('express');
 var app = express();
 var http = require("http");
@@ -213,7 +214,7 @@ app.post("contact/add",function(req,res) {
     });
 });
 
-app.get("/quiz/userdata",function(req,res){
+app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress || 'ANON';
@@ -221,7 +222,46 @@ app.get("/quiz/userdata",function(req,res){
     res.json({ip: ip});
 });
 
-app.post("/quiz/testquiz",function(req,res){
+app.post("/quiz/create",function(req,res){
+    var quiz = req.body.quiz;
+    if (!quiz) {
+        res.json({});
+        return;
+    }
+    quizes.insert(quiz,{w:1},function(err,result){
+        res.json(result[0]['_id']);
+    });
+});
+
+app.post("/quiz",function(req,res){
+    var quiz = req.body.quiz;
+    var responses = req.body.responses;
+    var quiz_id = ObjectID(quiz._id);
+    var name = req.body.name;
+    submissions.insert({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
+        console.log(result);
+        res.json(result);
+    });
+});
+
+app.get("/quiz/submissions",function(req,res){
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    var quiz_id = ObjectID(query.quiz_id);
+    submissions.find({quiz_id:quiz_id},function(err,c){
+        c.toArray(function(err,subAry) {
+            res.json({submissionsAry:subAry});
+        });
+    });
+});
+
+app.post("/quiz/removeBlank",function(req,res){
+    quizes.remove({questions: { $size: 0}},{w:1}, function(err,count) {
+        res.json({count:count});
+    });
+});
+
+app.post("/quiz/test/testquiz",function(req,res){
     //console.log(req);
     var quiz = req.body.quiz;
     if (!quiz) {
@@ -251,7 +291,16 @@ app.post("/quiz/testquiz",function(req,res){
     });
 });
 
-app.post("/quiz/submit",function(req,res){
+app.get("/quiz/quiz_list",function(req,res){
+    quizes.find({active:true}, function(err,c) {
+        c.toArray(function(err,quizAry){
+            console.log(quizAry);
+            res.json({quizAry:quizAry})
+        });
+    });
+});
+
+app.post("/quiz/test/submit",function(req,res){
     //console.log(req.body);
     var _id = ObjectID(req.body['quiz_id']);
     var responses = req.body.responses;

@@ -1,115 +1,162 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<html>
+<html ng-app='quiz'>
 <head>
+    <meta charset="utf-8">
 
-
-<script src="/bower_components/angular/angular.js"></script>
-<script src="/bower_components/d3/d3.js"></script>
-<script src="/bower_components/nvd3/nv.d3.js"></script>
-<script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
-<link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/d3/d3.js"></script>
+    <script src="/bower_components/nvd3/nv.d3.js"></script>
+    <script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+    <link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
 
 </head>
     
-<body ng-app='quiz'>
-<div ng-controller="Quiz" id="container">
-    <div>
-    <input 
-    ng-disabled="isLocked"
-    ng-model="user.data.ip">
-    {{user.data.ip}}
-    </div>
+<body ng-controller="Quiz">
 
-    <div class="quiz" 
-    ng-class="isLocked ? 'locked' : ''">
-        <h1>{{quiz.title}}</h1>
-        <div class="question"
-        ng-repeat="q in quiz.questions">
-        <div class="chart">
-	        <nvd3-discrete-bar-chart
-            	data="testData[$index]"
-                id="chart{{$index}}"
-                showXAxis="true"
-                showYAxis="true"
-                width="550"
-                height="400"
-                x="xFunction()"
-                y="yFunction()">
-                	<svg></svg>
-            </nvd3-discrete-bar-chart>
+<div id="container">
+    <div ng-hide="takingQuiz || viewingResults" class="quiz-list-container">
+        <div ng-hide="quizes.length || isLoading" class="no-data">
+            No quizes to display.
         </div>
-        <h2>{{q.title}} 
-            <span ng-if="isLocked">
-                <span ng-if="isResponseCorrect($index)">
-                (O)
-                </span>
-                <span ng-if="!isResponseCorrect($index)">
-                (X)
-                </span>
-            </span>
-        </h2>
-            <div
-            ng-repeat="r in q.responses"
-            >
-                <label ng-class="{'correct' : isCorrect($parent.$index,$index),
-                        'selected' : isSelected($parent.$index,$index)}">
-                    <input
-                     ng-click="toggleSelection($parent.$index,$index)" 
-                     type="radio" 
-                     name="question{{$parent.$index}}"
-                     ng-disabled="isLocked"
-                     >
-                    {{r.title}}
-                    {{$root.test}}
-                </label>
+        <div ng-hide="!isLoading">
+            Loading.
+        </div>
+        <div class="quiz-list"
+        ng-repeat="q in quizes">
+            <div class="quiz">
+                <div>{{q.title}}</div> <div>({{q.questions.length}} Questions)</div> 
+                <div><button ng-click="take(q)">Take Quiz</button></div>
+                <div><button ng-click="viewResults(q)">View Results</button></div>
             </div>
         </div>
-        <button 
-        ng-disabled="isLocked"
-        ng-click="submit()">Submit</button>
+        
+        <div class="options">
+            <a href="./create">Create New</a>
+            <button ng-click="removeBlank()">Remove Null Quizes</button>
+        </div>
+        
+        <!-- quiz-list-container -->
     </div>
     
-    <div class="results">
-        Correct: ({{correct()}}/{{quiz.questions.length}}) <br/>
-        Unanswered: {{user.unanswered}}
+    <div ng-hide="!takingQuiz">
+        <label>Name: <input ng-model="name"></label>
+        <h1>{{quiz.title}}</h1>
+        <div class="question" ng-repeat="q in quiz.questions">
+            <h2>{{$index + 1}}. {{q.title}}</h2>
+            <div class="responses" ng-repeat="r in q.responses">
+                <label>{{r.text}}<input name="question{{$parent.$index}}" type="radio" ng-click="response($parent.$index,$index)"></label>
+            </div>
+        </div>
+        
+        <div class="bottom-bar">
+            <button ng-click="submit()">Submit</button>
+        </div>
     </div>
     
-    <div class="debug">
-        <h1>Debug info:</h1>
-        <table>
-        <tr ng-repeat="(key,value) in quiz">
-            <td> {{key}} </td> <td> {{ value }} </td>
-        </tr>
-        </table>
+    
+    <div class="results" ng-hide="!viewingResults">
+        <h1 ng-hide="!loadingResults">Loading</h1>
+        <div ng-hide="loadingResults">
+            <h1>There are {{subTotals()}} submissions for quiz "{{quiz.title}}". 
+            Average score is {{averageScore}}</h1>
+        </div>
+        <div class="question-container" ng-repeat="q in quiz.questions">
+                <div class="question">
+                    <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
+                    <div class="responses" ng-repeat="r in q.responses"
+                    ng-class="{'correct' : q.answer == $index }">
+                        {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
+                    </div>
+                </div>
+            <div class="chart">
+	            <nvd3-discrete-bar-chart
+                	data="data[$index]"
+                    id="chart{{$index}}"
+                    showvalues="true"
+                    width="550"
+                    height="400"
+                    interactive="false"
+                    valueFormat="valueFormatFunction()"
+                    >
+                    	<svg></svg>
+                </nvd3-discrete-bar-chart>
+            </div>
+        </div>
+        <div class="bottom-bar">
+            <button ng-click="return()">Return</button>
+        </div>
+        
+    <!-- results -->
     </div>
     
+<!-- container -->
 </div>
 
 
-<script src="quiz.js"></script>
-
-
+<script src="./js/quiz.js"></script>
 <link rel="stylesheet" href="/css/main.css">
 <style>
 
-    .chart {
-        display: block;
-        float: right;
+
+
+    .options {
+        margin: 20px 0 0 0;
     }
     
-    .locked .chart {
-        display: block;
+    div.quiz-list {
+        display:table;
     }
     
-    .locked label.correct, .locked label.correct.selected {
+    div.quiz-list > div.quiz {
+        display:table-row;
+    }
+    
+    .quiz div {
+        display:table-cell;
+        width: 25%;
+    }
+    
+    div.question {
+        width: 200px;
+        margin: 20px 500px 20px 20px;
+        position: relative;
+    }
+    
+    .question label {
+        position: relative;
+        display: block;
+        width: 100%;
+    }
+    
+    .question-container {
+        padding:0;margin:0;
+        position: relative;
+        width: 100%;
+        height: 500px;
+    }
+    
+    .question input {
+        position: absolute;
+        display: inline;
+        right: 0;
+    }
+    
+    div.responses {
+        padding: 0 0 0 20px;
+    }
+    
+    .correct {
         background-color: green;
     }
     
-    .locked label.selected {
-        background-color: blue;
+    .chart {
+        position: absolute;
+        right:0;top:0;
+        padding:0;
     }
-
+    
+    
+    
 </style>
 
 </body>
