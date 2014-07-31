@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html ng-app='quiz'>
+<head>
+    <meta charset="utf-8">
+
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/d3/d3.js"></script>
+    <script src="/bower_components/nvd3/nv.d3.js"></script>
+    <script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+    <link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
+
+</head>
+    
+<body ng-controller="Quiz">
+
+<div id="container">
+    <div ng-hide="quizes.length || isLoading" class="no-data">
+        No quizes to display.
+    </div>
+    <div ng-hide="!isLoading">
+        Loading.
+    </div>
+    <div class="quiz-list"
+    ng-repeat="q in quizes">
+        <div class="quiz">
+            {{q.title}}
+        </div>
+    </div>
+    
+    <div class="options">
+        <a href="./create">Create New</a>
+    </div>
+    
+<!-- container -->
+</div>
+
+
+<script src="./js/quiz.js"></script>
+<link rel="stylesheet" href="/css/main.css">
+<style>
+
+    .options {
+        margin: 20px 0 0 0;
+    }
+</style>
+
+</body>
+</html>

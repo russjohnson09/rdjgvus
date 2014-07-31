@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html ng-app='quiz'>
+<head>
+    <meta charset="utf-8">
+
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/d3/d3.js"></script>
+    <script src="/bower_components/nvd3/nv.d3.js"></script>
+    <script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
+    <link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
+
+</head>
+    
+<body ng-controller="Create">
+
+
+<div id="container">
+
+    <form>
+        <label>Author: <input ng-model="quiz.author"></label>
+        <label>Title: <input ng-model="quiz.title"></label>
+        <label>Count:<input ng-model="quiz.questions.length" ng-disabled="true"></label>
+        <h1>Questions</h1>
+        <div class="question" ng-repeat="q in quiz.questions">
+            <label>Title:<textarea  ng-model="q.title"></textarea></label>
+            <div class="responses" ng-repeat="r in q.responses">
+                <input ng-model="r.text"><input ng-click="correct($parent.$index,$index)" type="radio" name="{{$parent.$index}}">
+            </div>
+        </div>
+        <button ng-click="addQuestion()">Add Question</button> w/ 4 responses <!-- todo add # responses and type of question-->
+        <div class="finalize">
+        <button ng-click="submit()">Create Quiz</button>
+        </div>
+     </form>
+    
+<!-- container -->
+</div>
+
+
+<script src="../js/create.js"></script>
+<link rel="stylesheet" href="/css/main.css">
+<style>
+
+    .question {
+        margin: 0 0 10px 0;
+    }
+
+    .options {
+        margin: 20px 0 0 0;
+    }
+    
+    .finalize {
+        margin: 20px 0 0 0;
+    }
+    
+    .responses {
+        display: block;
+        position: relative;
+        width: 500px;
+    }
+    
+    .responses input[type="text"] {
+        width: 200px;
+    }
+    
+    textarea {
+        vertical-align: top;
+    }
+    
+</style>
+
+</body>
+</html>
