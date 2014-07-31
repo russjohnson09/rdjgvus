@@ -13,10 +13,7 @@ function Quiz($scope,$http){
         url: "./quiz_list"
     });
     
-    console.log(1);
-    
     request.success(function(data) {
-        console.log(1);
         s.quizes = data.quizAry;
         console.log(s.quizes);
         s.isLoading = false;

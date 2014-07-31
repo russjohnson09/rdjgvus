@@ -221,6 +221,17 @@ app.get("/quiz/test/userdata",function(req,res){
     res.json({ip: ip});
 });
 
+app.post("/quiz/create",function(req,res){
+    var quiz = req.body.quiz;
+    if (!quiz) {
+        res.json({});
+        return;
+    }
+    quizes.insert(quiz,{w:1},function(err,result){
+        res.json(result[0]['_id']);
+    });
+});
+
 app.post("/quiz/test/testquiz",function(req,res){
     //console.log(req);
     var quiz = req.body.quiz;

@@ -9,7 +9,6 @@ function Create($scope,$http){
         questions : []
     };
     
-    
     s.addQuestion = function() {
         s.quiz.questions.push({
             answer: '',
@@ -23,8 +22,22 @@ function Create($scope,$http){
     }
     
     s.submit = function() {
-        console.log(s.quiz);
-        quiz.active = true;
+        s.quiz.active = true;
+        var request = $http({
+            method: "post",
+            url: "./",
+            data: {
+                quiz: s.quiz
+            }
+        });
+        
+        request.success(function(id) {
+            window.location.href = "../take?id=" + id;
+        });
+        
+        request.error(function(data) {
+            console.log("err"); console.log(data);
+        });
     };
     
 }
