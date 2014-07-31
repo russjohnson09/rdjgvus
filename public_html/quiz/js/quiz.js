@@ -49,6 +49,9 @@ function Quiz($scope,$http){
     s.quizes = [];
     s.responses = [];
     s.viewingResults = false;
+    s.averageScore = '';
+    s.quiz = {};
+    //s.
     
     refresh();
     
@@ -101,4 +104,73 @@ function Quiz($scope,$http){
     s.response = function(q,r) {
         s.responses[q] = r;
     };
+    
+    s.subTotals = function() {
+        var subs = s.submissions;
+        var quiz = s.quiz;
+        if (!s.viewingResults || s.loadingResults) return;
+        var questions = quiz.questions;
+        var totalPoints = 0;
+        var data = [];
+        var questions = s.quiz.questions;
+        for (var i in questions) {
+            var q = questions[i];
+            data[i] = [{
+                key: "chart" + i,
+                values: []
+            }];
+            var values = data[i][0].values;
+            var responses = q.responses;
+            for (var j in responses) {
+                values.push([j,0]);
+            }
+        }
+        for (var i in subs) {
+            var q = questions[i];
+            var answer = q.answer;
+            var submission = subs[i];
+            var responses = submission.responses;
+            for (var j in responses) {
+                data[j][0].values[responses[j]][1] += 1;
+                if (responses[i] == answer) {
+                    totalPoints += 1;
+                }
+            }
+        }
+        console.log(data);
+        s.data = data;
+        
+        var totalQuestions = questions.length;
+        var totalSubmissions = subs.length;
+        if (totalSubmissions > 0 && totalQuestions > 0) {
+            s.averageScore = totalPoints / (totalSubmissions * totalQuestions);
+        }
+        return totalSubmissions;
+    };
+    
+    s.return = function() {
+        s.viewingResults = false;
+    }
+        /*
+        for (var i in subs) {
+            var sub = subs[i];
+            var responses = sub.responses;
+            for 
+                s.totals[j] += responses[]j]
+        }
+        
+        for (var i in questions) {
+            var q = questions[i];
+            var answer = q.opts.answer;
+            var unanswered = (responses[i] === undefined || (!responses[i] && (responses[i] !== 0)));
+            if (responses[i] == answer) {
+                totalPoints += 1;
+            }
+            responses[i];
+        }
+        
+        if (totalSubmissions > 0 && totalQuestions > 0) {
+            s.averageScore = totalPoints / (totalSubmissions * totalQuestions)
+        }
+        */
 }

@@ -57,7 +57,18 @@
     <div class="results" ng-hide="!viewingResults">
         <h1 ng-hide="!loadingResults">Loading</h1>
         <div ng-hide="loadingResults">
-            <h1>{{quiz.title}}</h1>
+            <h1>There are {{subTotals()}} submissions for quiz "{{quiz.title}}". 
+            Average score is {{averageScore}}</h1>
+        </div>
+        <div class="question" ng-repeat="q in quiz.questions">
+            <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
+            <div class="responses" ng-repeat="r in q.responses"
+            ng-class="{'correct' : q.answer == $index }">
+                {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
+            </div>
+        </div>
+        <div class="bottom-bar">
+            <button ng-click="return()">Return</button>
         </div>
         
     <!-- results -->
@@ -107,6 +118,10 @@
     
     div.responses {
         padding: 0 0 0 20px;
+    }
+    
+    .correct {
+        background-color: green;
     }
     
     
