@@ -126,12 +126,12 @@ function Quiz($scope,$http){
             }
         }
         for (var i in subs) {
-            var q = questions[i];
-            var answer = q.answer;
             var submission = subs[i];
             var responses = submission.responses;
             for (var j in responses) {
                 data[j][0].values[responses[j]][1] += 1;
+                var q = questions[j];
+                var answer = q.answer;
                 if (responses[i] == answer) {
                     totalPoints += 1;
                 }
