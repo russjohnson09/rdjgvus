@@ -232,6 +232,17 @@ app.post("/quiz/create",function(req,res){
     });
 });
 
+app.post("/quiz",function(req,res){
+    var quiz = req.body.quiz;
+    var responses = req.body.responses;
+    var quiz_id = ObjectID(quiz._id);
+    var name = req.body.name;
+    submissions.insert({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
+        console.log(result);
+        res.json(result);
+    });
+});
+
 app.post("/quiz/removeBlank",function(req,res){
     quizes.remove({questions: { $size: 0}},{w:1}, function(err,count) {
         res.json({count:count});

@@ -37,11 +37,12 @@
     </div>
     
     <div ng-hide="!takingQuiz">
+        <label>Name: <input ng-model="name"></label>
         <h1>{{quiz.title}}</h1>
         <div class="question" ng-repeat="q in quiz.questions">
-            <h2>{{q.title}}</h2>
+            <h2>{{$index + 1}}. {{q.title}}</h2>
             <div class="responses" ng-repeat="r in q.responses">
-                <label>{{r.text}}<input type="radio" ng-click="response($parent.$index,$index)"></label>
+                <label>{{r.text}}<input name="question{{$parent.$index}}" type="radio" ng-click="response($parent.$index,$index)"></label>
             </div>
         </div>
         
@@ -75,15 +76,26 @@
         width: 25%;
     }
     
-    label, input {
+    div.question {
+        width: 200px;
+        margin: 20px;
+    }
+    
+    .question label {
         position: relative;
         display: block;
+        width: 100%;
     }
     
-    label input {
-        position: relative;
+    .question input {
+        position: absolute;
+        display: inline;
+        right: 0;
     }
     
+    div.responses {
+        padding: 0 0 0 20px;
+    }
     
     
     
