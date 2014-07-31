@@ -51,6 +51,7 @@ function Quiz($scope,$http){
     s.viewingResults = false;
     s.averageScore = '';
     s.quiz = {};
+    s.data = [];
     //s.
     
     refresh();
@@ -83,6 +84,7 @@ function Quiz($scope,$http){
     }
     
     s.viewResults = function(q) {
+        s.data = [];
         s.viewingResults = true;
         s.loadingResults = true;
         s.quiz = q;
@@ -108,8 +110,9 @@ function Quiz($scope,$http){
     s.subTotals = function() {
         var subs = s.submissions;
         var quiz = s.quiz;
-        if (!s.viewingResults || s.loadingResults) return;
         var questions = quiz.questions;
+        if (!s.viewingResults || s.loadingResults) return;
+        if (s.data.length > 0) return;
         var totalPoints = 0;
         var data = [];
         var questions = s.quiz.questions;
@@ -162,5 +165,13 @@ function Quiz($scope,$http){
         return function(d) {
             return d[1];
         };
-    }
+    };
+    
+    var format = d3.format(',.0f');
+    $scope.valueFormatFunction = function(){
+	    return function(d){
+        	return format(d);
+        }
+}
+
 }
