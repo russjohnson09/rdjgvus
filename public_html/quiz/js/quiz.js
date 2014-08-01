@@ -1,6 +1,13 @@
 var app = angular.module("quiz", ['nvd3ChartDirectives']);
 
 function Quiz($scope,$http){
+    var s = $scope;
+    init();
+    
+    function init() {
+    
+    
+    }
 
     function refresh() {
         var request = $http({
@@ -50,37 +57,15 @@ function Quiz($scope,$http){
     s.responses = [];
     s.viewingResults = false;
     s.averageScore = '';
-    s.quiz = {};
+    s.quiz = {};  //currently selected quiz (editing,taking,viewing results for, etc.)
     s.data = [];
-    //s.
+    s.view = 'mainView';  //one of mainView,resultsView,submissionView,takeQuizView,editQuizView
     
-    refresh();
-    
-    s.take = function(q) {
-        console.log(q);
-        s.quiz = q;
-        s.takingQuiz = true;
-    }
-    
-    s.submit = function() {
-        s.takingQuiz = false;
+    //mainView
         
-        var request = $http({
-            method: "post",
-            url: "./",
-            data: {quiz:s.quiz,
-                name:s.name,
-                responses:s.responses
-            }
-        });
-        
-        request.success(function(data) {
-            //refreshSubmissionCount()
-        });
-        
-        request.error(function(data) {
-            //s.isLoading = false;
-        });
+    s.mainViewInit = function(){
+        s.view = "mainView";
+       refresh();
     }
     
     s.viewResults = function(q) {
@@ -91,7 +76,6 @@ function Quiz($scope,$http){
         loadSubmissions();
     }
     
-    
     s.removeBlank = function() {
         var request = $http({
             method: "post",
@@ -100,6 +84,38 @@ function Quiz($scope,$http){
         
         request.success(function(data) {
             refresh();
+        });
+    }
+    
+    //create/edit quiz
+    s.editQuizViewInit = function(q) {
+        s.quiz = q;
+        s.view = 'editQuizView';
+    };
+    
+    refresh();
+    
+    
+    //takeQuizView
+    s.takeQuizViewInit = function(q) {
+        console.log(q);
+        s.quiz = q;
+        s.view = 'takeQuizView';
+        $("#takeQuizView input").prop("checked",false);
+    }
+    
+    s.submit = function() {
+        var request = $http({
+            method: "post",
+            url: "./",
+            data: {quiz:s.quiz,
+                name:s.name,
+                responses:s.responses
+            }
+        });
+        request.success(function(data) {
+            console.log(data);
+            s.mainViewInit();
         });
     }
     
@@ -151,10 +167,6 @@ function Quiz($scope,$http){
         return totalSubmissions;
     };
     
-    s.return = function() {
-        s.viewingResults = false;
-    }
-    
     s.xFunction = function() {
         return function(d) {
             return d[0];
@@ -171,7 +183,6 @@ function Quiz($scope,$http){
     $scope.valueFormatFunction = function(){
 	    return function(d){
         	return format(d);
-        }
-}
-
+        };
+    };
 }

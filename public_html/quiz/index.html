@@ -13,32 +13,34 @@
     
 <body ng-controller="Quiz">
 
-<div id="container">
-    <div ng-hide="takingQuiz || viewingResults" class="quiz-list-container">
+<div id="container" ng-switch="view">
+
+    <div id="mainView" ng-switch-when="mainView">
         <div ng-hide="quizes.length || isLoading" class="no-data">
             No quizes to display.
         </div>
         <div ng-hide="!isLoading">
             Loading.
         </div>
-        <div class="quiz-list"
+        <ul class="quiz-list"
         ng-repeat="q in quizes">
-            <div class="quiz">
-                <div>{{q.title}}</div> <div>({{q.questions.length}} Questions)</div> 
-                <div><button ng-click="take(q)">Take Quiz</button></div>
-                <div><button ng-click="viewResults(q)">View Results</button></div>
-            </div>
-        </div>
-        
+            <li class="quiz">
+                <span>{{q.title}}</span> <span>({{q.questions.length}} Questions)</span> 
+                <ul class="button-list">
+                    <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
+                    <li><button ng-click="viewResults(q)">View Results</button></li>
+                    <li><button ng-click="editInit(q)">Edit Quiz</button></li>
+                </ul>
+            </li>
+        </ul>
         <div class="options">
-            <a href="./create">Create New</a>
+            <button ng-click="editQuizViewInit()">Create New</a>
             <button ng-click="removeBlank()">Remove Null Quizes</button>
         </div>
-        
-        <!-- quiz-list-container -->
+        <!--mainView-->
     </div>
     
-    <div ng-hide="!takingQuiz">
+    <div id="takeQuizView" ng-switch-when="takeQuizView">
         <label>Name: <input ng-model="name"></label>
         <h1>{{quiz.title}}</h1>
         <div class="question" ng-repeat="q in quiz.questions">
@@ -47,14 +49,10 @@
                 <label>{{r.text}}<input name="question{{$parent.$index}}" type="radio" ng-click="response($parent.$index,$index)"></label>
             </div>
         </div>
-        
-        <div class="bottom-bar">
-            <button ng-click="submit()">Submit</button>
-        </div>
+        <!--takQuizView-->
     </div>
-    
-    
-    <div class="results" ng-hide="!viewingResults">
+  
+    <div id="resultsView" ng-switch-when="resultsView">
         <h1 ng-hide="!loadingResults">Loading</h1>
         <div ng-hide="loadingResults">
             <h1>There are {{subTotals()}} submissions for quiz "{{quiz.title}}". 
@@ -69,7 +67,7 @@
                     </div>
                 </div>
             <div class="chart">
-	            <nvd3-discrete-bar-chart
+                <nvd3-discrete-bar-chart
                 	data="data[$index]"
                     id="chart{{$index}}"
                     showvalues="true"
@@ -82,38 +80,31 @@
                 </nvd3-discrete-bar-chart>
             </div>
         </div>
-        <div class="bottom-bar">
-            <button ng-click="return()">Return</button>
-        </div>
-        
-    <!-- results -->
     </div>
     
-<!-- container -->
+    <!-- shared bottom-bar buttons -->
+    <div class="bottom-bar">
+        <button ng-hide="view != 'takeQuizView'" ng-click="submit()">Submit</button>
+        <button ng-hide="view == 'mainView'" ng-click="return()">Return</button>
+    </div>
 </div>
 
-
+<script src="/js/jquery.js"></script>
 <script src="./js/quiz.js"></script>
+
 <link rel="stylesheet" href="/css/main.css">
 <style>
 
-
-
+    #mainView li {
+        list-style: none;
+        margin:0;padding:0;
+        display: inline;
+    }
+    
+    
+    
     .options {
         margin: 20px 0 0 0;
-    }
-    
-    div.quiz-list {
-        display:table;
-    }
-    
-    div.quiz-list > div.quiz {
-        display:table-row;
-    }
-    
-    .quiz div {
-        display:table-cell;
-        width: 25%;
     }
     
     div.question {
@@ -153,10 +144,7 @@
         position: absolute;
         right:0;top:0;
         padding:0;
-    }
-    
-    
-    
+    } 
 </style>
 
 </body>
