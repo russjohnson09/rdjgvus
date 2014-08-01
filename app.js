@@ -300,6 +300,16 @@ app.get("/quiz/quiz_list",function(req,res){
     });
 });
 
+app.post("/quiz/removeAll",function(req,res){
+    submissions.remove({}, function(err,submissions_count) {
+        quizes.remove({},function(err,count) {
+            res.json({submissions_count:submissions_count,quizes_count:count});
+        });
+    });
+
+    
+});
+
 app.post("/quiz/test/submit",function(req,res){
     //console.log(req.body);
     var _id = ObjectID(req.body['quiz_id']);

@@ -32,9 +32,20 @@ function Quiz($scope,$http){
         });
         
         request.success(function(data) {
-            refresh();
+            refreshList();
         });
     }
+    
+    s.removeAll = function() {
+        var request = $http({
+            method: "post",
+            url: "./removeAll"
+        });
+        
+        request.success(function(data) {
+            refreshList();
+        });
+    };
     
     //create/edit quiz
     s.editQuizViewInit = function(q) {
