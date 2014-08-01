@@ -68,7 +68,7 @@ function Quiz($scope,$http){
         s.quiz.active = true;
         var request = $http({
             method: "post",
-            url: "./",
+            url: "./create",
             data: {
                 quiz: s.quiz
             }

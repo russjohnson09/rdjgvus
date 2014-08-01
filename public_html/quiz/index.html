@@ -16,12 +16,6 @@
 <div id="container" ng-switch="view">
 
     <div id="mainView" ng-switch-when="mainView">
-        <div ng-hide="quizes.length || isLoading" class="no-data">
-            No quizes to display.
-        </div>
-        <div ng-hide="!isLoading">
-            Loading.
-        </div>
         <ul class="quiz-list"
         ng-repeat="q in quizes">
             <li class="quiz">
