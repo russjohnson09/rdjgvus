@@ -245,8 +245,7 @@ app.post("/quiz",function(req,res){
     var responses = req.body.responses;
     var quiz_id = ObjectID(quiz._id);
     var name = req.body.name;
-    submissions.insert({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
-        console.log(result);
+    submissions.save({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
         res.json(result);
     });
 });
