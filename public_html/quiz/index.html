@@ -60,13 +60,13 @@
             Average score is {{averageScore}}</h1>
         </div>
         <div class="question-container" ng-repeat="q in quiz.questions">
-                <div class="question">
-                    <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
-                    <div class="responses" ng-repeat="r in q.responses"
-                    ng-class="{'correct' : q.answer == $index }">
-                        {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
-                    </div>
+            <div class="question">
+                <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
+                <div class="responses" ng-repeat="r in q.responses"
+                ng-class="{'correct' : q.answer == $index }">
+                    {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
                 </div>
+            </div>
             <div class="chart">
                 <nvd3-discrete-bar-chart
                 	data="data[$index]"
@@ -82,6 +82,26 @@
                 </nvd3-discrete-bar-chart>
             </div>
         </div>
+        <!--resultsView-->
+    </div>
+    
+    <div id="editQuizView" ng-switch-when="editQuizView">
+        <form>
+            <label>Author: <input ng-model="quiz.author"></label>
+            <label>Title: <input ng-model="quiz.title"></label>
+            <label>Count:<input ng-model="quiz.questions.length" ng-disabled="true"></label>
+            <h1>Questions</h1>
+            <div class="question" ng-repeat="q in quiz.questions">
+                <label>Title:<textarea  ng-model="q.title"></textarea></label>
+                <div class="responses" ng-repeat="r in q.responses">
+                    <input type="text" ng-model="r.text"><input ng-click="correct($parent.$index,$index)" type="radio" name="{{$parent.$index}}">
+                </div>
+            </div>
+            <button ng-click="addQuestion()">Add Question</button> w/ 4 responses <!-- todo add # responses and type of question-->
+            <div class="finalize">
+            <button ng-click="submitQuiz()">Create Quiz</button>
+            </div>
+         </form>
     </div>
     
     <!-- shared bottom-bar buttons -->
@@ -102,9 +122,7 @@
         margin:0;padding:0;
         display: inline;
     }
-    
-    
-    
+
     .options {
         margin: 20px 0 0 0;
     }
@@ -128,10 +146,14 @@
         height: 500px;
     }
     
-    .question input {
+    .question input[type="radio"] {
         position: absolute;
         display: inline;
         right: 0;
+    }
+    
+    .question input[type="text"] {
+        width: 80%;
     }
     
     div.responses {
@@ -157,8 +179,55 @@
     }
     
     
+    #editQuizView .question {
+        margin: 0 0 10px 0;
+    }
 
-
+    #editQuizView .options {
+        margin: 20px 0 0 0;
+    }
+    
+    #editQuizView .finalize {
+        margin: 20px 0 0 0;
+    }
+    
+    
+    #editQuizView {
+        width: 90%;
+        padding-left: 10%;
+    }
+    
+    #editQuizView form {
+        width: 700px;
+    }
+    
+    #editQuizView textarea {
+        width: 100%;
+        display: block;
+    }
+    
+    #editQuizView div.question {
+        width: 100%;
+    }
+    
+    #editQuizView .question input[type="text"] {
+        max-width: 500px;
+        width: 80%;
+    }
+    
+    #editQuizView input[type="radio"] {
+        display: inline;
+        right: 0px;
+    }
+    
+    #editQuizView div.responses {
+        padding: 5px 0px 0px;
+    }
+    
+    #editQuizView div.question {
+        max-width: 500px;
+    }
+    
     
 </style>
 

@@ -49,9 +49,40 @@ function Quiz($scope,$http){
     
     //create/edit quiz
     s.editQuizViewInit = function(q) {
+        if (typeof q === "undefined") {
+            q = {author:'',title:'',questions:[]};
+        }
         s.quiz = q;
         s.view = 'editQuizView';
     };
+    
+    s.addQuestion = function() {
+        s.quiz.questions.push({
+            answer: '',
+            title: '',
+            responses: [{},{},{},{}]
+        });
+    };
+    
+    s.submitQuiz = function() {
+        s.quiz.active = true;
+        var request = $http({
+            method: "post",
+            url: "./",
+            data: {
+                quiz: s.quiz
+            }
+        });
+        
+        request.success(function(id) {
+            mainViewInit();
+        });
+        
+        request.error(function(data) {
+            console.log("err"); console.log(data);
+        });
+    };
+    
     
     //takeQuizView
     s.takeQuizViewInit = function(q) {
