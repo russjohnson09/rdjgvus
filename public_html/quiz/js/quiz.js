@@ -2,14 +2,9 @@ var app = angular.module("quiz", ['nvd3ChartDirectives']);
 
 function Quiz($scope,$http){
     var s = $scope;
-    init();
     
-    function init() {
-    
-    
-    }
-
-    function refresh() {
+    //refresh/load related functions
+    s.refreshList = refreshList = function() {
         var request = $http({
             method: "get",
             url: "./quiz_list"
@@ -23,57 +18,11 @@ function Quiz($scope,$http){
             s.isLoading = false;
         });
     }
-    
-    function refreshSubmissionCount() {
-        var request = $http({
-            method: "get",
-            url: "./sub_count?" + "qid",
-        });
-        request.success(function(data) {
-            s.quizes = data.quizAry;
-            s.isLoading = false;
-        });
-        request.error(function(data) {
-            s.isLoading = false;
-        });
-    }
-    
-    function loadSubmissions() {
-        var request = $http({
-            method: "get",
-            url: "./submissions?quiz_id=" + s.quiz._id
-        });
-        request.success(function(data) {
-            console.log(data);
-            s.submissions = data.submissionsAry;
-            s.loadingResults = false;
-        });
-    }
 
-    var s = $scope;
-    s.isLoading = true;
-    s.takingQuiz = false;
-    s.quizes = [];
-    s.responses = [];
-    s.viewingResults = false;
-    s.averageScore = '';
-    s.quiz = {};  //currently selected quiz (editing,taking,viewing results for, etc.)
-    s.data = [];
-    s.view = 'mainView';  //one of mainView,resultsView,submissionView,takeQuizView,editQuizView
-    
     //mainView
-        
     s.mainViewInit = function(){
         s.view = "mainView";
-       refresh();
-    }
-    
-    s.viewResults = function(q) {
-        s.data = [];
-        s.viewingResults = true;
-        s.loadingResults = true;
-        s.quiz = q;
-        loadSubmissions();
+       refreshList();
     }
     
     s.removeBlank = function() {
@@ -92,9 +41,6 @@ function Quiz($scope,$http){
         s.quiz = q;
         s.view = 'editQuizView';
     };
-    
-    refresh();
-    
     
     //takeQuizView
     s.takeQuizViewInit = function(q) {
@@ -119,70 +65,132 @@ function Quiz($scope,$http){
         });
     }
     
-    s.response = function(q,r) {
+    s.saveResponse = function(q,r) {
         s.responses[q] = r;
     };
     
-    s.subTotals = function() {
+    //resultsView
+    s.resultsViewInit = function(q) {
+        s.quiz = q;
+        console.log(q);
+        loadSubmissions(q._id);
+        s.view = 'resultsView';
+    }
+    
+    s.loadSubmissions = loadSubmissions = function(_id) {
+        var request = $http({
+            method: "get",
+            url: "./submissions?quiz_id=" + _id
+        });
+        request.success(function(data) {
+            console.log(data);
+            s.submissions = data.submissionsAry;
+            getSubmissionTotals();
+        });
+    }
+
+    s.getSubmissionTotals = getSubmissionTotals = function() {
         var subs = s.submissions;
         var quiz = s.quiz;
         var questions = quiz.questions;
-        if (!s.viewingResults || s.loadingResults) return;
+        
         if (s.data.length > 0) return;
         var totalPoints = 0;
-        var data = [];
         var questions = s.quiz.questions;
-        for (var i in questions) {
-            var q = questions[i];
-            data[i] = [{
-                key: "chart" + i,
-                values: []
-            }];
-            var values = data[i][0].values;
-            var responses = q.responses;
-            for (var j in responses) {
-                values.push([j,0]);
-            }
-        }
-        for (var i in subs) {
-            var submission = subs[i];
-            var responses = submission.responses;
-            for (var j in responses) {
-                data[j][0].values[responses[j]][1] += 1;
-                var q = questions[j];
-                var answer = q.answer;
-                if (responses[i] == answer) {
-                    totalPoints += 1;
-                }
-            }
-        }
-        console.log(data);
-        s.data = data;
+
+        s.data = getDataArray(subs,questions);
         
         var totalQuestions = questions.length;
         var totalSubmissions = subs.length;
         if (totalSubmissions > 0 && totalQuestions > 0) {
-            s.averageScore = totalPoints / (totalSubmissions * totalQuestions);
+            s.averageScore = s.totalPoints / (totalSubmissions * totalQuestions);
         }
-        return totalSubmissions;
+    };
+
+    //data-related functions
+    s.valueFormatFunction = function(){
+	    return function(d){
+        	return s.labelFormat(d);
+        };
     };
     
-    s.xFunction = function() {
-        return function(d) {
-            return d[0];
-        };
+    
+    //populate data from submissions
+    //submissions = [sub1,sub2,...]
+    //sub = {_id,name,quiz_id,responses}
+    //responses = [[2,'',1],..] where the index of a response is the question number
+    //data[questionNumber][0] = {values: [[responseCount]]}
+    //data is an array with a single object, this object has a single key 'values'
+    // /*http://stackoverflow.com/questions/21242620/displaying-a-single-series-multi-bar-chart-using-nvd3-library
+    function getDataArray(subs,questions) {
+        var values = [];
+        s.totalPoints = 0;
+        var questions = s.quiz.questions;
+        
+        data = initDataArray(questions);
+        //console.log(data);
+        
+        for (var i in subs) {
+            var submission = subs[i];
+            var responses = submission.responses;
+            //console.log(responses);
+            for (var j in responses) {
+                var response = parseInt(responses[j]);
+                if (isNaN(response)) {
+                    break;
+                }
+                //console.log(j);
+                if (typeof data[j] === "undefined") {
+                    console.log("invalid submission");
+                    console.log(j);
+                    console.log(response);
+                    console.log(responses);
+                    break;
+                }
+                var values = data[j][0].values;
+                
+                values[response][1] += 1;
+
+                var q = questions[j];
+                var answer = q.answer;
+                if (response == answer) {
+                    s.totalPoints += 1;
+                }
+            }
+        }
+        
+        return data;
+        
     }
     
-    s.yFunction = function() {
-        return function(d) {
-            return d[1];
-        };
-    };
+    function initDataArray(questions) {
+        var data = [];
+        for (var i in questions) {
+            var q = questions[i];
+            var values = [];
+            data[i] = [{values: values}];
+            var responses = q.responses;
+            for (var j in responses) {
+                var response = responses[j];
+                values.push([response.text,0])
+            }
+        }
+        return data;
+    }
     
-    var format = d3.format(',.0f');
-    $scope.valueFormatFunction = function(){
-	    return function(d){
-        	return format(d);
-        };
-    };
+    
+    //initialize data
+    (function(){
+        refreshList();
+        s.isLoading = true;
+        s.takingQuiz = false;
+        s.quizes = [];
+        s.responses = [];
+        s.viewingResults = false;
+        s.averageScore = '';
+        s.quiz = {};  //currently selected quiz (editing,taking,viewing results for, etc.)
+        s.data = [];
+        s.view = 'mainView';  //one of mainView,resultsView,submissionView,takeQuizView,editQuizView
+        s.labelFormat = d3.format(',.0f');  //requires d3
+    }());
 }

@@ -28,7 +28,7 @@
                 <span>{{q.title}}</span> <span>({{q.questions.length}} Questions)</span> 
                 <ul class="button-list">
                     <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
-                    <li><button ng-click="viewResults(q)">View Results</button></li>
+                    <li><button ng-click="resultsViewInit(q)">View Results</button></li>
                     <li><button ng-click="editInit(q)">Edit Quiz</button></li>
                 </ul>
             </li>
@@ -46,16 +46,16 @@
         <div class="question" ng-repeat="q in quiz.questions">
             <h2>{{$index + 1}}. {{q.title}}</h2>
             <div class="responses" ng-repeat="r in q.responses">
-                <label>{{r.text}}<input name="question{{$parent.$index}}" type="radio" ng-click="response($parent.$index,$index)"></label>
+                <label>{{r.text}}<input name="question{{$parent.$index}}" 
+                type="radio" ng-click="saveResponse($parent.$index,$index)"></label>
             </div>
         </div>
         <!--takQuizView-->
     </div>
   
     <div id="resultsView" ng-switch-when="resultsView">
-        <h1 ng-hide="!loadingResults">Loading</h1>
-        <div ng-hide="loadingResults">
-            <h1>There are {{subTotals()}} submissions for quiz "{{quiz.title}}". 
+        <div>
+            <h1>There are {{submissions.length}} submissions for quiz "{{quiz.title}}". 
             Average score is {{averageScore}}</h1>
         </div>
         <div class="question-container" ng-repeat="q in quiz.questions">
@@ -72,9 +72,10 @@
                     id="chart{{$index}}"
                     showvalues="true"
                     width="550"
+                    showXAxis="true"
                     height="400"
-                    interactive="false"
                     valueFormat="valueFormatFunction()"
+                    staggerLabels="true"
                     >
                     	<svg></svg>
                 </nvd3-discrete-bar-chart>
@@ -85,7 +86,7 @@
     <!-- shared bottom-bar buttons -->
     <div class="bottom-bar">
         <button ng-hide="view != 'takeQuizView'" ng-click="submit()">Submit</button>
-        <button ng-hide="view == 'mainView'" ng-click="return()">Return</button>
+        <button ng-hide="view == 'mainView'" ng-click="mainViewInit()">Return</button>
     </div>
 </div>
 
@@ -144,7 +145,20 @@
         position: absolute;
         right:0;top:0;
         padding:0;
-    } 
+    }
+    
+    .tick line {
+        display: none;
+    }
+    
+    .tick text {
+        fill: #FFF;
+    }
+    
+    
+
+
+    
 </style>
 
 </body>
