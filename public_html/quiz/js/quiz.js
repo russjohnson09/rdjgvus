@@ -20,7 +20,7 @@ function Quiz($scope,$http){
     }
 
     //mainView
-    s.mainViewInit = function(){
+    s.mainViewInit = mainViewInit = function(){
         s.view = "mainView";
        refreshList();
     }
@@ -48,7 +48,7 @@ function Quiz($scope,$http){
     };
     
     //create/edit quiz
-    s.editQuizViewInit = function(q) {
+    s.editQuizViewInit = editQuizViewInit = function(q) {
         if (typeof q === "undefined") {
             q = {author:'',title:'',questions:[]};
         }
@@ -66,6 +66,7 @@ function Quiz($scope,$http){
     
     s.submitQuiz = function() {
         s.quiz.active = true;
+        console.log(s.quiz);
         var request = $http({
             method: "post",
             url: "./create",
@@ -74,7 +75,9 @@ function Quiz($scope,$http){
             }
         });
         
-        request.success(function(id) {
+        request.success(function(data) {
+            console.log("updated");
+            console.log(data);
             mainViewInit();
         });
         

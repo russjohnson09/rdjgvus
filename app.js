@@ -224,13 +224,20 @@ app.get("/quiz/test/userdata",function(req,res){
 
 app.post("/quiz/create",function(req,res){
     var quiz = req.body.quiz;
+    console.log("creating");
+    console.log(quiz);
     if (!quiz) {
         res.json({});
-        return;
     }
-    quizes.insert(quiz,{w:1},function(err,result){
-        res.json(result[0]['_id']);
-    });
+    else {
+        if (quiz._id) {
+            quiz._id = ObjectID(quiz._id);
+        }
+        quizes.save(quiz,{w:1},function(err,result) {
+            console.log(err);
+            res.json(result);
+        });
+    }
 });
 
 app.post("/quiz",function(req,res){
