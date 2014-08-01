@@ -24,6 +24,9 @@
                     <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
                     <li><button ng-click="resultsViewInit(q)">View Results</button></li>
                     <li><button ng-click="editQuizViewInit(q)">Edit Quiz</button></li>
+                    <li><button ng-click="export(q)">Export</button></li>
+                    <li><a download="{{q.title}}.txt" ng-click="exportQuiz(q)" href="{{export}}"
+                    target="_blank">Export</a></li>
                 </ul>
             </li>
         </ul>

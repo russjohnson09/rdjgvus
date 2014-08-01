@@ -1,4 +1,9 @@
-var app = angular.module("quiz", ['nvd3ChartDirectives']);
+var app = angular.module("quiz", ['nvd3ChartDirectives']).config(
+['$compileProvider', function($compileProvider) {
+    $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension|data):/);
+}
+
+]);
 
 function Quiz($scope,$http){
     var s = $scope;
@@ -46,6 +51,10 @@ function Quiz($scope,$http){
             refreshList();
         });
     };
+    
+    s.exportQuiz = exportQuiz = function(q) {
+        s.export = 'data:application/json;' + JSON.stringify(q);
+    }
     
     //create/edit quiz
     s.editQuizViewInit = editQuizViewInit = function(q) {
