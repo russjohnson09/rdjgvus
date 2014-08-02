@@ -21,6 +21,7 @@ var pusherOpts = config.pusher;
 function getApp(config) {
     var secret = config.secret;
     var express = require("express");
+    var passport = require('passport');
     app = express(); 
     app.use(require("body-parser")());
     app.use("/",express.static(__dirname + "/public_html"));
@@ -29,6 +30,10 @@ function getApp(config) {
     app.use(require('cookie-session'));
     app.use(require('morgan'));  //previously logger
     app.use(require('express-session')({secret:secret}));
+    
+    //passport
+    app.use(passport.initialize());
+    app.use(passport.session());
     return app;
 }
 
