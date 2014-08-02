@@ -1,7 +1,10 @@
 var config = require('./config.js');
+var express = require('express');
 var u = require('./util_modules/utils.js')({seed:100});
 var url = require('url');
-var app = getApp(config);
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+var app = express();
 var http = require("http");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
@@ -17,34 +20,93 @@ var appPort = config.app.port;
 var Pusher = require("pusher");
 var pusherOpts = config.pusher;
 
-//configure Express
-function getApp(config) {
-    var secret = config.secret;
-    var express = require("express");
-    var passport = require('passport');
-    app = express(); 
-    app.use(require("body-parser")());
-    app.use("/",express.static(__dirname + "/public_html"));
-    app.use("/bower_components/",express.static(__dirname + "/bower_components"));
-    app.use(require('cookie-parser'));
-    app.use(require('cookie-session'));
-    app.use(require('morgan'));  //previously logger
-    app.use(require('express-session')({secret:secret}));
-    
-    //passport
-    app.use(passport.initialize());
-    app.use(passport.session());
-    return app;
-}
+var cookieParser = require('cookie-parser');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
 
-w.add(w.transports.File, { filename: './error.log' });
+//configure passport
+passport.serializeUser(function(user, done) {
+    done(null, user._id);
+});
 
-w.info(dbUrl);
+// used to deserialize the user
+passport.deserializeUser(function(id, done) {
+    users.findOne({_id:ObjectID(id)}, function(err, user) {
+        console.log(user);
+        done(err, user);
+    });
+});
+console.log(config.googleAuth.clientID);
+passport.use(new GoogleStrategy({
+    clientID        : config.googleAuth.clientID,
+    clientSecret    : config.googleAuth.clientSecret,
+    callbackURL     : config.googleAuth.callbackURL,
+    passReqToCallback : true
+},
+function(req, token, refreshToken, profile, done) {
+    console.log(req);
+    if (!req.user) {
+        users.findOne({ 'googleId' : profile.id }, function(err, user) {
+            if (err) {
+                return done(err);
+            }
+            if (user) {
+                if (!user.googleToken) {
+                    user.googleToken = token;
+                    user.googleName  = profile.displayName;
+                    user.googleEmail = (profile.emails[0].value || '').toLowerCase();
+                    users.save(user,{w:1},function(err) {
+                        if (err)
+                            throw err;
+                        return done(null, user);
+                    });
+                }
+                return done(null, user);
+            } 
+            else {
+                var newUser          = {};
+                newUser.googleId    = profile.id;
+                newUser.googleToken = token;
+                newUser.googleName  = profile.displayName;
+                newUser.googleEmail = (profile.emails[0].value || '').toLowerCase();
+                console.log(newUser);
+                users.save(newUser,{w:1},function(err,result) {
+                    console.log(err);
+                    return done(null,result);
+                });
+            }
+        });
+    } 
+    else {
+        var user = req.user;
+        user.googleId    = profile.id;
+        user.googleToken = token;
+        user.googleName  = profile.displayName;
+        user.googleEmail = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+        users.save(user,{w:1},function(err,result) {
+            if (err) {
+                console.log(err);
+            }
+            return done(null, result);
+        });
+    }
 
-w.info(pusherOpts);
+}));
 
-var pusher = new Pusher(pusherOpts);
+app.use(require("body-parser")());
+app.use("/",express.static(__dirname + "/public_html"));
+app.use("/bower_components/",express.static(__dirname + "/bower_components"));
 
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// required for passport
+app.use(require('express-session')({secret:config.secret}));
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
+
+//configure collections
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: 
 	{socketOptions: {connectTimeoutMS: 500}}}}, 
     function(err, db) {
@@ -61,7 +123,16 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         employees = db.collection('employees');
         quizes = db.collection("quizes");
         submissions = db.collection("submissions");
+        auth = db.collection('auth');
+        users = db.collection('users');
 });
+
+w.add(w.transports.File, { filename: './error.log' });
+
+w.info(dbUrl);
+w.info(pusherOpts);
+
+var pusher = new Pusher(pusherOpts);
 
 app.get("/pusher/update",function(req,res){    
     pusher.trigger('test', 'test', {
@@ -426,6 +497,15 @@ app.get("/contacts/getsex",function(req,res) {
         res.json(docs);
     });
 });
+
+//auth
+app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+app.get('/auth/google/callback',
+	passport.authenticate('google', {
+		successRedirect : '/auth/profile',
+		failureRedirect : '/auth'
+	}));
 
 var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];
 
