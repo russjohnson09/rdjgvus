@@ -2,6 +2,7 @@
 <html ng-app='quiz'>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/bower_components/d3/d3.js"></script>
@@ -14,13 +15,67 @@
 <body ng-controller="Quiz">
 
 <div id="container" ng-switch="view">
+<div class="col-md-9">
+    <h1 class="text-center">About</h1>
+    <p>
+        This is a simple single page application that utilizes angularjs along with nvd3 directives
+        for the discrete bar charts displayed. It is available 
+        <a href="https://github.com/russjohnson09/rdjgvus">here</a> along with the rest of the source for
+        my site. 
+    </p>
+    
+    <h1 class="text-center">ViewModel</h1>
+        <pre>
+
+dictionary Quiz {
+    string title;
+    string user;
+    question[] questions;
+};
+dictionary Question {
+    string title;
+    int answer;
+    int response[] responses;
+};
+dictionary Response {
+    string text;
+};
+dictionary User {
+    string name;
+    string email;
+    string profileId;
+}
+
+interface QuizController {
+    attribute Quiz? quiz;
+    attribute User? user;
+    attribute Quiz[] quizes;
+    attribute string view;
+    void refreshList();  //refresh the quiz list
+    void mainViewInit(); //initialize the main view
+    void removeBlank(); //remove any quizes with no questions
+    void removeAll(); //remove all quizes
+    void addQuesiont(); //add a blank question
+};
+        </pre>
+    
+    <dl class="dl-horizontal">
+      <dt>quizes</dt>
+      <dd>A list of quiz objects</dd>
+      <dt>quiz</dt>
+      <dd>The currently selected quiz. {title,user,questions}</dd>
+    </dl>
+
+    <div id="login">
+    <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google+</a>
+    </div>
 
     <div id="mainView" ng-switch-when="mainView">
-        <ul class="quiz-list"
+        <ul class="list-unstyled"
         ng-repeat="q in quizes">
             <li class="quiz">
                 <span>{{q.title}}</span> <span>({{q.questions.length}} Questions)</span> 
-                <ul class="button-list">
+                <ul class="list-unstyled list-inline">
                     <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
                     <li><button ng-click="resultsViewInit(q)">View Results</button></li>
                     <li><button ng-click="editQuizViewInit(q)">Edit Quiz</button></li>
@@ -105,19 +160,18 @@
         <button ng-hide="view != 'takeQuizView'" ng-click="submit()">Submit</button>
         <button ng-hide="view == 'mainView'" ng-click="mainViewInit()">Return</button>
     </div>
+    
+<!--col-->
+</div>
+    <!--container-->
 </div>
 
 <script src="/js/jquery.js"></script>
 <script src="./js/quiz.js"></script>
 
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/bootstrap-cyborg.min.css">
 <style>
 
-    #mainView li {
-        list-style: none;
-        margin:0;padding:0;
-        display: inline;
-    }
 
     .options {
         margin: 20px 0 0 0;

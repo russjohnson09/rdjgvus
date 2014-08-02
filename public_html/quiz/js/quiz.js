@@ -27,7 +27,7 @@ function Quiz($scope,$http){
     //mainView
     s.mainViewInit = mainViewInit = function(){
         s.view = "mainView";
-       refreshList();
+        refreshList();
     }
     
     s.removeBlank = function() {
@@ -75,7 +75,6 @@ function Quiz($scope,$http){
     
     s.submitQuiz = function() {
         s.quiz.active = true;
-        console.log(s.quiz);
         var request = $http({
             method: "post",
             url: "./create",

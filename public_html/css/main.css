@@ -3,13 +3,18 @@ html, body {
     padding: 0;
 }
 
-a {
-    color: #FFF;
-}
 
 #main {
     margin: 10px 100px 20px 200px;
     max-width: 1000px;
+}
+
+#container a:visited {
+    color: #FFF;
+}
+
+#container a {
+    text-decoration: underline;
 }
 
 body {
