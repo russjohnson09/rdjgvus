@@ -460,7 +460,6 @@ app.get("/contacts/load",function(req,res) {
 });
 
 app.post("/contacts/add",function(req,res) {
-    //var cat = req.body.cat;
     console.log(req.body);
     contacts.insert(req.body,{w:1}, function(err,result) {
         if (err) {
@@ -485,9 +484,19 @@ app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'e
 
 app.get('/auth/google/callback',
 	passport.authenticate('google', {
-		successRedirect : '/auth/profile',
+		successRedirect : '/auth',
 		failureRedirect : '/auth'
 	}));
+	
+app.get('/user',function(req,res){
+    console.log(req.user);
+    res.json(req.user);
+});
+
+app.get('/auth/logout', function(req, res){
+  req.logout();
+  res.redirect('/auth');
+});
 
 var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];
 
