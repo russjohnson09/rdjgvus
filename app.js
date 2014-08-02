@@ -25,8 +25,9 @@ var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
 //configure passport
-passport.serializeUser(function(user, done) {
-    done(null, user._id);
+passport.serializeUser(function(id, done) {
+    console.log('serial');
+    done(null, id);
 });
 
 // used to deserialize the user
@@ -36,7 +37,15 @@ passport.deserializeUser(function(id, done) {
         done(err, user);
     });
 });
-console.log(config.googleAuth.clientID);
+
+
+function updateUser(user,done) {
+    users.save(user,{w:1},function(err,result) { 
+        return done(null, user._id || result._id);
+    });
+}
+
+
 passport.use(new GoogleStrategy({
     clientID        : config.googleAuth.clientID,
     clientSecret    : config.googleAuth.clientSecret,
@@ -44,51 +53,24 @@ passport.use(new GoogleStrategy({
     passReqToCallback : true
 },
 function(req, token, refreshToken, profile, done) {
-    console.log(req);
-    if (!req.user) {
+    var user = req.user;
+    if (!user) {
         users.findOne({ 'googleId' : profile.id }, function(err, user) {
-            if (err) {
-                return done(err);
+            if (!user) {
+                user = {};
             }
-            if (user) {
-                if (!user.googleToken) {
-                    user.googleToken = token;
-                    user.googleName  = profile.displayName;
-                    user.googleEmail = (profile.emails[0].value || '').toLowerCase();
-                    users.save(user,{w:1},function(err) {
-                        if (err)
-                            throw err;
-                        return done(null, user);
-                    });
-                }
-                return done(null, user);
-            } 
-            else {
-                var newUser          = {};
-                newUser.googleId    = profile.id;
-                newUser.googleToken = token;
-                newUser.googleName  = profile.displayName;
-                newUser.googleEmail = (profile.emails[0].value || '').toLowerCase();
-                console.log(newUser);
-                users.save(newUser,{w:1},function(err,result) {
-                    console.log(err);
-                    return done(null,result);
-                });
-            }
+            user.googleToken = token;
+            user.googleName  = profile.displayName;
+            user.googleEmail = (profile.emails[0].value || '').toLowerCase();
+            updateUser(user,done);
         });
-    } 
+    }
     else {
-        var user = req.user;
         user.googleId    = profile.id;
         user.googleToken = token;
         user.googleName  = profile.displayName;
         user.googleEmail = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-        users.save(user,{w:1},function(err,result) {
-            if (err) {
-                console.log(err);
-            }
-            return done(null, result);
-        });
+        updateUser(user,done);
     }
 
 }));
