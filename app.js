@@ -1,10 +1,8 @@
 var config = require('./config.js');
 var u = require('./util_modules/utils.js')({seed:100});
 var url = require('url');
-var express = require('express');
-var app = express();
+var app = getApp(config);
 var http = require("http");
-var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
@@ -18,6 +16,21 @@ var http = require('http');
 var appPort = config.app.port;
 var Pusher = require("pusher");
 var pusherOpts = config.pusher;
+
+//configure Express
+function getApp(config) {
+    var secret = config.secret;
+    var express = require("express");
+    app = express(); 
+    app.use(require("body-parser")());
+    app.use("/",express.static(__dirname + "/public_html"));
+    app.use("/bower_components/",express.static(__dirname + "/bower_components"));
+    app.use(require('cookie-parser'));
+    app.use(require('cookie-session'));
+    app.use(require('morgan'));  //previously logger
+    app.use(require('express-session')({secret:secret}));
+    return app;
+}
 
 w.add(w.transports.File, { filename: './error.log' });
 
@@ -44,11 +57,6 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         quizes = db.collection("quizes");
         submissions = db.collection("submissions");
 });
-
-app.use(bodyparser());
-app.use("/",express.static(__dirname + "/public_html"));
-app.use("/bower_components/",express.static(__dirname + "/bower_components"));
-
 
 app.get("/pusher/update",function(req,res){    
     pusher.trigger('test', 'test', {
