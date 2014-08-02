@@ -16,17 +16,57 @@
 
 <div id="container" ng-switch="view">
 <div class="col-md-9">
-    <h1 class="text-center">About</h1>
-    <p>
-        This is a simple single page application that utilizes angularjs along with nvd3 directives
-        for the discrete bar charts displayed. It is available 
-        <a href="https://github.com/russjohnson09/rdjgvus">here</a> along with the rest of the source for
-        my site. 
-    </p>
+    <div id="mainView" ng-switch-when="mainView">
+        <!--about-->
+        <h1 class="text-center">About</h1>
+        <p>
+            This is a simple single page application that utilizes angularjs along with nvd3 directives
+            for the discrete bar charts displayed. On the server side node along with express and passport are
+            used. The source is
+            <a href="https://github.com/russjohnson09/rdjgvus">here</a> along with the rest of the source for
+            my site. 
+        </p>
+        
+        <div ng-hide="user" id="login">
+            Login to create authored quizes.
+            <a ng-hide="user" href="./auth/google" class="btn btn-danger">
+            <span class="fa fa-google-plus"></span> Google+</a>
+        </div>
+        <div ng-hide="!user" class="account-details">
+        
+            <div class="h2">Account Details</div>
+            <dl class="dl-horizontal">
+                <dt>Name:</dt>
+                <dd>{{user.googleName}}</dd>
+                <dt>Email:</dt>
+                <dd>{{user.googleEmail}}</dd>
+            </dl>
+            <a ng-hide="!user" href="/logout" class="btn btn-default">Logout</a>
+        </div>
+        <!--about-->
     
-    <h1 class="text-center">ViewModel</h1>
+        <ul class="list-unstyled"
+        ng-repeat="q in quizes">
+            <li class="quiz">
+                <span>{{q.title}}</span> <span>({{q.questions.length}} Questions)</span> 
+                <ul class="list-unstyled list-inline">
+                    <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
+                    <li><button ng-click="resultsViewInit(q)">View Results</button></li>
+                    <li><button ng-click="editQuizViewInit(q)">Edit Quiz</button></li>
+                    <li><a download="{{q.title}}.txt" ng-click="exportQuiz(q)" href="{{export}}"
+                    target="_blank">Export</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div class="options">
+            <button ng-click="editQuizViewInit()">Create New</a>
+            <button ng-click="removeBlank()">Remove Null Quizes</button>
+            <button ng-click="removeAll()">Remove All Quizes/Submissions</button>
+        </div>
+        
+    <h1 class="text-center">Controller Spec</h1>
+    These are the objects and functions available to the view through the controller.
         <pre>
-
 dictionary Quiz {
     string title;
     string user;
@@ -58,37 +98,8 @@ interface QuizController {
     void addQuesiont(); //add a blank question
 };
         </pre>
-    
-    <dl class="dl-horizontal">
-      <dt>quizes</dt>
-      <dd>A list of quiz objects</dd>
-      <dt>quiz</dt>
-      <dd>The currently selected quiz. {title,user,questions}</dd>
-    </dl>
-
-    <div id="login">
-    <a href="/auth/google" class="btn btn-danger"><span class="fa fa-google-plus"></span> Google+</a>
-    </div>
-
-    <div id="mainView" ng-switch-when="mainView">
-        <ul class="list-unstyled"
-        ng-repeat="q in quizes">
-            <li class="quiz">
-                <span>{{q.title}}</span> <span>({{q.questions.length}} Questions)</span> 
-                <ul class="list-unstyled list-inline">
-                    <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
-                    <li><button ng-click="resultsViewInit(q)">View Results</button></li>
-                    <li><button ng-click="editQuizViewInit(q)">Edit Quiz</button></li>
-                    <li><a download="{{q.title}}.txt" ng-click="exportQuiz(q)" href="{{export}}"
-                    target="_blank">Export</a></li>
-                </ul>
-            </li>
-        </ul>
-        <div class="options">
-            <button ng-click="editQuizViewInit()">Create New</a>
-            <button ng-click="removeBlank()">Remove Null Quizes</button>
-            <button ng-click="removeAll()">Remove All Quizes/Submissions</button>
-        </div>
+        
+        
         <!--mainView-->
     </div>
     
@@ -172,6 +183,9 @@ interface QuizController {
 <link rel="stylesheet" href="/css/bootstrap-cyborg.min.css">
 <style>
 
+    .account-details {
+        margin: 10px 0 10px 0;
+    }
 
     .options {
         margin: 20px 0 0 0;

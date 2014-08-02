@@ -280,6 +280,15 @@ app.post("contact/add",function(req,res) {
     });
 });
 
+//auth
+app.get('/quiz/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+app.get('/auth/google',
+	passport.authenticate('google', {
+		successRedirect : '/quiz',
+		failureRedirect : '/quiz'
+}));
+
 app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
     req.socket.remoteAddress ||
@@ -489,13 +498,12 @@ app.get('/auth/google/callback',
 	}));
 	
 app.get('/user',function(req,res){
-    console.log(req.user);
     res.json(req.user);
 });
 
-app.get('/auth/logout', function(req, res){
+app.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/auth');
+  res.redirect('/quiz');
 });
 
 var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];

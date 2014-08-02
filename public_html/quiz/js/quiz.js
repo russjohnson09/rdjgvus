@@ -8,6 +8,17 @@ var app = angular.module("quiz", ['nvd3ChartDirectives']).config(
 function Quiz($scope,$http){
     var s = $scope;
     
+    var getUser = s.getUser = function() {
+        var request = $http({
+            method: "get",
+            url: "/user"
+        });
+        request.success(function(data) {
+            console.log(data);
+            s.user = data;
+        });
+    }
+    
     //refresh/load related functions
     s.refreshList = refreshList = function() {
         var request = $http({
@@ -235,6 +246,7 @@ function Quiz($scope,$http){
     //initialize data
     (function(){
         refreshList();
+        getUser();
         s.isLoading = true;
         s.takingQuiz = false;
         s.quizes = [];
