@@ -31,6 +31,9 @@ function Quiz($scope,$http){
             if (callback) {
                 callback(s.quizes);
             }
+            else {
+                getUsers(s.quizes);
+            }
         });
         
         request.error(function(data) {
@@ -280,7 +283,7 @@ function Quiz($scope,$http){
     
     //initialize data
     (function(){
-        refreshList(getUsers);
+        refreshList();
         getCurrentUser();
         s.isLoading = true;
         s.takingQuiz = false;

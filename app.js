@@ -513,7 +513,7 @@ app.get('/user',function(req,res) {
     var query = url_parts.query;
     console.log(query);
     var _id = ObjectID(query.user_id);
-    user.findOne({_id:_id},function(err,item){
+    users.findOne({_id:_id},function(err,item){
         res.json({user:item});
     });
 });
