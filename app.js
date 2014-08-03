@@ -282,7 +282,9 @@ app.post("contact/add",function(req,res) {
 });
 
 //auth
-app.get('/quiz/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+app.get('/quiz/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] ,
+		successRedirect : '/quiz',
+		failureRedirect : '/quiz'}));
 
 app.get('/auth/google',
 	passport.authenticate('google', {
