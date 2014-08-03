@@ -70,7 +70,11 @@ function Quiz($scope,$http){
     //create/edit quiz
     s.editQuizViewInit = editQuizViewInit = function(q) {
         if (typeof q === "undefined") {
+            s.isEditing = false;
             q = {author:'',title:'',questions:[]};
+        }
+        else {
+            s.isEditing = true;
         }
         s.quiz = q;
         s.view = 'editQuizView';

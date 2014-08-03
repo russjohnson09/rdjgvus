@@ -149,7 +149,8 @@ interface QuizController {
     
     <div id="editQuizView" ng-switch-when="editQuizView">
         <form>
-            <label>Author: <input ng-model="quiz.author"></label>
+            <label>Author: <input ng-model="user.googleName"
+             ng-model="quiz.author" ng-disabled="true"></label>
             <label>Title: <input ng-model="quiz.title"></label>
             <label>Count:<input ng-model="quiz.questions.length" ng-disabled="true"></label>
             <h1>Questions</h1>
@@ -161,7 +162,8 @@ interface QuizController {
             </div>
             <button ng-click="addQuestion()">Add Question</button> w/ 4 responses <!-- todo add # responses and type of question-->
             <div class="finalize">
-            <button ng-click="submitQuiz()">Create Quiz</button>
+            <button ng-click="submitQuiz()"><span ng-hide="isEditing">Create Quiz</span>
+            <span ng-hide="!isEditing">Update Quiz</span></button>
             </div>
          </form>
     </div>
