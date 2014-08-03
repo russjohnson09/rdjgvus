@@ -105,7 +105,6 @@ interface QuizController {
     </div>
     
     <div id="takeQuizView" ng-switch-when="takeQuizView">
-        <label>Name: <input ng-model="name"></label>
         <h1>{{quiz.title}}</h1>
         <div class="question" ng-repeat="q in quiz.questions">
             <h2>{{$index + 1}}. {{q.title}}</h2>
