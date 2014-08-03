@@ -2,6 +2,7 @@
 <html ng-app='quiz'>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <script src="/bower_components/angular/angular.js"></script>
     <script src="/bower_components/d3/d3.js"></script>
@@ -13,107 +14,184 @@
     
 <body ng-controller="Quiz">
 
-<div id="container">
-    <div ng-hide="takingQuiz || viewingResults" class="quiz-list-container">
-        <div ng-hide="quizes.length || isLoading" class="no-data">
-            No quizes to display.
+<div id="container" ng-switch="view">
+<div class="col-md-9">
+    <div id="mainView" ng-switch-when="mainView">
+        <!--about-->
+        <h1 class="text-center">About</h1>
+        <p>
+            This is a simple single page application that utilizes angularjs along with nvd3 directives
+            for the discrete bar charts displayed. On the server side node along with express and passport are
+            used. The source is
+            <a href="https://github.com/russjohnson09/rdjgvus">here</a> along with the rest of the source for
+            my site. 
+        </p>
+        
+        <div ng-hide="user" id="login">
+            Login to create authored quizes.
+            <a ng-hide="user" href="./auth/google" class="btn btn-danger">
+            <span class="fa fa-google-plus"></span> Google+</a>
         </div>
-        <div ng-hide="!isLoading">
-            Loading.
+        <div ng-hide="!user" class="account-details">
+        
+            <div class="h2">Account Details</div>
+            <dl class="dl-horizontal">
+                <dt>Name:</dt>
+                <dd>{{user.googleName}}</dd>
+                <dt>Email:</dt>
+                <dd>{{user.googleEmail}}</dd>
+            </dl>
+            <a ng-hide="!user" href="/logout" class="btn btn-default">Logout</a>
         </div>
-        <div class="quiz-list"
+        <!--about-->
+    
+        <ul class="list-unstyled"
         ng-repeat="q in quizes">
-            <div class="quiz">
-                <div>{{q.title}}</div> <div>({{q.questions.length}} Questions)</div> 
-                <div><button ng-click="take(q)">Take Quiz</button></div>
-                <div><button ng-click="viewResults(q)">View Results</button></div>
-            </div>
-        </div>
-        
+            <li class="quiz">
+                <span>{{q.title}}</span> <span>({{q.questions.length}} Questions) by 
+                {{q.user.googleName || 'Anon'}}</span> 
+                <ul class="list-unstyled list-inline">
+                    <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
+                    <li><button ng-click="resultsViewInit(q)">View Results</button></li>
+                    <li><button ng-click="editQuizViewInit(q)">Edit Quiz</button></li>
+                    <li><a download="{{q.title}}.txt" ng-click="exportQuiz(q)" href="{{export}}"
+                    target="_blank">Export</a></li>
+                </ul>
+            </li>
+        </ul>
         <div class="options">
-            <a href="./create">Create New</a>
+            <button ng-click="editQuizViewInit()">Create New</a>
             <button ng-click="removeBlank()">Remove Null Quizes</button>
+            <button ng-click="removeAll()">Remove All Quizes/Submissions</button>
         </div>
         
-        <!-- quiz-list-container -->
+    <h1 class="text-center">Controller Spec</h1>
+    These are the objects and functions available to the view through the controller.
+        <pre>
+dictionary Quiz {
+    string title;
+    string user;
+    question[] questions;
+};
+dictionary Question {
+    string title;
+    int answer;
+    int response[] responses;
+};
+dictionary Response {
+    string text;
+};
+dictionary User {
+    string name;
+    string email;
+    string profileId;
+}
+
+interface QuizController {
+    attribute Quiz? quiz;
+    attribute User? user;
+    attribute Quiz[] quizes;
+    attribute string view;
+    void refreshList();  //refresh the quiz list
+    void mainViewInit(); //initialize the main view
+    void removeBlank(); //remove any quizes with no questions
+    void removeAll(); //remove all quizes
+    void addQuesiont(); //add a blank question
+};
+        </pre>
+        
+        
+        <!--mainView-->
     </div>
     
-    <div ng-hide="!takingQuiz">
+    <div id="takeQuizView" ng-switch-when="takeQuizView">
         <label>Name: <input ng-model="name"></label>
         <h1>{{quiz.title}}</h1>
         <div class="question" ng-repeat="q in quiz.questions">
             <h2>{{$index + 1}}. {{q.title}}</h2>
             <div class="responses" ng-repeat="r in q.responses">
-                <label>{{r.text}}<input name="question{{$parent.$index}}" type="radio" ng-click="response($parent.$index,$index)"></label>
+                <label>{{r.text}}<input name="question{{$parent.$index}}" 
+                type="radio" ng-click="saveResponse($parent.$index,$index)"></label>
             </div>
         </div>
-        
-        <div class="bottom-bar">
-            <button ng-click="submit()">Submit</button>
-        </div>
+        <!--takQuizView-->
     </div>
-    
-    
-    <div class="results" ng-hide="!viewingResults">
-        <h1 ng-hide="!loadingResults">Loading</h1>
-        <div ng-hide="loadingResults">
-            <h1>There are {{subTotals()}} submissions for quiz "{{quiz.title}}". 
+  
+    <div id="resultsView" ng-switch-when="resultsView">
+        <div>
+            <h1>There are {{submissions.length}} submissions for quiz "{{quiz.title}}". 
             Average score is {{averageScore}}</h1>
         </div>
         <div class="question-container" ng-repeat="q in quiz.questions">
-                <div class="question">
-                    <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
-                    <div class="responses" ng-repeat="r in q.responses"
-                    ng-class="{'correct' : q.answer == $index }">
-                        {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
-                    </div>
+            <div class="question">
+                <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
+                <div class="responses" ng-repeat="r in q.responses"
+                ng-class="{'correct' : q.answer == $index }">
+                    {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
                 </div>
+            </div>
             <div class="chart">
-	            <nvd3-discrete-bar-chart
+                <nvd3-discrete-bar-chart
                 	data="data[$index]"
                     id="chart{{$index}}"
                     showvalues="true"
                     width="550"
+                    showXAxis="true"
                     height="400"
-                    interactive="false"
                     valueFormat="valueFormatFunction()"
+                    staggerLabels="true"
                     >
                     	<svg></svg>
                 </nvd3-discrete-bar-chart>
             </div>
         </div>
-        <div class="bottom-bar">
-            <button ng-click="return()">Return</button>
-        </div>
-        
-    <!-- results -->
+        <!--resultsView-->
     </div>
     
-<!-- container -->
+    <div id="editQuizView" ng-switch-when="editQuizView">
+        <form>
+            <label>Author: <input ng-model="user.googleName"
+             ng-model="quiz.author" ng-disabled="true"></label>
+            <label>Title: <input ng-model="quiz.title"></label>
+            <label>Count:<input ng-model="quiz.questions.length" ng-disabled="true"></label>
+            <h1>Questions</h1>
+            <div class="question" ng-repeat="q in quiz.questions">
+                <label>Title:<textarea  ng-model="q.title"></textarea></label>
+                <div class="responses" ng-repeat="r in q.responses">
+                    <input type="text" ng-model="r.text"><input ng-click="correct($parent.$index,$index)" type="radio" name="{{$parent.$index}}">
+                </div>
+            </div>
+            <button ng-click="addQuestion()">Add Question</button> w/ 4 responses <!-- todo add # responses and type of question-->
+            <div class="finalize">
+            <button ng-click="submitQuiz()"><span ng-hide="isEditing">Create Quiz</span>
+            <span ng-hide="!isEditing">Update Quiz</span></button>
+            </div>
+         </form>
+    </div>
+    
+    <!-- shared bottom-bar buttons -->
+    <div class="bottom-bar">
+        <button ng-hide="view != 'takeQuizView'" ng-click="submit()">Submit</button>
+        <button ng-hide="view == 'mainView'" ng-click="mainViewInit()">Return</button>
+    </div>
+    
+<!--col-->
+</div>
+    <!--container-->
 </div>
 
-
+<script src="/js/jquery.js"></script>
 <script src="./js/quiz.js"></script>
-<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="/css/bootstrap-cyborg.min.css">
 <style>
 
-
+    .account-details {
+        margin: 10px 0 10px 0;
+    }
 
     .options {
         margin: 20px 0 0 0;
-    }
-    
-    div.quiz-list {
-        display:table;
-    }
-    
-    div.quiz-list > div.quiz {
-        display:table-row;
-    }
-    
-    .quiz div {
-        display:table-cell;
-        width: 25%;
     }
     
     div.question {
@@ -135,10 +213,14 @@
         height: 500px;
     }
     
-    .question input {
+    .question input[type="radio"] {
         position: absolute;
         display: inline;
         right: 0;
+    }
+    
+    .question input[type="text"] {
+        width: 80%;
     }
     
     div.responses {
@@ -155,6 +237,63 @@
         padding:0;
     }
     
+    .tick line {
+        display: none;
+    }
+    
+    .tick text {
+        fill: #FFF;
+    }
+    
+    
+    #editQuizView .question {
+        margin: 0 0 10px 0;
+    }
+
+    #editQuizView .options {
+        margin: 20px 0 0 0;
+    }
+    
+    #editQuizView .finalize {
+        margin: 20px 0 0 0;
+    }
+    
+    
+    #editQuizView {
+        width: 90%;
+        padding-left: 10%;
+    }
+    
+    #editQuizView form {
+        width: 700px;
+    }
+    
+    #editQuizView textarea {
+        width: 100%;
+        display: block;
+    }
+    
+    #editQuizView div.question {
+        width: 100%;
+    }
+    
+    #editQuizView .question input[type="text"] {
+        max-width: 500px;
+        width: 80%;
+    }
+    
+    #editQuizView input[type="radio"] {
+        display: inline;
+        right: 0px;
+    }
+    
+    #editQuizView div.responses {
+        padding: 5px 0px 0px;
+    }
+    
+    #editQuizView div.question {
+        max-width: 500px;
+    }
     
     
 </style>

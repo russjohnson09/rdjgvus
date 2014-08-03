@@ -1,10 +1,11 @@
 var config = require('./config.js');
+var express = require('express');
 var u = require('./util_modules/utils.js')({seed:100});
 var url = require('url');
-var express = require('express');
+var passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var app = express();
 var http = require("http");
-var bodyparser = require("body-parser");
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
@@ -19,14 +20,75 @@ var appPort = config.app.port;
 var Pusher = require("pusher");
 var pusherOpts = config.pusher;
 
-w.add(w.transports.File, { filename: './error.log' });
+var cookieParser = require('cookie-parser');
+var bodyParser   = require('body-parser');
+var session      = require('express-session');
 
-w.info(dbUrl);
+//configure passport
+passport.serializeUser(function(id, done) {
+    console.log('serial');
+    done(null, id);
+});
 
-w.info(pusherOpts);
+// used to deserialize the user
+passport.deserializeUser(function(id, done) {
+    users.findOne({_id:ObjectID(id)}, function(err, user) {
+        console.log(user);
+        done(err, user);
+    });
+});
 
-var pusher = new Pusher(pusherOpts);
 
+function updateUser(user,done) {
+    users.save(user,{w:1},function(err,result) { 
+        return done(null, user._id || result._id);
+    });
+}
+
+
+passport.use(new GoogleStrategy({
+    clientID        : config.googleAuth.clientID,
+    clientSecret    : config.googleAuth.clientSecret,
+    callbackURL     : config.googleAuth.callbackURL,
+    passReqToCallback : true
+},
+function(req, token, refreshToken, profile, done) {
+    var user = req.user;
+    if (!user) {
+        users.findOne({ 'googleId' : profile.id }, function(err, user) {
+            if (!user) {
+                user = {};
+            }
+            user.googleToken = token;
+            user.googleName  = profile.displayName;
+            user.googleEmail = (profile.emails[0].value || '').toLowerCase();
+            updateUser(user,done);
+        });
+    }
+    else {
+        user.googleId    = profile.id;
+        user.googleToken = token;
+        user.googleName  = profile.displayName;
+        user.googleEmail = (profile.emails[0].value || '').toLowerCase(); // pull the first email
+        updateUser(user,done);
+    }
+
+}));
+
+app.use(require("body-parser")());
+app.use("/",express.static(__dirname + "/public_html"));
+app.use("/bower_components/",express.static(__dirname + "/bower_components"));
+
+app.use(cookieParser()); // read cookies (needed for auth)
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// required for passport
+app.use(require('express-session')({secret:config.secret}));
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+
+
+//configure collections
 m.MongoClient.connect(dbUrl, {db : {native_parser: false, server: 
 	{socketOptions: {connectTimeoutMS: 500}}}}, 
     function(err, db) {
@@ -43,12 +105,16 @@ m.MongoClient.connect(dbUrl, {db : {native_parser: false, server:
         employees = db.collection('employees');
         quizes = db.collection("quizes");
         submissions = db.collection("submissions");
+        auth = db.collection('auth');
+        users = db.collection('users');
 });
 
-app.use(bodyparser());
-app.use("/",express.static(__dirname + "/public_html"));
-app.use("/bower_components/",express.static(__dirname + "/bower_components"));
+w.add(w.transports.File, { filename: './error.log' });
 
+w.info(dbUrl);
+w.info(pusherOpts);
+
+var pusher = new Pusher(pusherOpts);
 
 app.get("/pusher/update",function(req,res){    
     pusher.trigger('test', 'test', {
@@ -214,6 +280,15 @@ app.post("contact/add",function(req,res) {
     });
 });
 
+//auth
+app.get('/quiz/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+app.get('/auth/google',
+	passport.authenticate('google', {
+		successRedirect : '/quiz',
+		failureRedirect : '/quiz'
+}));
+
 app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
     req.socket.remoteAddress ||
@@ -224,13 +299,22 @@ app.get("/quiz/test/userdata",function(req,res){
 
 app.post("/quiz/create",function(req,res){
     var quiz = req.body.quiz;
+    var user = req.body.user;
     if (!quiz) {
         res.json({});
-        return;
     }
-    quizes.insert(quiz,{w:1},function(err,result){
-        res.json(result[0]['_id']);
-    });
+    else {
+        if (quiz._id) {
+            quiz._id = ObjectID(quiz._id);
+        }
+        if (user._id) {
+            quiz.user_id = ObjectID(user._id);
+        }
+        quizes.save(quiz,{w:1},function(err,result) {
+            console.log(err);
+            res.json(result);
+        });
+    }
 });
 
 app.post("/quiz",function(req,res){
@@ -238,8 +322,7 @@ app.post("/quiz",function(req,res){
     var responses = req.body.responses;
     var quiz_id = ObjectID(quiz._id);
     var name = req.body.name;
-    submissions.insert({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
-        console.log(result);
+    submissions.save({name:name,quiz_id:quiz_id,responses:responses},{w:1},function(err,result){
         res.json(result);
     });
 });
@@ -293,11 +376,25 @@ app.post("/quiz/test/testquiz",function(req,res){
 
 app.get("/quiz/quiz_list",function(req,res){
     quizes.find({active:true}, function(err,c) {
-        c.toArray(function(err,quizAry){
-            console.log(quizAry);
-            res.json({quizAry:quizAry})
+        var quizAry = [];
+        c.each(function(err,quiz) {
+            if(quiz == null) {
+                res.json({quizAry:quizAry});
+                return;
+            }
+            quizAry.push(quiz);
         });
     });
+});
+
+app.post("/quiz/removeAll",function(req,res){
+    submissions.remove({}, function(err,submissions_count) {
+        quizes.remove({},function(err,count) {
+            res.json({submissions_count:submissions_count,quizes_count:count});
+        });
+    });
+
+    
 });
 
 app.post("/quiz/test/submit",function(req,res){
@@ -378,7 +475,6 @@ app.get("/contacts/load",function(req,res) {
 });
 
 app.post("/contacts/add",function(req,res) {
-    //var cat = req.body.cat;
     console.log(req.body);
     contacts.insert(req.body,{w:1}, function(err,result) {
         if (err) {
@@ -396,6 +492,35 @@ app.get("/contacts/getsex",function(req,res) {
         console.log(docs);
         res.json(docs);
     });
+});
+
+//auth
+app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] }));
+
+app.get('/auth/google/callback',
+	passport.authenticate('google', {
+		successRedirect : '/auth',
+		failureRedirect : '/auth'
+	}));
+	
+app.get('/current_user',function(req,res){
+    res.json(req.user);
+});
+
+app.get('/user',function(req,res) {
+    console.log(req);
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    console.log(query);
+    var _id = ObjectID(query.user_id);
+    users.findOne({_id:_id},function(err,item){
+        res.json({user:item});
+    });
+});
+
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/quiz');
 });
 
 var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen"];
