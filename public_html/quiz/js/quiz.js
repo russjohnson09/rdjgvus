@@ -71,7 +71,7 @@ function Quiz($scope,$http){
     s.editQuizViewInit = editQuizViewInit = function(q) {
         if (typeof q === "undefined") {
             s.isEditing = false;
-            q = {author:'',title:'',questions:[]};
+            q = {title:'',questions:[]};
         }
         else {
             s.isEditing = true;
@@ -94,7 +94,8 @@ function Quiz($scope,$http){
             method: "post",
             url: "./create",
             data: {
-                quiz: s.quiz
+                quiz: s.quiz,
+                user: s.user
             }
         });
         

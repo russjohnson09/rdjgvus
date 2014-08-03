@@ -299,14 +299,16 @@ app.get("/quiz/test/userdata",function(req,res){
 
 app.post("/quiz/create",function(req,res){
     var quiz = req.body.quiz;
-    console.log("creating");
-    console.log(quiz);
+    var user = req.body.user;
     if (!quiz) {
         res.json({});
     }
     else {
         if (quiz._id) {
             quiz._id = ObjectID(quiz._id);
+        }
+        if (user._id) {
+            quiz.user_id = ObjectID(user._id);
         }
         quizes.save(quiz,{w:1},function(err,result) {
             console.log(err);
@@ -374,9 +376,13 @@ app.post("/quiz/test/testquiz",function(req,res){
 
 app.get("/quiz/quiz_list",function(req,res){
     quizes.find({active:true}, function(err,c) {
-        c.toArray(function(err,quizAry){
-            console.log(quizAry);
-            res.json({quizAry:quizAry})
+        var quizAry = [];
+        c.each(function(err,quiz) {
+            if(quiz == null) {
+                res.json({quizAry:quizAry});
+                return;
+            }
+            quizAry.push(quiz);
         });
     });
 });
