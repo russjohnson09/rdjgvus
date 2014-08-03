@@ -48,7 +48,7 @@
         <ul class="list-unstyled"
         ng-repeat="q in quizes">
             <li class="quiz">
-                <span>{{q.title}}</span> <span>({{q.questions.length}} Questions) by {{q.author}}</span> 
+                <span>{{q.title}}</span> <span>({{q.questions.length}} Questions) by {{q.author || 'Anon'}}</span> 
                 <ul class="list-unstyled list-inline">
                     <li><button ng-click="takeQuizViewInit(q)">Take Quiz</button></li>
                     <li><button ng-click="resultsViewInit(q)">View Results</button></li>

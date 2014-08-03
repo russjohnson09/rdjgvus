@@ -20,7 +20,7 @@ function Quiz($scope,$http){
     }
     
     //refresh/load related functions
-    s.refreshList = refreshList = function() {
+    s.refreshList = refreshList = function(callback) {
         var request = $http({
             method: "get",
             url: "./quiz_list"
@@ -28,6 +28,9 @@ function Quiz($scope,$http){
         request.success(function(data) {
             s.quizes = data.quizAry;
             s.isLoading = false;
+            if (callback) {
+                callback(s.quizes);
+            }
         });
         
         request.error(function(data) {
@@ -157,22 +160,33 @@ function Quiz($scope,$http){
             getSubmissionTotals();
         });
     }
-    
-    var getUserForQuiz = s.getUser = function(q) {
-        if (q.user) {
-            return q.user;
+
+    s.getUsers = getUsers;
+    //loop over quizes and if user is not populated, get it
+    function getUsers(quizes) {
+        console.log('getting users');
+        for (var i in quizes) {
+            _getUserForQuiz(quizes[i]);
         }
-        else {
+    }
+    
+    function _getUserForQuiz(q) {
+        if (!q.user_id) {
+            return;
+        }
+        if (!q.user) {
+            console.log(q);
             var request = $http({
                 method: "get",
-                url: "/user?user_id=" + id
+                url: "/user?user_id=" + q.user_id
             });
             request.success(function(data) {
                 q.user = data.user;
                 console.log(data);
             });
-         }
+        }
     }
+    
 
     s.getSubmissionTotals = getSubmissionTotals = function() {
         var subs = s.submissions;
@@ -266,7 +280,7 @@ function Quiz($scope,$http){
     
     //initialize data
     (function(){
-        refreshList();
+        refreshList(getUsers);
         getCurrentUser();
         s.isLoading = true;
         s.takingQuiz = false;
