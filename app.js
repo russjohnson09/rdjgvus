@@ -374,7 +374,7 @@ app.post("/quiz/test/testquiz",function(req,res){
     });
 });
 
-app.get("/quiz/quiz_list",function(req,res){
+app.get("/quiz/quiz-list",function(req,res){
     quizes.find({active:true}, function(err,c) {
         var quizAry = [];
         c.each(function(err,quiz) {
@@ -503,7 +503,7 @@ app.get('/auth/google/callback',
 		failureRedirect : '/auth'
 	}));
 	
-app.get('/current_user',function(req,res){
+app.get('/current-user',function(req,res){
     res.json(req.user);
 });
 

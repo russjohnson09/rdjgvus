@@ -11,7 +11,7 @@ function Quiz($scope,$http){
     var getCurrentUser = s.getUser = function() {
         var request = $http({
             method: "get",
-            url: "/current_user"
+            url: "/current-user"
         });
         request.success(function(data) {
             console.log(data);
@@ -23,7 +23,7 @@ function Quiz($scope,$http){
     s.refreshList = refreshList = function(callback) {
         var request = $http({
             method: "get",
-            url: "./quiz_list"
+            url: "./quiz-list"
         });
         request.success(function(data) {
             s.quizes = data.quizAry;
