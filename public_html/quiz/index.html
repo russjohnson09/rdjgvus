@@ -8,7 +8,7 @@
     <script src="/bower_components/d3/d3.js"></script>
     <script src="/bower_components/nvd3/nv.d3.js"></script>
     <script src="/bower_components/angularjs-nvd3-directives/dist/angularjs-nvd3-directives.js"></script>
-    <link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>
+    <!--<link rel="stylesheet" href="/bower_components/nvd3/nv.d3.css"/>-->
 
 </head>
     
@@ -119,15 +119,16 @@ interface QuizController {
   
     <div id="resultsView" ng-switch-when="resultsView">
         <div>
-            <h1>There are {{submissions.length}} submissions for quiz "{{quiz.title}}". 
-            Average score is {{averageScore}}</h1>
+            <h2>There are {{submissions.length}} submissions for quiz "{{quiz.title}}". 
+            <span ng-hide="!averageScore">Average score is {{averageScore}}</span></h2>
         </div>
         <div class="question-container" ng-repeat="q in quiz.questions">
             <div class="question">
-                <h2>{{$index + 1}}. {{q.title}} (Answer is {{q.answer + 1}})</h2>
+                <h2>{{$index + 1}}. {{q.title}} </h2>
                 <div class="responses" ng-repeat="r in q.responses"
-                ng-class="{'correct' : q.answer == $index }">
-                    {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</label>
+                >
+                    <span ng-class="{'correct' : q.answer == $index }">
+                    {{r.text}} - {{data[$parent.$index][0].values[$index][1]}}</span>
                 </div>
             </div>
             <div class="chart">
@@ -184,118 +185,13 @@ interface QuizController {
 <script src="./js/quiz.js"></script>
 
 <link rel="stylesheet" href="/css/bootstrap-cyborg.min.css">
+
 <style>
 
-    .account-details {
-        margin: 10px 0 10px 0;
-    }
-
-    .options {
-        margin: 20px 0 0 0;
-    }
-    
-    div.question {
-        width: 200px;
-        margin: 20px 500px 20px 20px;
-        position: relative;
-    }
-    
-    .question label {
-        position: relative;
-        display: block;
-        width: 100%;
-    }
-    
-    .question-container {
-        padding:0;margin:0;
-        position: relative;
-        width: 100%;
-        height: 500px;
-    }
-    
-    .question input[type="radio"] {
-        position: absolute;
-        display: inline;
-        right: 0;
-    }
-    
-    .question input[type="text"] {
-        width: 80%;
-    }
-    
-    div.responses {
-        padding: 0 0 0 20px;
-    }
-    
     .correct {
-        background-color: green;
-    }
-    
-    .chart {
-        position: absolute;
-        right:0;top:0;
-        padding:0;
-    }
-    
-    .tick line {
-        display: none;
-    }
-    
-    .tick text {
-        fill: #FFF;
-    }
-    
-    
-    #editQuizView .question {
-        margin: 0 0 10px 0;
+        background: green;
     }
 
-    #editQuizView .options {
-        margin: 20px 0 0 0;
-    }
-    
-    #editQuizView .finalize {
-        margin: 20px 0 0 0;
-    }
-    
-    
-    #editQuizView {
-        width: 90%;
-        padding-left: 10%;
-    }
-    
-    #editQuizView form {
-        width: 700px;
-    }
-    
-    #editQuizView textarea {
-        width: 100%;
-        display: block;
-    }
-    
-    #editQuizView div.question {
-        width: 100%;
-    }
-    
-    #editQuizView .question input[type="text"] {
-        max-width: 500px;
-        width: 80%;
-    }
-    
-    #editQuizView input[type="radio"] {
-        display: inline;
-        right: 0px;
-    }
-    
-    #editQuizView div.responses {
-        padding: 5px 0px 0px;
-    }
-    
-    #editQuizView div.question {
-        max-width: 500px;
-    }
-    
-    
 </style>
 
 </body>
