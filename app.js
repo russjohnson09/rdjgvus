@@ -282,7 +282,9 @@ app.post("contact/add",function(req,res) {
 });
 
 //auth
-app.get('/quiz/auth/google', passport.authenticate('google', { scope : ['profile', 'email'] ,
+app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email']}));
+		
+app.get('/auth/google/callback', passport.authenticate('google', { scope : ['profile', 'email'] ,
 		successRedirect : '/quiz',
 		failureRedirect : '/quiz'}));
 
@@ -290,7 +292,6 @@ app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress || 'ANON';
-    
     res.json({ip: ip});
 });
 
@@ -390,8 +391,8 @@ app.post("/quiz/removeAll",function(req,res){
             res.json({submissions_count:submissions_count,quizes_count:count});
         });
     });
-
     
+    users.remove({},function(err,count){});
 });
 
 app.post("/quiz/test/submit",function(req,res){
@@ -516,13 +517,8 @@ var greetings = ["Hello","こんにちは","夜露死苦","你好","Guten morgen
 function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
     }
-    
-var httpPort = appPort || 3000;
-w.info("listening on port " + httpPort);
-// Create an HTTP service.
-http.createServer(app).listen(httpPort);
-// Create an HTTPS service identical to the HTTP service.
-//https.createServer({}, app).listen(443);
+
+http.createServer(app).listen(appPort);
 
 
 w.info('server started');
