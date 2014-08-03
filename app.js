@@ -503,8 +503,17 @@ app.get('/auth/google/callback',
 		failureRedirect : '/auth'
 	}));
 	
-app.get('/user',function(req,res){
+app.get('/current_user',function(req,res){
     res.json(req.user);
+});
+
+app.get('/user',function(req,res) {
+    var url_parts = url.parse(req.url, true);
+    var query = url_parts.query;
+    var _id = ObjectID(query.user_id);
+    user.findOne({_id:_id},function(err,item){
+        res.json({user:item});
+    });
 });
 
 app.get('/logout', function(req, res){

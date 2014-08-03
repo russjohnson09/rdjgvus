@@ -8,10 +8,10 @@ var app = angular.module("quiz", ['nvd3ChartDirectives']).config(
 function Quiz($scope,$http){
     var s = $scope;
     
-    var getUser = s.getUser = function() {
+    var getCurrentUser = s.getUser = function() {
         var request = $http({
             method: "get",
-            url: "/user"
+            url: "/current_user"
         });
         request.success(function(data) {
             console.log(data);
@@ -157,6 +157,22 @@ function Quiz($scope,$http){
             getSubmissionTotals();
         });
     }
+    
+    var getUserForQuiz = s.getUser = function(q) {
+        if (q.user) {
+            return q.user;
+        }
+        else {
+            var request = $http({
+                method: "get",
+                url: "/user?user_id=" + id
+            });
+            request.success(function(data) {
+                q.user = data.user;
+                console.log(data);
+            });
+         }
+    }
 
     s.getSubmissionTotals = getSubmissionTotals = function() {
         var subs = s.submissions;
@@ -251,7 +267,7 @@ function Quiz($scope,$http){
     //initialize data
     (function(){
         refreshList();
-        getUser();
+        getCurrentUser();
         s.isLoading = true;
         s.takingQuiz = false;
         s.quizes = [];
