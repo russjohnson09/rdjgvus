@@ -7,10 +7,10 @@
         <title>Home - russ</title>
     </head>
     <body>
-        <div id="sidebar">
-            <a href="/"><h1>Home</h1></a>
-            <div id="options">
-                <ul>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand"><a href="#">Home</a></li>
                     <li>
                         <a href="/#about">About Me</a>
                     </li>
@@ -23,20 +23,29 @@
                     <li>
                         <a href="/resume">Resume</a>
                     </li>
-                </ul>
-             </div>
-        </div>
-
-        <div id="main">
-            
+        </ul>
+    </div>
+    <div id="page-content-wrapper">
+        <div class="page-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!-- content of page -->
             <h1 id="about">About Me</h1>
             <p>
                 My name is Russ, I work as a software developer at Epic Systems in Verona, WI. 
-                One of my hobbies is studying Japanese and I hope to visit Japan sometime in 2014. 
                 This site is somewhat of a mix between a blog and some more technical stuff. 
                 I may throw in some entries on web development, python, Japanese, mathematics, or 
                 whatever interests me at the time.
             </p>
+            <h1 id="demo">Demos</h1>
+                <p>
+                This is where I keep most of my demos, some of them are more complete than others.
+                </p>
+            <ul>
+                <li><a href="/contact">Contacts</a>-Stores a table of contacts using IndexedDB</li>
+                <li><a href="/quiz">Quiz</a>-Simple SPA.</li>
+            </ul>
             
             <h1 id="japanese">Short Japanese Lesson</h1>
             <p>
@@ -99,22 +108,15 @@
                 <li>尸 (し) corpse radical</li>
                 <li>寸 (すん) inch/sundial degree radical</li>
                 </ul>
-
-        <h1 id="demo">Demos</h1>
-            <p>
-            This is where I keep most of my demos, some of them are more complete than others.
-            </p>
-        <ul>
-            <li><a href="/ajax">Ajax Example</a> - A simple ajax example for reference.</li>
-            <li><a href="/contact">Contacts</a>-Stores a table of contacts using IndexedDB</li>
-            <li><a href="/bullethell">Bullethell</a>-Simple 2d shooter I've been working on.</li>
-            <li><a href="/knockout">Knockout</a></li>
-            <li><a href="/codesnippets">Code snippets using primjs.</a> (Not really worth mentioning aside
-                from having syntax highlighting when demoing pieces of code is nice to have.)</li>
-            <li><a href="/clock">Clock</a></li>
-        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <link rel="stylesheet" href="/css/main.css">
+    </div>
+</div>
+        
+        <link rel="stylesheet" href="/css/bootstrap-cyborg.min.css">
+        <link rel="stylesheet" href="/css/main2.css">
 
     </body>
 
