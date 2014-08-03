@@ -8,28 +8,6 @@
 
 <body>
 
-<div id="sidebar">
-    <a href="/"><h1>Home</h1></a>
-    <div id="options">
-        <ul>
-            <li>
-                <a href="/#about">About Me</a>
-            </li>
-            <li>
-                <a href="/#japanese">Japanese</a>
-            </li>
-            <li>
-                <a href="/#demo">Demos</a>
-            </li>
-            <li>
-                <a href="/resume">Resume</a>
-            </li>
-        </ul>
-     </div>
-</div>
-
-
-
 <div class="container">
 
     <h1 class="header" data-bind="text:i18n().russ_full"></h1>
@@ -94,116 +72,13 @@
 
 
 <link rel="stylesheet" href="/css/table-select.css">
-<link rel="stylesheet" href="/css/main.css">
+<link rel="stylesheet" href="/css/bootstrap-cyborg.min.css">
+<link rel="stylesheet" href="/css/main2.css">
+<link rel="stylesheet" href="./resume.css">
 
 <script src="/js/jquery.js"></script>
 <script src="/js/knockout.js"></script>
 <script src="strings.js"></script>
-
-
-<style>
-    
-    
-    
-    d {
-        border: 1px solid;
-    }
-    
-    #language-select {
-        margin: 20px 0;
-        width: 300px;
-        border: 1px solid;
-        padding: 10px;
-        position: absolute;
-        left: 40%
-    }
-    
-    #language-select input {
-        right: 0;
-    }
-    
-    #language-select h1 {
-        border-bottom: 1px solid;
-        font-size: 25px;
-    }
-    
-    #language-select label {
-        width: 100%;
-    }
-    
-    #language-select .choices {
-        max-width: 200px;
-        width: 90%;
-    }
-    
-    .container {
-		margin: 20px 10px 10px 10px;
-		margin: 0 0 0 20%;
-	}
-	
-	.container p,li {
-	    max-width: 800px;
-	}
-	
-	.header {
-	    margin: 10px 0 50px 0;
-	}
-	
-	.contact h1 {
-	    font-size: 25px;
-	}
-    
-    .center {
-        text-align: center;
-    }
-    
-    .contact {
-        /*position: absolute;*/   
-    }
-
-	body,html,div,ul {
-		margin:0;padding:0;
-	}
-	
-	body,html,div,ul {
-	    position: relative;
-	}
-	
-	ul {
-		list-style: none;
-	}
-	
-	ul.comma-list>li {
-	    display: inline;
-	}
-	
-	ul.comma-list>li:after {
-        content: ", ";
-    }
-    
-    ul.comma-list>li:last-child:after {
-    content: "";
-    }
-	
-	div.section {
-	    margin:20px 0 0 100px; 
-	}
-	
-	h2 {
-	    font-size: 20px;
-	    margin: 5px 0 0 10px;
-	}
-	
-	h1 {
-	    padding:0;
-	    margin:0 0 5px 0;
-	}
-	
-	ul,p {
-	    margin:0 0 0 50px;
-	}
-	
-</style>
 
 
 <script>
