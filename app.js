@@ -5,7 +5,8 @@ var url = require('url');
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var app = express();
-var http = require("http");
+var https = require('https');
+var http = require('http');
 var m = require("mongodb");
 var ObjectID = m.ObjectID;
 var mConfig = config.mongo;
@@ -520,9 +521,12 @@ function randElement(ary) {
         return ary[Math.floor(Math.random() * ary.length)];
     }
     
-var port = appPort || 8080;
-w.info("listening on port " + port);
-app.listen(port);
+var httpPort = appPort || 3000;
+w.info("listening on port " + httpPort);
+// Create an HTTP service.
+http.createServer(app).listen(httpPort);
+// Create an HTTPS service identical to the HTTP service.
+//https.createServer({}, app).listen(443);
 
 
 w.info('server started');
