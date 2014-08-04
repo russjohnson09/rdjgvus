@@ -286,7 +286,7 @@ app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'e
 		
 app.get('/auth/google/callback',function(req,res,next) {
     passport.authenticate('google',function(err,user,info) {
-        if (err) { return next(err); }
+        if (err) { return res.redirect('/quiz'); }
         if (!user) { return res.redirect('/quiz'); }
         req.logIn(user, function(err) {
           if (err) { return next(err); }
