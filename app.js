@@ -284,9 +284,17 @@ app.post("contact/add",function(req,res) {
 //auth
 app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email']}));
 		
-app.get('/auth/google/callback', passport.authenticate('google', {
-		successRedirect : '/quiz',
-		failureRedirect : '/'}));
+app.get('/auth/google/callback',function(req,res,next) {
+    passport.authenticate('google',function(err,user,info) {
+        if (err) { return next(err); }
+        if (!user) { return res.redirect('/quiz'); }
+        req.logIn(user, function(err) {
+          if (err) { return next(err); }
+          return res.redirect('/quiz');
+        });
+    })(req, res, next);
+});
+
 
 app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
