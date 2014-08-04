@@ -284,9 +284,9 @@ app.post("contact/add",function(req,res) {
 //auth
 app.get('/auth/google', passport.authenticate('google', { scope : ['profile', 'email']}));
 		
-app.get('/auth/google/callback', passport.authenticate('google', { scope : ['profile', 'email'] ,
+app.get('/auth/google/callback', passport.authenticate('google', {
 		successRedirect : '/quiz',
-		failureRedirect : '/quiz'}));
+		failureRedirect : '/'}));
 
 app.get("/quiz/test/userdata",function(req,res){
     var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 
